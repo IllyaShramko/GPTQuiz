@@ -17,4 +17,8 @@ user_app.user_app.add_url_rule(
     view_func= user_app.render_login,
     methods= ["POST", "GET"]
 )
+user_app.user_app.add_url_rule(
+    rule = '/history/',
+    view_func= user_app.render_history,
+)
 project.register_blueprint(blueprint= user_app.user_app)

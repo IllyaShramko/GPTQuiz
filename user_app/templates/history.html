@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+History
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('user_app.static', filename='css/history.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="history">
+    <p class="history-text"><b>Історія пройденних вікторин</b></p>
+
+    <div class="quiz-card">
+        <img class="quiz-image" src="{{ url_for('user_app.static', filename='images/math.png') }}" alt="quiz image">
+
+        <div class="quiz-info">
+            <div class="quiz-icon">
+                <img src="{{ url_for('user_app.static', filename='images/checklist.png') }}" alt="icon">
+            </div>
+            <div class="quiz-text">
+                <p class="quiz-title">Вікторина №1</p>
+                <p class="quiz-author">Автор: illya_shramko</p>
+            </div>
+        </div>
+
+        <div class="quiz-actions">
+            <button class="quiz-view">Переглянути</button>
+            <button class="quiz-delete">
+                <img src="{{ url_for('user_app.static', filename='images/trash-bin.png') }}" alt="delete">
+            </button>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

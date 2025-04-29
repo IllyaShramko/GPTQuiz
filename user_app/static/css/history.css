@@ -1,0 +1,143 @@
+form {
+    width: 1792px;
+    height: 161px;
+    background-color: #262626;
+    border-radius: 40px;
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    padding: 0 0px;
+    position: relative;
+    left: 50%;
+    top: 5%;
+    transform: translate(-50%, -25%);
+    overflow: hidden; 
+}
+
+form img {
+    height: 100%;
+    width: auto; 
+    object-fit: cover;
+    border-radius: 40px 0 0 40px; 
+}
+.history{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0px;
+    padding-top:20px;
+}
+
+.history-text{
+    color: white;
+    font-family: "inter";
+    font-size: 40px;
+    width: 800px;
+    height: 160px;
+    text-align: center;
+    line-height: 90px;
+}
+
+.quiz-card {
+    width: 100%;
+    max-width: 1720px;
+    height: 161px;
+    background-color: #262626;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    gap: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.quiz-image {
+    height: 100%;
+    width: auto;
+    border-radius: 40px 0 0 40px;
+    object-fit: cover;
+}
+
+.quiz-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-grow: 1;
+}
+
+.quiz-icon img {
+    width: 130px;
+    height: 130px;
+}
+
+.quiz-text {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+.quiz-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.quiz-author {
+    font-size: 13px;
+    color: #aaa;
+    margin: 4;
+}
+
+.quiz-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* .quiz-view {
+    background-color: #00e600;
+    color: black;
+    font-weight: bold;
+    padding: 20px 40px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+} */
+
+.quiz-view {
+padding: 10px 20px;
+border: none;
+font-size: 17px;
+color: #fff;
+border-radius: 7px;
+letter-spacing: 4px;
+font-weight: 700;
+text-transform: uppercase;
+transition: 0.5s;
+transition-property: box-shadow;
+}
+
+.quiz-view {
+background: rgb(64, 255, 0);
+box-shadow: 0 0 25px rgb(64, 255, 0);
+}
+
+.quiz-view:hover {
+box-shadow: 0 0 5px rgb(64, 255, 0),
+            0 0 25px rgb(64, 255, 0),
+            0 0 50px rgb(64, 255, 0),
+            0 0 100px rgb(64, 255, 0);
+}
+
+.quiz-delete {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.quiz-delete img {
+    width: 32px;
+    height: 32px;
+}

@@ -25,3 +25,6 @@ def render_signup():
 
 def render_login():
     return flask.render_template(template_name_or_list= 'login.html')
+
+def render_history():
+    return flask.render_template(template_name_or_list= 'history.html')
