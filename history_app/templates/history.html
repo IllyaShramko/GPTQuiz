@@ -9,64 +9,21 @@
 {% endblock %}
 
 {% block content %}
-    <div class="passed-by-me">
-        <h2>
-            Пройдено мною
-        </h2>
+    <div class="header">
+        <h2>Пройдено мною</h2>
     </div>
-    <div class="passed-quizes-by-me">
+    <div class="quiz-list-container">
         <div class="quiz">
-            <img class="quiz-image" src="{{url_for('history_app.static', filename= 'images/quiz.png') }}">
+            <img src="{{url_for('history_app.static', filename= 'images/quiz.png') }}">
+            <div class="quiz-icon-container"></div>
             <div class="info">
                 <h3>Вікторина</h3>
                 <p>Автор: illya_shramko</p>
                 <h4>Пройдено на 8/12</h4>
             </div>
-            <form method="post" class="view-or-delete">
-                <button id="view" name="view" value="1">Переглянути</button>
-                <button id="delete" name="delete" value="1">
-                    <img src="{{url_for('history_app.static', filename= 'images/trash.png') }}" >
-                </button>
-            </form>
-        </div>
-        <div class="quiz">
-            <img class="quiz-image" src="{{url_for('history_app.static', filename= 'images/quiz.png') }}">
-            <div class="info">
-                <h3>Вікторина</h3>
-                <p>Автор: illya_shramko</p>
-                <h4>Пройдено на 8/12</h4>
-            </div>
-            <form method="post" class="view-or-delete">
-                <button id="view" name="view" value="1">Переглянути</button>
-                <button id="delete" name="delete" value="1">
-                    <img src="{{url_for('history_app.static', filename= 'images/trash.png') }}" >
-                </button>
-            </form>
-        </div>
-        <div class="quiz">
-            <img class="quiz-image" src="{{url_for('history_app.static', filename= 'images/quiz.png') }}">
-            <div class="info">
-                <h3>Вікторина</h3>
-                <p>Автор: illya_shramko</p>
-                <h4>Пройдено на 8/12</h4>
-            </div>
-            <form method="post" class="view-or-delete">
-                <button id="view" name="view" value="1">Переглянути</button>
-                <button id="delete" name="delete" value="1">
-                    <img src="{{url_for('history_app.static', filename= 'images/trash.png') }}" >
-                </button>
-            </form>
-        </div>
-        <div class="quiz">
-            <img class="quiz-image" src="{{url_for('history_app.static', filename= 'images/quiz.png') }}">
-            <div class="info">
-                <h3>Вікторина</h3>
-                <p>Автор: illya_shramko</p>
-                <h4>Пройдено на 8/12</h4>
-            </div>
-            <form method="post" class="view-or-delete">
-                <button id="view" name="view" value="1">Переглянути</button>
-                <button id="delete" name="delete" value="1">
+            <form method="post" class="view-or-delete row">
+                <button id="view-btn" name="view" value="1">Переглянути</button>
+                <button id="delete-btn" name="delete" value="1">
                     <img src="{{url_for('history_app.static', filename= 'images/trash.png') }}" >
                 </button>
             </form>

@@ -1,3 +1,35 @@
+body {
+    overflow-x: hidden;
+}
+
+.nav {
+    position: sticky;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    width: calc(100% - 88px);
+    height: 78px;
+    padding: 0 44px;
+}
+
+.header h2 {
+    font-size: 32px;
+    font-family: "Inter";
+    font-weight: bold;
+    color:  white;
+}
+
+.quiz-icon-container {
+    background-image: url(../images/test.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #3F434C;
+    border-radius: 100px;
+    min-width: 140px;
+    height: 141px;
+}
 .passed-by-me{
     width: 1270px;
     height: 20px;
@@ -6,78 +38,79 @@
     flex-direction: row;
 }
 
-.passed-by-me h2{
-    font-family: "Inter";
-    font-size: 16px;
-    color:  white;
+.quiz{
+    display: flex;
+    align-items: center;
+    width: 92%;
+    height: 170px;
+    background-color: 262626;
+    border-radius: 30px;
+    padding-right: 30px;
+    overflow: hidden;
+    gap: 15px;
 }
-.passed-quizes-by-me{
-    top: 100px;
-    position: relative;
+
+.quiz-list-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width:auto;
-    gap: 1vw;
-    
 }
-.quiz{
-    width: 80%;
-    height: 135px;
-    background-color: #262626;
-    border-radius: 30px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: row;
-}
-.quiz-image{
-    height: 135px;
-    width: 20%;
+.quiz img{
+    height: 170px;
+    width: 250px;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 .info{
     width: 60%;
     font-family: "Inter";
     font-size: 20px;
     color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: start;
-    padding: 15px;
+    margin-left: 15px;
+    margin-top: 5px;
+}
+
+form button{   
+    background-color: 262626;
+    border: none;
+    margin-bottom: 10px;
+}
+form img{
+    border-radius: 50%;
+    width: 10px;
+    height: 20px;
     
 }
 
-form {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 20%;
-    height: 100%;
-    gap: 0.5vw;
+#view-btn {
+    font-weight: bold;
+    font-size: 15px;
+    color: #262626;
+    background-color: #22CE00;
+    border-radius: 100px;
+    height: 49px;
+    padding: 0 20px;
 }
 
-#view{   
-    background-color: #22CE00;
-    border: none;
-    border-radius: 45px;
-    padding: 10px 20px;
-    font-family: sans-serif;
-    font-weight: 500;
+#delete-btn {
+    background-color: #464C66;
+    border-radius: 100px;
+    width: 52px;
+    height: 49px;
     cursor: pointer;
 }
-#delete{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    background-color: #464C66;
-    border: none;
-    border-radius: 45px;
-    padding: 10px;
-}
 
-#delete img{
+#delete-btn img {
     width: 20px;
     height: 20px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+}
+
+.view-or-delete {
+    gap: 20px;
 }
