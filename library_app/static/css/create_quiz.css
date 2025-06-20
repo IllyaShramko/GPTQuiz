@@ -409,6 +409,12 @@ textarea:focus, input:focus{
   outline:solid #B26FFF 1px ;
 }
 
+.button-div{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .button-save {
     font-size: clamp(1px, 1.2vw, 100px);
     font-weight: bold;
@@ -457,3 +463,5 @@ textarea:focus, input:focus{
 .correct-answer:checked + .correct-label{
     background-color: #10C300;
 }
+
+.button-save
