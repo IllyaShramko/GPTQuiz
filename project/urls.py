@@ -57,16 +57,29 @@ project.register_blueprint(blueprint= library_app.library_app)
 
 execution_app.execution_app.add_url_rule(
     rule = '/execution/',
-    view_func = execution_app.render_execution_page,
+    view_func = execution_app.render_enter_code,
     methods = ["POST", "GET"]
 )
 
 execution_app.execution_app.add_url_rule(
-    rule = '/execution/<enter_code>/',
-    view_func = execution_app.render_enter_code,
+    rule = '/execution/<int:code>/',
+    view_func = execution_app.render_execution_page,
     methods = ["POST","GET"]
 )
+
+execution_app.execution_app.add_url_rule(
+    rule= "/quiz/<int:quiz_id>/<int:question_index>/<result_id>",
+    view_func= execution_app.passing_quiz,
+    methods = ["POST", "GET"]
+)
+
+execution_app.execution_app.add_url_rule(
+    rule = "/result/<result_id>",
+    view_func = execution_app.render_results
+)
+
 project.register_blueprint(blueprint = execution_app.execution_app)
+
 
 history_app.history_app.add_url_rule(
     rule = '/history/',
@@ -89,6 +102,7 @@ project.register_blueprint(blueprint=search_app.search_app)
 
 host_app.host_app.add_url_rule(
     rule = '/host/<int:quizid>',
-    view_func = host_app.render_host_app
+    view_func = host_app.render_host_app,
+    methods= ["POST", "GET"]
 )
 project.register_blueprint(blueprint = host_app.host_app) 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>{{ question.name }}</h1>
+        <form method="post"> 
+            {% if question.type == "one answer" %}
+                <div>
+                    <span>{{ question.variant_1 }}</span>
+                    <input type="radio" name="answer" value="1" id="">
+                </div>
+                <div>
+                    <span>{{ question.variant_2 }}</span>
+                    <input type="radio" name="answer" value="2" id="">
+                </div>
+                <div>
+                    <span>{{ question.variant_3 }}</span>
+                    <input type="radio" name="answer" value="3" id="">
+                </div>
+                <div>
+                    <span>{{ question.variant_4 }}</span>
+                    <input type="radio" name="answer" value="4" id="">
+                </div>
+            {% elif question.type == "multiple answers" %}
+                <div>
+                    <span>{{ question.variant_1 }}</span>
+                    <input type="checkbox" name="answer" value="1" id="">
+                </div>
+                <div>
+                    <span>{{ question.variant_2 }}</span>
+                    <input type="checkbox" name="answer" value="2" id="">
+                </div>
+                <div>
+                    <span>{{ question.variant_3 }}</span>
+                    <input type="checkbox" name="answer" value="3" id="">
+                </div>
+                <div>
+                    <span>{{ question.variant_4 }}</span>
+                    <input type="checkbox" name="answer" value="4" id="">
+                </div>
+            {% elif question.type == "enter answer" %}
+                <div><input type="text" name="answer" placeholder="..."></div>
+            {% endif %}
+            <button type="submit">Відповісти</button>
+        </form>
+    </body>
+</html>

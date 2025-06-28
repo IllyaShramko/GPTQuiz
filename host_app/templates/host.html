@@ -10,8 +10,12 @@ host
 
 {% block content %}
     <form method="post" class="main-info">
-        <h1>{{ quiz.name }}</h1>
-        <h2>{{ quiz.author }}</h2>
+        <h1>Quiz name: {{ quiz.name }}</h1>
+        <h2>Author id: {{ quiz.author_id }}</h2>
         <button id="submit-btn" type="submit">Задати на виконання</button>
+        {% if code != 000000 %}
+            <h2>Genereted code: {{ code }}</h2>
+        {% endif %}
+        <h2></h2>
     </form>
 {% endblock %}

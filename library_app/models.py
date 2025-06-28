@@ -17,6 +17,12 @@ class Question(DATABASE.Model):
 
     quiz_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'))
 
+class Result(DATABASE.Model):
+    id = DATABASE.Column(DATABASE.Integer, primary_key = True)
+    who_passed = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'))
+    what_passed = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'))
+    right_answers = DATABASE.Column(DATABASE.Integer)
+
 class RedeemCode(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
     quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
@@ -31,3 +37,4 @@ class Quiz(DATABASE.Model):
     author_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'))
     questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
     codes = DATABASE.relationship(RedeemCode, backref = 'redeemcode', lazy = True)
+    results = DATABASE.relationship(Result, backref = 'result', lazy=True)
