@@ -5,6 +5,8 @@ from project.settings import DATABASE
 def render_execution_page(code):
     quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
     if flask.request.method == "POST":
+        nickname = flask.request.form.get("input-nickname")
+        print(nickname)
         result = Result(
             who_passed= flask_login.current_user.id,
             what_passed= quiz.id,
