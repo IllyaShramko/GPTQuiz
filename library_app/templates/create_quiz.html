@@ -9,6 +9,7 @@
         <header>
             <a href="/library/"><img src="{{url_for('library_app.static',filename= 'images/arrow.svg')}}"></a>
             <p>Створення нової вікторини</p>
+            <button type="button" id="SaveAndExit">Зберегти і вийти</button>
         </header>
         <main>
             <div class="sidebar">
@@ -174,13 +175,14 @@
                     </form>
                 {% endif %}
             {% endif %}
-            {% for question in quiz.questions %}
-                <p>{{ question.name }}</p>
-                <br>
-            {% endfor %}
         </main>
         
+        <form method="post" id="saveForm" class="hideform">
+            <p>Задайте назву вікторини:</p>
+            <input type="text" name="Name-Quiz">
+            <button type="submit" name="button" value="save_quiz">Зберегти</button>
+        </form>
+        <script src="{{ url_for('library_app.static',filename= 'js/openCloseModel.js') }}"></script>
         <script src="{{ url_for('library_app.static',filename= 'js/enterAnswer.js') }}"></script>
-        <script src="{{ url_for('library_app.static',filename= 'js/highlightCorrect.js') }}"></script>
     </body>
 </html>

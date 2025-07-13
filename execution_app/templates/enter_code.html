@@ -1,32 +1,26 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Code</title>
-    <link rel="stylesheet" href="{{ url_for('execution_app.static', filename='css/execution.css') }}">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Enter Code</title>
+        <link rel="stylesheet" href="{{ url_for('execution_app.static', filename='css/execution.css') }}">
+    </head>
 
-<body>
-    <header>
-        <a href="/"><img src="{{ url_for('execution_app.static', filename='images/atom.svg') }}" style="width: 46px;"></a>
-    </header>
-    
-    <main>
-
-        <form method="post" class = 'form_enter'>
-            <p>GPTQuiz</p>
-            <div class = 'input_code'>
-                <input type="text" name="input-code" placeholder="Введіть код">
-                <button class="button_code" type="submit">ПРИЄДНАТИСЬ</button> 
-            </div> 
-
-
-        </form>
-
-
-    </main>
-
+    <body>
+        <header>
+            <a href="/"><img src="{{ url_for('execution_app.static', filename='images/atom.svg') }}" style="width: 46px;"></a>
+        </header>
         
 
-</body>
+            <form method="post" class = 'form_enter'>
+                <p>GPTQuiz</p>
+                <div class = 'input_code'>
+                    <input type="text" name="input-code" placeholder="Введіть код">
+                    <button class="button_code" type="submit">ПРИЄДНАТИСЬ</button> 
+                </div> 
+
+
+            </form>
+
+    </body>
 </html>

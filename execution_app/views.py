@@ -1,14 +1,14 @@
 import flask, flask_login 
 from library_app.models import RedeemCode, Quiz, Question, Result
 from project.settings import DATABASE
+from user_app.models import User
 
 def render_execution_page(code):
     quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
     if flask.request.method == "POST":
         nickname = flask.request.form.get("input-nickname")
-        print(nickname)
         result = Result(
-            who_passed= flask_login.current_user.id,
+            who_passed= nickname,
             what_passed= quiz.id,
             right_answers= 0
         )
@@ -97,7 +97,14 @@ def render_results(result_id):
     result= Result.query.get(result_id)
     quiz= Quiz.query.get(result.what_passed)
     right= result.right_answers
+    incorrect = quiz.count_questions - right 
     all_count= quiz.count_questions
-    percent= f"{right*100//all_count}%"
+    percent= f"{right*100//all_count}"
+    rating = f"{int(12 / all_count * right // 1)}"
+    author = User.query.get(quiz.author_id)
+    if author.name:
+        name_author = f"{author.surname} {author.name}"
+    else:
+        name_author = author.login
 
-    return flask.render_template('summary.html', right= right, all_count= all_count, percent= percent)
+    return flask.render_template('summary.html', right= right, incorrect= incorrect, all_count= all_count, percent= percent, rating= rating, name_author=name_author)

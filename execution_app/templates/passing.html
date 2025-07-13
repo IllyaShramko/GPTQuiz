@@ -4,48 +4,59 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
+        <link rel="stylesheet" href="{{ url_for('execution_app.static', filename='css/passing.css') }}">
+
     </head>
     <body>
-        <h1>{{ question.name }}</h1>
-        <form method="post"> 
-            {% if question.type == "one answer" %}
-                <div>
-                    <span>{{ question.variant_1 }}</span>
-                    <input type="radio" name="answer" value="1" id="">
-                </div>
-                <div>
-                    <span>{{ question.variant_2 }}</span>
-                    <input type="radio" name="answer" value="2" id="">
-                </div>
-                <div>
-                    <span>{{ question.variant_3 }}</span>
-                    <input type="radio" name="answer" value="3" id="">
-                </div>
-                <div>
-                    <span>{{ question.variant_4 }}</span>
-                    <input type="radio" name="answer" value="4" id="">
-                </div>
-            {% elif question.type == "multiple answers" %}
-                <div>
-                    <span>{{ question.variant_1 }}</span>
-                    <input type="checkbox" name="answer" value="1" id="">
-                </div>
-                <div>
-                    <span>{{ question.variant_2 }}</span>
-                    <input type="checkbox" name="answer" value="2" id="">
-                </div>
-                <div>
-                    <span>{{ question.variant_3 }}</span>
-                    <input type="checkbox" name="answer" value="3" id="">
-                </div>
-                <div>
-                    <span>{{ question.variant_4 }}</span>
-                    <input type="checkbox" name="answer" value="4" id="">
-                </div>
-            {% elif question.type == "enter answer" %}
-                <div><input type="text" name="answer" placeholder="..."></div>
-            {% endif %}
-            <button type="submit">Відповісти</button>
-        </form>
+        <main>
+            <div class="question-div">
+                <p>{{ question.name }}</p>
+            </div>
+        
+            <form method="post"> 
+                {% if question.type == "one answer" %}
+                    <div class="answers-block">
+                        <label for="1" class="answer1">
+                            <span>{{ question.variant_1 }}</span>
+                            <input type="radio" class="choose" name="answer" value="1" id="1">
+                        </label>
+                        <label for="2" class="answer2">
+                            <span >{{ question.variant_2 }}</span>
+                            <input type="radio"  class="choose" name="answer" value="2" id="2">
+                        </label>
+                        <label for="3" class="answer3">
+                            <span >{{ question.variant_3 }}</span>
+                            <input type="radio" class="choose" name="answer" value="3" id="3">
+                        </label>
+                        <label for="4" class="answer4">
+                            <span>{{ question.variant_4 }}</span>
+                            <input type="radio" class="choose" name="answer" value="4" id="4">
+                        </label>
+                    </div>
+                {% elif question.type == "multiple answers" %}
+                    <div style="margin-left: 200px;">
+                        <span>{{ question.variant_1 }}</span>
+                        <input type="checkbox" name="answer" value="1" id="">
+                    </div>
+                    <div>
+                        <span>{{ question.variant_2 }}</span>
+                        <input type="checkbox" name="answer" value="2" id="">
+                    </div>
+                    <div>
+                        <span>{{ question.variant_3 }}</span>
+                        <input type="checkbox" name="answer" value="3" id="">
+                    </div>
+                    <div>
+                        <span>{{ question.variant_4 }}</span>
+                        <input type="checkbox" name="answer" value="4" id="">
+                    </div>
+                {% elif question.type == "enter answer" %}
+                    <div style="margin-left: 200px;"><input type="text" name="answer" placeholder="..."></div>
+                {% endif %}
+                <button type="submit">Відповісти</button>
+            </form>
+        </main>
+   
+       
     </body>
 </html>

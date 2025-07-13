@@ -19,7 +19,7 @@ class Question(DATABASE.Model):
 
 class Result(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
-    who_passed = DATABASE.Column(DATABASE.Integer, DATABASE.String(50))
+    who_passed = DATABASE.Column(DATABASE.String(50))
     what_passed = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'))
     right_answers = DATABASE.Column(DATABASE.Integer)
 

@@ -464,4 +464,18 @@ textarea:focus, input:focus{
     background-color: #10C300;
 }
 
-.button-save
+.hideform {
+    display: none;
+}
+
+.showform {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: fit-content;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    z-index: 5;
+}
