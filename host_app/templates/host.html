@@ -1,0 +1,21 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+host
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('host_app.static', filename='css/static.css') }}">
+{% endblock %}
+
+{% block content %}
+    <form method="post" class="main-info">
+        <h1>Quiz name: {{ quiz.name }}</h1>
+        <h2>Author id: {{ quiz.author_id }}</h2>
+        <button id="submit-btn" type="submit">Задати на виконання</button>
+        {% if code != 000000 %}
+            <h2>Genereted code: {{ code }}</h2>
+        {% endif %}
+        <h2></h2>
+    </form>
+{% endblock %}

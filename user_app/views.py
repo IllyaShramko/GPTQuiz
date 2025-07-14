@@ -1,6 +1,5 @@
 import flask
 import flask_login
-
 from .models import User
 from project import login_manager
 from project.settings import DATABASE

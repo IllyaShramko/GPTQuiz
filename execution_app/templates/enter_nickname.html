@@ -11,9 +11,8 @@
         <a href="/"><img src="{{ url_for('execution_app.static', filename='images/atom.svg') }}" style="width: 46px;"></a>
     </header>
     
-    <main>
 
-        <form action="/execution/<enter_code>" method="post" class = 'form_enter'>
+        <form method="post" class = 'form_enter'>
             <p>GPTQuiz</p>
             <div class = 'input_code'>
                 <input type="text" name="input-nickname" placeholder="Введіть нікнейм">
@@ -23,11 +22,5 @@
 
 
         </form>
-
-
-    </main>
-
-        
-
 </body>
 </html>

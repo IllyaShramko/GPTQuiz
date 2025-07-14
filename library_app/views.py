@@ -28,8 +28,11 @@ def render_create_quiz():
         elif flask.request.form['button'] == 'multiple_answers':
             question = 'multiple answers'
             create_question = True
-
-
+        elif flask.request.form["button"] == 'save_quiz':
+            quiz.name = flask.request.form['Name-Quiz']
+            print(flask.request.form['Name-Quiz'])
+            DATABASE.session.commit()
+            return flask.redirect('/library/')
             
         else:
             type_question = flask.request.form['type_question']
@@ -98,7 +101,6 @@ def render_create_quiz():
         else:
             quiz = Quiz(
                 name = "draft",
-                code_enter = 1234,
                 description = 'draft',
                 count_questions = 0,
                 author_id = flask_login.current_user.id

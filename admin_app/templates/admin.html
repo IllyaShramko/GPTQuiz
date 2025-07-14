@@ -25,19 +25,14 @@
         <h2>Популярні вікторини</h2>
         <div class="quizes">
             {% for quiz in quizes %}    
-                <div class="quiz">
+                <a href="/host/{{ quiz.id }}" class="quiz">
                     <!-- <img src="{{ url_for('admin_app.static', filename= 'images/' + quiz.name ) }}"> -->
                     <img src="{{ url_for('admin_app.static', filename= 'images/image.png') }}">
                     <h3>{{ quiz.name }}</h3>
                     <p>{{ quiz.count_questions }} запитань</p>
                     <p>Author: {{ quiz.user.login }}</p>
-                </div>
+                </a>
             {% endfor %}
-            <div class="quiz">
-                <img src="{{ url_for('admin_app.static', filename= 'images/image.png') }}">
-                <h3>Додавання і віднімання дробів з різними знаменниками</h3>
-                <p>10 запитань</p>
-            </div>
         </div>
     </div>
 {% endblock %}

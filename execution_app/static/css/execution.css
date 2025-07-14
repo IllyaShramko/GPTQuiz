@@ -44,6 +44,10 @@ main {
     padding: 5px 16px 5px 16px;
     background-color: #2B2B2B;
     border-radius: 18px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 
 
 }
@@ -98,10 +102,6 @@ main {
     display: inline-block;
     width: 294px;
 }
-
-
-
-
 
 
 
