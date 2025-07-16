@@ -17,25 +17,39 @@
                 + Створити
             </button>
             <div class="links">
-                <a href="/search/">
-                    <img src="{{ url_for('static', filename= 'images/discover.svg') }}">
-                    <p>Пошук</p>
+                <a class="tab-link" href="/search/">
+                    <div>
+                        <img src="{{ url_for('static', filename= 'images/discover.svg') }}">
+                        <p>Пошук</p>
+                    </div>
+                    <div class="divider"></div>
                 </a>
-                <a href="/library/">
-                    <img src="{{ url_for('static', filename= 'images/library.svg') }}">
-                    <p>Бібліотека</p>
+                <a class="tab-link" href="/library/">
+                    <div>
+                        <img src="{{ url_for('static', filename= 'images/library.svg') }}">
+                        <p>Бібліотека</p>
+                    </div>
+                    <div class="divider"></div>
                 </a>
-                <a href="/history/">
-                    <img src="{{ url_for('static', filename= 'images/history.svg') }}">
-                    <p>Історія</p>
+                <a class="tab-link" href="/history/">
+                    <div>
+                        <img src="{{ url_for('static', filename= 'images/history.svg') }}">
+                        <p>Історія</p>
+                    </div>
+                    <div class="divider"></div>
                 </a>
-                <a href="/reports/">
-                    <img src="{{ url_for('static', filename= 'images/reports.svg') }}">
-                    <p>Звіти</p>
+                <a class="tab-link" href="/reports/">
+                    <div>
+                        <img src="{{ url_for('static', filename= 'images/reports.svg') }}">
+                        <p>Звіти</p>
+                    </div>
+                    <div class="divider"></div>
                 </a>
-                <a href="" class="gpt-quiz-ai">
-                    <img src="{{ url_for('static', filename= 'images/ai.svg') }}">
-                    <p class="ai-text">GPTQuiz AI</p>
+                <a class="tab-link" href="" class="gpt-quiz-ai">
+                    <div>
+                        <img src="{{ url_for('static', filename= 'images/ai.svg') }}">
+                        <p class="ai-text">GPTQuiz AI</p>
+                    </div>
                 </a>
             </div>
         </aside>
@@ -50,4 +64,5 @@
         
         {% endblock %}
     </body>
+    <script src="{{ url_for('static', filename= 'js/ripple.js') }}"></script>
 </html>
