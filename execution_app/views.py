@@ -62,7 +62,7 @@ def passing_quiz(quiz_id, question_index, result_id):
     if flask.request.method == "POST":
 
         if now_question.type == "one answer":
-            user_answer = flask.request.form.get("answer")
+            user_answer = flask.request.form.get("button").split(";")[1]
             if user_answer == now_question.correct_answer:
                 print("success")
                 result.right_answers += 1

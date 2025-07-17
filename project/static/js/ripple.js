@@ -1,5 +1,5 @@
 document.addEventListener('click', function (event) {
-    const button = event.target.closest('aside button');
+    const button = event.target.closest('.create-btn-ripple');
     
     if (button) {
       const ripple = document.createElement('span');
