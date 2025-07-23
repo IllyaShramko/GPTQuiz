@@ -9,29 +9,29 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Звіти</h2>
-    <div class="report">
-        <p class="report-cover"><img src="{{ url_for('reports_app.static', filename= 'images/test-cover.png') }}"></p>
-        <div class="report-icon"></div>
-        <div class="column" style="padding: 20px;">
-            <p class="report-title">Вікторина n1 <span class="passed-people">пройшло: 12 людей</span> <span class="author">Автор: illya_shramko</span></p>
-            <div class="center">
-                <p class="accuracy">Точність</p>
-                <div class="accuracy-range">
-                    <div></div>
+
+    <div class="summary-conteiner">
+        <h2>Звіти</h2>
+        <div class="reports">
+            {% for quiz in quizzes %}
+            
+                <div class="report">
+                    <p class="report-title">Ім'я вікторини: {{ quiz.name }} </p>
+                    <span class="passed-people">пройшло: {{ quiz.results|length }} людей</span>
+                    <span class="author">Автор ID: {{ quiz.author_id }}</span>
+                    <div class="center">
+                        Результати:
+                    
+                    {% for result in quiz.results %}
+                        <div class="line"></div>
+                        <div>
+                            <h4>Пройшов: {{ result.who_passed }}</h4>
+                            <p>Результат: {{ result.right_answers }}/{{ quiz.count_questions}}</p>
+                        </div>
+                    {% endfor %}
+                    </div>
                 </div>
-                <p class="accuracy">40%</p>
-            </div>
-            <div class="center">
-                <img src="{{ url_for('reports_app.static', filename= 'images/time.svg') }}">
-                <p class="average-answer-time">Ср. час питання: 40c.</p>
-                <div class="correct-answers answers">10 <img src="{{ url_for('reports_app.static', filename= 'images/tick.svg') }}"></div>
-                <div class="wrong-answers answers">2 <img src="{{ url_for('reports_app.static', filename= 'images/cross.svg') }}"></div>
-            </div>
-        </div>
-        <div class="right"  style="padding: 20px;">
-            <button class="view-report-btn"><p>Переглянути</p></button>
-            <button class="delete-report-btn"><img src="{{ url_for('reports_app.static', filename= 'images/bin.svg') }}"></button>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

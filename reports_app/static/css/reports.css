@@ -1,134 +1,40 @@
 * {
     font-family: 'Inter';
-}
-
-h2 {
-    font-size: 24px;
     color: white;
 }
 
-img {
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
-}
 
-.column {
+.summary-conteiner{
+    position: absolute;
+    top: 45px;
+    left: 220px;
     display: flex;
     flex-direction: column;
-
-    gap: 10px;
+    align-items: center;
+    padding: 30px;
+    gap: 15px;
+    width: calc(100% - 220px);
 }
-
-.author {
-    font-size: 20px;
-    font-weight: bold;
-    color: #979797;
-}
-
-.passed-people {
-    font-size: 20px;
-    font-weight: bold;
+.reports{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
 }
 
 .report {
-    display: flex;
-    align-items: center;
-    color: white;
-    background-color: #262626;
-    border-radius: 33px;
-    overflow: hidden;
-    margin-top: 17px;
-}
-
-.report-cover img {
-    width: 90%;
-    height: 142px;
-}
-
-.report-icon {
-    background-color: #3F434C;
-    border-radius: 100px;
-    background-image: url(../images/test.svg);
-    background-position: center;
-    background-size: 74px;
-    background-repeat: no-repeat;
-
-    min-width: 140px;
-    height: 140px;
-}
-
-.report-title {
-    font-size: 32px;
-}
-
-.accuracy {
-    font-size: 24px;
-}
-
-.accuracy-range {
-    width: 630px;
-    height: 14px;
-    background-color: #B26FFF;
-    overflow: hidden;
+    width: 100%;
+    background-color: #404040;
     border-radius: 10px;
-}
-
-.accuracy-range div {
-    width: 200px;
-    height: 14px;
-    background-color: #22CE00;
-}
-
-.average-answer-time {
-    font-size: 24px;
-}
-
-.view-report-btn {
-    width: 176px;
-    height: 49px;
-    background-color: #22CE00;
-    color: #262626;
-    border: none;
-    border-radius: 100px;
-}
-
-.view-report-btn p {
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.answers {
-    font-size: 28px;
-    font-weight: bold;
-    background-color: #444444;
-    padding: 15px 20px;
-    border-radius: 15px;
-}
-
-.answers img {
-    width: 30px;
-    height: 30px;
-}
-
-.center {
     display: flex;
-    align-items: center;
-
-    gap: 15px;
-}
-
-.right {
-    display: flex;
-    align-items: center;
-
+    flex-direction: column;
+    padding: 20px;
     gap: 20px;
+    margin-bottom: 20px;
 }
-
-.delete-report-btn {
-    background-color: #464C66;
-    border-radius: 100px;
-    border: none;
-    width: 52px;
-    height: 49px;
+.line {
+    height: 1px;
+    background-color: #666;
+    margin: 10px 0;
 }
