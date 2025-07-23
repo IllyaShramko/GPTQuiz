@@ -1,6 +1,8 @@
 form {
     position: absolute;
-    margin-top: 50px;
+    top: 50px;
+    left: 250px;
+    
 }
 h2 {
     color: white;

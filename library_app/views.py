@@ -32,8 +32,10 @@ def render_create_quiz():
             quiz.name = flask.request.form['Name-Quiz']
             print(flask.request.form['Name-Quiz'])
             DATABASE.session.commit()
-            return flask.redirect('/library/')
-            
+            response = flask.make_response(flask.redirect("/library/"))
+            response.delete_cookie('draft')
+            return response
+
         else:
             type_question = flask.request.form['type_question']
             if type_question == 'one_answer':

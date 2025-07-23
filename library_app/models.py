@@ -23,9 +23,12 @@ class Result(DATABASE.Model):
     what_passed = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'))
     by_code = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('redeem_code.id'))
     right_answers = DATABASE.Column(DATABASE.Integer)
+    correct_answers = DATABASE.Column(DATABASE.Integer)
+    all_answers = DATABASE.Column(DATABASE.Integer)
 
 class RedeemCode(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
+    name = DATABASE.Column(DATABASE.String(100), nullable = False)
     quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
     code_enter = DATABASE.Column(DATABASE.Integer)
     hosted_by = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))

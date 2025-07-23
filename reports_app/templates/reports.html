@@ -13,22 +13,21 @@
     <div class="summary-conteiner">
         <h2>Звіти</h2>
         <div class="reports">
-            {% for quiz in quizzes %}
-            
-                <div class="report">
-                    <p class="report-title">Ім'я вікторини: {{ quiz.name }} </p>
-                    <span class="passed-people">пройшло: {{ quiz.results|length }} людей</span>
-                    <span class="author">Автор ID: {{ quiz.author_id }}</span>
+            {% for code in redeem_codes %}
+
+                <div class="report">    
+                    <h3>Звіт по коду: {{ code.name }} ({{ code.code_enter }})</h3>
                     <div class="center">
                         Результати:
-                    
-                    {% for result in quiz.results %}
-                        <div class="line"></div>
-                        <div>
-                            <h4>Пройшов: {{ result.who_passed }}</h4>
-                            <p>Результат: {{ result.right_answers }}/{{ quiz.count_questions}}</p>
-                        </div>
-                    {% endfor %}
+                        {% for result in code.results %}
+                            <div class="line"></div>
+                            <div>
+                                <h4>Пройшов: {{ result.who_passed }}</h4>
+                                <p>Правильних відповідей: {{ result.right_answers }}</p>
+                                <p>Неправильних відповідей: {{ result.all_answers - result.right_answers }}</p>
+                                <h4>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12</h4>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             {% endfor %}

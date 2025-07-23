@@ -2,6 +2,8 @@ import flask, flask_login
 from library_app.models import RedeemCode, Quiz, Question, Result
 from project.settings import DATABASE
 from user_app.models import User
+from flask import session
+
 
 def render_execution_page(code):
     quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
@@ -10,13 +12,17 @@ def render_execution_page(code):
         result = Result(
             who_passed= nickname,
             what_passed= quiz.id,
-            right_answers= 0
+            right_answers= 0,
+            by_code= RedeemCode.query.filter_by(code_enter = code).first().id,
+            correct_answers= 0,
+            all_answers= quiz.count_questions
         )
         try:
             DATABASE.session.add(result)
             DATABASE.session.commit()
         except:
             print(Exception)
+        session['code']= code 
         return flask.redirect(f"/quiz/{quiz.id}/0/{result.id}")
     print(quiz.name)
     return flask.render_template(
@@ -41,11 +47,14 @@ def passing_quiz(quiz_id, question_index, result_id):
     result= Result.query.get(result_id)
     
     if not result:
-        print(result)
+        print(RedeemCode.query.filter_by(code_enter = session.get('code')).first().id)
         result = Result(
             who_passed= flask_login.current_user.id,
             what_passed= quiz_id,
-            right_answers= 0
+            right_answers= 0,
+            by_code= RedeemCode.query.filter_by(code_enter = session.get('code')).first().id,
+            correct_answers= 0,
+            all_answers= quiz.count_questions
         )
         try:
             DATABASE.session.add(result)
@@ -66,6 +75,7 @@ def passing_quiz(quiz_id, question_index, result_id):
             if user_answer == now_question.correct_answer:
                 print("success")
                 result.right_answers += 1
+                result.correct_answers += 1
                 DATABASE.session.commit()
             else:
                 print("not success")
@@ -75,6 +85,7 @@ def passing_quiz(quiz_id, question_index, result_id):
             if user_answer == now_question.correct_answer:
                 print("success")
                 result.right_answers += 1
+                result.correct_answers += 1
                 DATABASE.session.commit()
             else:
                 print("not success")
@@ -85,6 +96,7 @@ def passing_quiz(quiz_id, question_index, result_id):
             if user_answer == now_question.correct_answer:
                 print("success")
                 result.right_answers += 1
+                result.correct_answers += 1
                 DATABASE.session.commit()
             else:
                 print("not success")

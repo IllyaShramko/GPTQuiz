@@ -21,8 +21,10 @@ def render_host_app(quizid):
         redeem_code= generate_code()
         code_db= RedeemCode(
             quiz= quiz.id,
+            name = quiz.name,
             code_enter= redeem_code,
             hosted_by= flask_login.current_user.id
+            
         )
         try:
             DATABASE.session.add(code_db)
