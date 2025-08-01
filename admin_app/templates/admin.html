@@ -29,6 +29,8 @@
                     <!-- <img src="{{ url_for('admin_app.static', filename= 'images/' + quiz.name ) }}"> -->
                     <img src="{{ url_for('admin_app.static', filename= 'images/image.png') }}">
                     <h3>{{ quiz.name }}</h3>
+                    <p>{{ quiz.description }}</p>
+                    <hr>
                     <p>{{ quiz.count_questions }} запитань</p>
                     <p>Author: {{ quiz.user.login }}</p>
                 </a>

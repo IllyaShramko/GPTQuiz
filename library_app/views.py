@@ -30,6 +30,7 @@ def render_create_quiz():
             create_question = True
         elif flask.request.form["button"] == 'save_quiz':
             quiz.name = flask.request.form['Name-Quiz']
+            quiz.description = flask.request.form['Description-Quiz']
             print(flask.request.form['Name-Quiz'])
             DATABASE.session.commit()
             response = flask.make_response(flask.redirect("/library/"))

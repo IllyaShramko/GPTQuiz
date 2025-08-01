@@ -35,8 +35,13 @@ Library
         {% for quiz in created_quizes %}    
             <div class="quiz">
                 <h3>{{ quiz.name }}</h3>
-                <p>ID: {{ quiz.id }} </p>
-                <p>Кількість запитань: {{ quiz.count_questions }}</p>
+                <div>
+                    <p id="desc">{{ quiz.description }}</p>
+                    <hr>
+                    <p>{{ quiz.count_questions }} Запитань</p>
+                    <hr>
+                    <p>Було використано для <br> проходженння: {{ quiz.codes|length }}</p>
+                </div>
             </div>
         {% endfor %}        
     </div>

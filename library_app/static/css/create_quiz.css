@@ -36,10 +36,16 @@ header {
     border-bottom: 1px solid #202020;
 
     width: 100vw;
-    height: 54px;
-    padding: 0px 10px;
-
+    height: 55px;
+    padding: 0px 20px;
+    justify-content: space-between;
     gap: 10px;
+}
+
+header div{
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 header a {
@@ -464,18 +470,163 @@ textarea:focus, input:focus{
     background-color: #10C300;
 }
 
-.hideform {
-    display: none;
-}
 
-.showform {
+.form {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 345px;
+    padding: 20px 10px;
+    gap: 10px;
+    background-color: #414141;
+    border-radius: 10px;
+    
     position: absolute;
-    width: fit-content;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    z-index: 5;
+    z-index: 11;
+    
+}
+
+.form h2 {
+    font-size: 22px;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+}
+
+.uploadLabel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 115px;
+    border: 2px dashed white;
+    border-radius: 10px;
+    cursor: pointer;
+    gap: 5px;
+    overflow: hidden;
+    position: relative;
+}
+.uploadLabel img {
+    width: 100%;
+    height: 100%;
+}
+
+.uploadLabel div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3.5px;
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.uploadLabel div img {
+    width: 100%;
+    height: 100%;
+}
+
+.uploadLabel p {
+    color: white;
+    font-size: 16px;
+    width: 190px;
+}
+
+
+.uploadLabel span {
+    color: #2695DA;
+    text-decoration: underline;
+}
+
+hr {
+    width: 100%;
+}
+
+.form-inputs {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.form-inputs label {
+    font-size: 16px;
+    color: white;
+}
+
+.form-inputs input, textarea {
+    padding: 10px;
+    background-color: #393939;
+    border: none;
+    color: white;
+    border-radius: 10px;
+}
+
+.form-inputs textarea {
+    resize: vertical;
+    min-height: 52px;
+}
+
+.form-inputs textarea::-webkit-scrollbar {
+    display: none;
+}
+
+.hideform {
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.1s ease-in-out;
+}
+
+.showform {
+    visibility: visible;
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+}
+#blur {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    z-index: 10;
+
+
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(2.5px);
+
+}
+
+.form button {
+    width: 155px;
+    height: 41px;
+    background-color: #B26FFF;
+    border: none;
+    font-size: 16px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#SaveAndExit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 10px;
+    background-color: #9C47FF;
+    border: none;
+    cursor: pointer;
+}
+#SaveAndExit p{
+    font-size: 18px;
+    font-weight: 300;
+}
+#SaveAndExit img{
+    width: 22px;
+    height: 22px;
 }

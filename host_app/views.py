@@ -36,4 +36,7 @@ def render_host_app(quizid):
         
             
         
-    return flask.render_template("host.html", quiz = quiz, code= code)
+    return flask.render_template(
+        "host.html", quiz = quiz, code= code,
+        username = flask_login.current_user.login
+        )

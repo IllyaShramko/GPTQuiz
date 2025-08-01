@@ -2,7 +2,8 @@
 .created-by-me-create{
     position: relative;
     top: 45px;
-    width: 100%;
+    left: 220px;
+    width: calc(100% - 220px);
     height: 80px;
     display: flex;
     justify-content: center;
@@ -42,9 +43,10 @@
 
 }
 .created-by-me{
-    width: 100%;
+    width: calc(100% - 220px);
     position: relative;
     top: 45px;
+    left: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -107,4 +109,55 @@ textarea:focus, input:focus{
 
 #createQuiz a {
     padding: 20px 0;
+}
+
+.quizes {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: center;
+    width: calc(100% - 220px);
+    position: absolute;
+    left: 220px;
+    top: 315px;
+    gap: 10px;
+    padding: 0 180px;
+    flex-wrap: wrap;    
+}
+
+.quiz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    width: 400px;
+    height: 350px;
+    background-color: #2a2a2a;
+    border-radius: 15px;
+    padding: 10px;
+    gap: 10px;
+    color: white;
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.25);
+
+}
+
+.quiz div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiz h3 {
+    font-size: 24px;
+}
+
+.quiz p {
+    font-size: 20px;
+    font-weight: 300;
+}
+
+#desc {
+    height: 140px;
 }

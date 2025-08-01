@@ -7,9 +7,11 @@
     </head>
     <body>
         <header>
-            <a href="/library/"><img src="{{url_for('library_app.static',filename= 'images/arrow.svg')}}"></a>
-            <p>Створення нової вікторини</p>
-            <button type="button" id="SaveAndExit">Зберегти і вийти</button>
+            <div>
+                <a href="/library/"><img src="{{url_for('library_app.static',filename= 'images/arrow.svg')}}"></a>
+                <p>Створення нової вікторини</p>
+            </div>
+            <button type="button" id="SaveAndExit"><p>Опублiкувати</p><img src="{{url_for('library_app.static',filename= 'images/public.svg')}}"></button>
         </header>
         <main>
             <div class="sidebar">
@@ -176,10 +178,27 @@
                 {% endif %}
             {% endif %}
         </main>
-        
-        <form method="post" id="saveForm" class="hideform">
-            <p>Задайте назву вікторини:</p>
-            <input type="text" name="Name-Quiz">
+
+        <div class="blur hideform" id="blur"></div>
+
+        <form method="post" id="saveForm" class="form hideform" enctype="multipart/form-data">
+            <h2>Опублiкувати вікторину</h2>
+            <label class="uploadLabel" id="uploadLabel" for="imageQuiz">
+                <div>
+                    <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}">
+                </div>
+                <p><span>Завантажте</span> або перетягніть зображення</p>
+            </label>
+            <input type="file" name="image" id="imageQuiz" accept="image/*" style="display: none;">
+            <hr color="#696969">
+            <div class="form-inputs">
+                <label for="NameQuiz">Додайте назву:</label>
+                <input type="text" name="Name-Quiz" id="NameQuiz" placeholder="Назва вікторини" required>
+
+                <label for="DescriptionQuiz">Додайте опис:</label>
+                <textarea name="Description-Quiz" id="DescriptionQuiz" placeholder="Опис вікторини"></textarea>
+            </div>
+
             <button type="submit" name="button" value="save_quiz">Зберегти</button>
         </form>
         <script src="{{ url_for('library_app.static',filename= 'js/openCloseModel.js') }}"></script>

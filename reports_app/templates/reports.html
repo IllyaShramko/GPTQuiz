@@ -21,10 +21,20 @@
                         Результати:
                         {% for result in code.results %}
                             <div class="line"></div>
-                            <div>
+                            <div class="information">
                                 <h4>Пройшов: {{ result.who_passed }}</h4>
-                                <p>Правильних відповідей: {{ result.right_answers }}</p>
-                                <p>Неправильних відповідей: {{ result.all_answers - result.right_answers }}</p>
+                                <div class="info">
+                                    <div>
+                                        <img src="{{ url_for('reports_app.static', filename= 'images/correct.svg') }}">
+                                    </div>
+                                    <p>Правильних відповідей: {{ result.right_answers }} </p>
+                                </div>
+                                <div class="info" >
+                                    <div id="fail">
+                                        <img src="{{ url_for('reports_app.static', filename= 'images/cross.svg') }}">
+                                    </div>
+                                    <p>Неправильних відповідей: {{ result.all_answers - result.right_answers }}</p>
+                                </div>
                                 <h4>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12</h4>
                             </div>
                         {% endfor %}

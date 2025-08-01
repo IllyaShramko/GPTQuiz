@@ -38,3 +38,33 @@
     background-color: #666;
     margin: 10px 0;
 }
+
+.info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info div {
+    position: relative;
+    width: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3px;
+    background-color: #22CE00;
+    border-radius: 5px;
+}
+
+.info div img{
+    width: 100%;
+}
+
+#fail{
+    background-color: rgb(223, 25, 25);
+}
+.information {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
