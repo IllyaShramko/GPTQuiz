@@ -2,7 +2,7 @@ import flask, flask_login
 from library_app.models import RedeemCode, Quiz, Question, Result
 from project.settings import DATABASE
 from user_app.models import User
-from flask import session
+from flask import session, request, make_response
 
 
 def render_execution_page(code):
@@ -63,8 +63,22 @@ def passing_quiz(quiz_id, question_index, result_id):
             print(Exception)
 
     questions = quiz.questions
+
     if question_index < 0 or question_index >= len(questions):
-        return flask.redirect(f"/result/{result.id}")
+
+        passed_cookie = request.cookies.get("Passed", "")
+        if passed_cookie:
+            passed_ids = passed_cookie.split(",")
+        else:
+            passed_ids = []
+
+        if str(result.id) not in passed_ids:
+            passed_ids.append(str(result.id))
+
+        response = make_response(flask.redirect(f"/result/{result.id}"))
+        response.set_cookie("Passed", ",".join(passed_ids), max_age=60*60*24*30)
+
+        return response
 
     now_question = questions[question_index]
 
