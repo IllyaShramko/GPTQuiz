@@ -19,12 +19,16 @@ class Question(DATABASE.Model):
 
 class Result(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
+    name = DATABASE.Column(DATABASE.String(100))
+    description = DATABASE.Column(DATABASE.String(100))
     who_passed = DATABASE.Column(DATABASE.String(50))
     what_passed = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'))
     by_code = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('redeem_code.id'))
     right_answers = DATABASE.Column(DATABASE.Integer)
     correct_answers = DATABASE.Column(DATABASE.Integer)
     all_answers = DATABASE.Column(DATABASE.Integer)
+    name_teacher = DATABASE.Column(DATABASE.String(100))
+    
 
 class RedeemCode(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)

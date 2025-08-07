@@ -9,13 +9,17 @@ def render_execution_page(code):
     quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
     if flask.request.method == "POST":
         nickname = flask.request.form.get("input-nickname")
+        
         result = Result(
+            name = quiz.name,
+            description = quiz.description,
             who_passed= nickname,
             what_passed= quiz.id,
             right_answers= 0,
             by_code= RedeemCode.query.filter_by(code_enter = code).first().id,
             correct_answers= 0,
-            all_answers= quiz.count_questions
+            all_answers= quiz.count_questions,
+            name_teacher = nickname,
         )
         try:
             DATABASE.session.add(result)
@@ -49,12 +53,15 @@ def passing_quiz(quiz_id, question_index, result_id):
     if not result:
         print(RedeemCode.query.filter_by(code_enter = session.get('code')).first().id)
         result = Result(
+            name = quiz.name,
+            description = quiz.description,
             who_passed= flask_login.current_user.id,
             what_passed= quiz_id,
             right_answers= 0,
             by_code= RedeemCode.query.filter_by(code_enter = session.get('code')).first().id,
             correct_answers= 0,
-            all_answers= quiz.count_questions
+            all_answers= quiz.count_questions,
+            name_teacher = "",
         )
         try:
             DATABASE.session.add(result)
@@ -71,9 +78,10 @@ def passing_quiz(quiz_id, question_index, result_id):
             passed_ids = passed_cookie.split(",")
         else:
             passed_ids = []
-
+        print(75, passed_cookie)
         if str(result.id) not in passed_ids:
             passed_ids.append(str(result.id))
+            print(passed_ids)
 
         response = make_response(flask.redirect(f"/result/{result.id}"))
         response.set_cookie("Passed", ",".join(passed_ids), max_age=60*60*24*30)

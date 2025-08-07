@@ -9,24 +9,23 @@
 {% endblock %}
 
 {% block content %}
-    <!-- <div class="header">
+    <header>
         <h2>Пройдено мною</h2>
-    </div>
-    <div class="quiz-list-container">
-        <div class="quiz">
-            <img src="{{url_for('history_app.static', filename= 'images/quiz.png') }}">
-            <div class="quiz-icon-container"></div>
-            <div class="info">
-                <h3>Вікторина</h3>
-                <p>Автор: illya_shramko</p>
-                <h4>Пройдено на 8/12</h4>
+    </header>
+    <div class="passed-quizes">
+
+        {% for result in results %}
+            <div class="quiz">
+                <h3>Назва: {{ result.name }}</h3>
+                <h4>Автор: {{ result.name_teacher }}</h4>
+                <p id="desc">опис: {{ result.description }}</p>
+                <hr>
+                <p>Всього запитань: {{ result.all_answers }}</p>
+                <p>Бали: {{ result.right_answers }}/{{ result.all_answers }}</p>
+                <p>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12</p>
+                <hr>
+                <h4>Ім’я вчителя: {{ result.name_teacher }}</h4>
             </div>
-            <form method="post" class="view-or-delete row">
-                <button id="view-btn" name="view" value="1">Переглянути</button>
-                <button id="delete-btn" name="delete" value="1">
-                    <img src="{{url_for('history_app.static', filename= 'images/trash.png') }}" >
-                </button>
-            </form>
-        </div>
-    </div> -->
+        {% endfor %}
+    </div>
 {% endblock %}
