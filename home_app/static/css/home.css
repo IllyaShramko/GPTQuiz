@@ -34,7 +34,12 @@ span{
     color: white;
     font-family: 'inter';
     font-size: 28px;
-    font-weight: 400;
+    font-weight: 300;
     text-align: center;
 }
 
+#name{
+    
+    font-family: Inter;
+    font-weight: 500;
+}
