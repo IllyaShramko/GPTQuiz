@@ -15,5 +15,21 @@
     <div class="line"></div>
     <h2 class="welcome-information"><span id="name">GPTQuiz</span> - твій зручний помічний у навчанні та роботі,<br> це платформа для <span>створення</span>, <span>проходження</span> <br> та <span>аналізу </span>вікторин</h2>
 </div>
+<div class="block-quizes">
+    <h2>Популярні вікторини</h2>
+    <div class="quizes">
+        {% for quiz in quizes %}
+            <div class="quiz">
+                <h3>{{ quiz.name }}</h3>
+                <h4>Aвтор ID: {{ quiz.author_id }}</h4>
+                <p class="description">Опис: {{ quiz.description }}</p>
+                <hr>
+                <p>{{ quiz.count_questions }} запитань</p>
+                <hr>
+                <p>{{ quiz.codes|length }} переглядів</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 {% endblock %}

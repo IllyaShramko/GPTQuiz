@@ -43,3 +43,49 @@ span{
     font-family: Inter;
     font-weight: 500;
 }
+
+.block-quizes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+    padding: 20px;
+    color: white;
+    width: 100%;
+}
+
+.quizes {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    max-width: 95%;
+}
+
+.quiz {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    width: 300px;
+    height: 350px;
+    background-color: #3d3d3d;
+    border-radius: 10px;
+    font-family: Inter;
+}
+
+.description {
+    height: 176px;
+    font-weight: 300;
+}
+
+h3 {
+    font-size: 22px;
+    font-weight: 300;
+}
+
+h4 {
+    font-size: 18px;
+    font-weight: 300;
+    opacity: 0.8;
+}

@@ -8,5 +8,6 @@ def render_home_page():
     quizes= Quiz.query.all()[:4]
     print(quizes)
     return flask.render_template(
-        template_name_or_list= 'home.html'
+        template_name_or_list= 'home.html',
+        quizes = quizes
     )
