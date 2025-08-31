@@ -48,5 +48,6 @@
 - **GitHub:** [Перейти](https://github.com/DeKlain4ik)
 
 ---
-
-
+```
+flask --app .\project\ db init | flask --app .\project\ db migrate | flask --app .\project\ db upgrade
+```
