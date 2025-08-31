@@ -69,6 +69,8 @@ main {
 
 .question-div p{
     opacity: 70%;
+    width: 65%;
+    text-align: center;
 }
 
 

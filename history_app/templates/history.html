@@ -16,7 +16,11 @@
 
         {% for result in results %}
             <div class="quiz">
-                <img src="{{ url_for('library_app.static', filename=result.redeemcode.quiz1.image) }}" alt="">
+                {% if result.redeemcode.quiz1 %}
+                    <img src="{{ url_for('library_app.static', filename=result.redeemcode.quiz1.image) }}" alt="">
+                {% else %}
+                    <img src="{{ url_for('library_app.static', filename='images/quizes/default.svg') }}" alt="">
+                {% endif %}
                 <h3>Назва: {{ result.name }}</h3>
                 <h4>Автор: {{ result.name_teacher }}</h4>
                 <p id="desc">опис: {{ result.description }}</p>

@@ -14,6 +14,9 @@
             <main class="enter-answer">
         {% endif %}
             <div class="question-div">
+                {% if question.image %}
+                    <img src="{{ url_for('library_app.static', filename=question.image) }}">
+                {% endif %}
                 <p>{{ question.name }}</p>
             </div>
         

@@ -29,7 +29,7 @@ host
                     <h2>Варіанти відповіді:</h2>
                     <div class="answers">
                         {% if question.type != 'enter answer' %}
-                            {% if question.correct_answer == "1" %}
+                            {% if "1" in question.correct_answer %}
                                 <div class="answer correct">
                                     <p>{{ question.variant_1 }}</p>
                                 </div>
@@ -39,7 +39,7 @@ host
                                 </div>
                             {% endif %}
 
-                            {% if question.correct_answer == "2" %}
+                            {% if "2" in question.correct_answer %}
                                 <div class="answer correct">
                                     <p>{{ question.variant_2 }}</p>
                                 </div>
@@ -48,8 +48,8 @@ host
                                     <p>{{ question.variant_2 }}</p>
                                 </div>
                             {% endif %}
-                            
-                            {% if question.correct_answer == "3" %}
+
+                            {% if "3" in question.correct_answer %}
                                 <div class="answer correct">
                                     <p>{{ question.variant_3 }}</p>
                                 </div>
@@ -58,8 +58,8 @@ host
                                     <p>{{ question.variant_3 }}</p>
                                 </div>
                             {% endif %}
-                            
-                            {% if question.correct_answer == "4" %}
+
+                            {% if "4" in question.correct_answer %}
                                 <div class="answer correct">
                                     <p>{{ question.variant_4 }}</p>
                                 </div>
