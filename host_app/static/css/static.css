@@ -1,9 +1,75 @@
-form {
-    position: absolute;
-    top: 50px;
+.main-info {
+    position: relative;
+    top: 70px;
     left: 250px;
-    
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 600px;
 }
-h2 {
+form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.main-info p {
     color: white;
+    font-size: 16px;
+    font-weight: 300;
+}
+.main-info h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: 300;
+}
+#generated-code {
+    color: white;
+    font-size: 20px;
+    font-weight: 300;
+}
+button {
+    width: 200px;
+    height: 50px;
+    background-color: #B26FFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+}
+.main-info img {
+    width: 600px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.questions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.question {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    background-color: #3d3d3d;
+    border-radius: 10px;
+}
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.answer {
+    padding: 5px 10px;
+    background-color: #616161;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    width: fit-content;
+}
+.correct {
+    background-color: #4CAF50;
 }

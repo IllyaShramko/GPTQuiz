@@ -9,13 +9,73 @@ host
 {% endblock %}
 
 {% block content %}
-    <form method="post" class="main-info">
-        <h1>Quiz name: {{ quiz.name }}</h1>
-        <h2>Author id: {{ quiz.author_id }}</h2>
-        <button id="submit-btn" type="submit">Задати на виконання</button>
-        {% if code != 000000 %}
-            <h2>Genereted code: {{ code }}</h2>
-        {% endif %}
-        <h2></h2>
-    </form>
+    <div class="main-info">
+        <img src="{{ url_for('library_app.static', filename=quiz.image) }}" alt="">
+        <h1>Назва: {{ quiz.name }}</h1>
+        <p>Опис: {{ quiz.description }}</p>
+        <h2>Кількість запитань: {{ quiz.count_questions }}</h2>
+        <h2>Автор: {{ quiz.user.surname }} {{ quiz.user.name }}</h2>
+        <form method="post">
+            <button id="submit-btn" type="submit">Задати на виконання</button>
+            {% if code != 000000 %}
+                <h2 id="generated-code">Сгенерований код: {{ code }}</h2>
+            {% endif %}
+        </form>
+        <div class="questions">
+            {% for question in quiz.questions %}
+                <hr>
+                <div class="question">
+                    <h2>Запитання {{ loop.index }}: {{ question.name }}</h2>
+                    <h2>Варіанти відповіді:</h2>
+                    <div class="answers">
+                        {% if question.type != 'enter answer' %}
+                            {% if question.correct_answer == "1" %}
+                                <div class="answer correct">
+                                    <p>{{ question.variant_1 }}</p>
+                                </div>
+                            {% else %}
+                                <div class="answer">
+                                    <p>{{ question.variant_1 }}</p>
+                                </div>
+                            {% endif %}
+
+                            {% if question.correct_answer == "2" %}
+                                <div class="answer correct">
+                                    <p>{{ question.variant_2 }}</p>
+                                </div>
+                            {% else %}
+                                <div class="answer">
+                                    <p>{{ question.variant_2 }}</p>
+                                </div>
+                            {% endif %}
+                            
+                            {% if question.correct_answer == "3" %}
+                                <div class="answer correct">
+                                    <p>{{ question.variant_3 }}</p>
+                                </div>
+                            {% else %}
+                                <div class="answer">
+                                    <p>{{ question.variant_3 }}</p>
+                                </div>
+                            {% endif %}
+                            
+                            {% if question.correct_answer == "4" %}
+                                <div class="answer correct">
+                                    <p>{{ question.variant_4 }}</p>
+                                </div>
+                            {% else %}
+                                <div class="answer">
+                                    <p>{{ question.variant_4 }}</p>
+                                </div>  
+                            {% endif %}
+                        {% else %}
+                            <div class="answer correct">
+                                <p>{{ question.variant_1 }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

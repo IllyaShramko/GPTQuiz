@@ -14,7 +14,8 @@ def generate_code():
     return int(code)
 
 def render_host_app(quizid):
-
+    if not flask_login.current_user.is_authenticated:
+        return flask.redirect(flask.url_for("user_app.render_login"))
     quiz = Quiz.query.get(ident=quizid)
     code = 000000
     if flask.request.method == "POST":

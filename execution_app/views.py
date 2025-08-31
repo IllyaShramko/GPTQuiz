@@ -19,7 +19,7 @@ def render_execution_page(code):
             by_code= RedeemCode.query.filter_by(code_enter = code).first().id,
             correct_answers= 0,
             all_answers= quiz.count_questions,
-            name_teacher = nickname,
+            name_teacher = f"{quiz.user.surname} {quiz.user.name} ",
         )
         try:
             DATABASE.session.add(result)

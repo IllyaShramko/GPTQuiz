@@ -16,6 +16,7 @@ class Question(DATABASE.Model):
     correct_answer = DATABASE.Column(DATABASE.JSON())
 
     quiz_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'))
+    image = DATABASE.Column(DATABASE.String(100), nullable = True)
 
 class Result(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
@@ -44,6 +45,7 @@ class Quiz(DATABASE.Model):
     description = DATABASE.Column(DATABASE.String, nullable = False)
     count_questions = DATABASE.Column(DATABASE.Integer, nullable = False)
     author_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'))
+    image = DATABASE.Column(DATABASE.String(100), nullable = False)
     questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
-    codes = DATABASE.relationship(RedeemCode, backref = 'redeemcode', lazy = True)
-    results = DATABASE.relationship(Result, backref = 'result', lazy=True)
+    codes = DATABASE.relationship(RedeemCode, backref = 'quiz1', lazy = True)
+    results = DATABASE.relationship(Result, backref = 'quiz2', lazy=True)

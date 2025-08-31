@@ -1,6 +1,7 @@
-import flask, flask_login
+import flask, flask_login, os
 from .models import Quiz, Question
 from project.settings import DATABASE
+from werkzeug.utils import secure_filename
 
 def render_library():
     
@@ -29,13 +30,33 @@ def render_create_quiz():
             question = 'multiple answers'
             create_question = True
         elif flask.request.form["button"] == 'save_quiz':
-            quiz.name = flask.request.form['Name-Quiz']
-            quiz.description = flask.request.form['Description-Quiz']
-            print(flask.request.form['Name-Quiz'])
-            DATABASE.session.commit()
-            response = flask.make_response(flask.redirect("/library/"))
-            response.delete_cookie('draft')
-            return response
+            if len(quiz.questions) != 0:
+                quiz.name = flask.request.form['Name-Quiz']
+                quiz.description = flask.request.form['Description-Quiz']
+                quiz_image = flask.request.files['image']
+                if quiz_image:
+                    filename = secure_filename(quiz_image.filename)
+                    name, ext = os.path.splitext(secure_filename(quiz_image.filename))
+                    save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "quizes", filename)
+                    counter = 1
+                    
+                    while os.path.exists(save_path):
+                        new_filename = f"{name}_{counter}{ext}"
+                        save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "quizes", new_filename)
+                        counter += 1
+                    
+                    final_filename = os.path.basename(save_path)
+                    print(os.path.abspath(save_path), final_filename, quiz_image)
+                    quiz_image.save(os.path.abspath(save_path))
+                    quiz.image = f"/images/quizes/{final_filename}"
+                else:
+                    quiz.image = f"/images/quizes/default.svg"
+
+                print(flask.request.form['Name-Quiz'])
+                DATABASE.session.commit()
+                response = flask.make_response(flask.redirect("/library/"))
+                response.delete_cookie('draft')
+                return response
 
         else:
             type_question = flask.request.form['type_question']
@@ -106,7 +127,8 @@ def render_create_quiz():
                 name = "draft",
                 description = 'draft',
                 count_questions = 0,
-                author_id = flask_login.current_user.id
+                author_id = flask_login.current_user.id,
+                image = "/images/quizes/default.svg"
             )
             try:
                 DATABASE.session.add(quiz)

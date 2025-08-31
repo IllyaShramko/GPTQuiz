@@ -26,13 +26,12 @@
         <div class="quizes">
             {% for quiz in quizes %}    
                 <a href="/host/{{ quiz.id }}" class="quiz">
-                    <!-- <img src="{{ url_for('admin_app.static', filename= 'images/' + quiz.name ) }}"> -->
-                    <img src="{{ url_for('admin_app.static', filename= 'images/image.png') }}">
+                    <img src="{{ url_for('library_app.static', filename= quiz.image ) }}">
                     <h3>{{ quiz.name }}</h3>
                     <p class="quiz-description">{{ quiz.description }}</p>
                     <hr>
                     <p>{{ quiz.count_questions }} запитань</p>
-                    <p>Author: {{ quiz.user.login }}</p>
+                    <p>Автор: {{ quiz.user.surname }} {{ quiz.user.name }}</p>
                 </a>
             {% endfor %}
         </div>

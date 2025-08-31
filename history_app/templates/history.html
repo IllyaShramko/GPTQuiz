@@ -16,6 +16,7 @@
 
         {% for result in results %}
             <div class="quiz">
+                <img src="{{ url_for('library_app.static', filename=result.redeemcode.quiz1.image) }}" alt="">
                 <h3>Назва: {{ result.name }}</h3>
                 <h4>Автор: {{ result.name_teacher }}</h4>
                 <p id="desc">опис: {{ result.description }}</p>
@@ -24,7 +25,11 @@
                 <p>Бали: {{ result.right_answers }}/{{ result.all_answers }}</p>
                 <p>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12</p>
                 <hr>
-                <h4>Ім’я вчителя: {{ result.name_teacher }}</h4>
+                {% if result.redeemcode %}
+                    <h4>Ім’я вчителя: {{ result.redeemcode.hosted.surname }} {{ result.redeemcode.hosted.name }}</h4>
+                {% else %}
+                    <h4>Ім’я вчителя: Невідомо</h4>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

@@ -75,7 +75,8 @@ execution_app.execution_app.add_url_rule(
 
 execution_app.execution_app.add_url_rule(
     rule = "/result/<result_id>",
-    view_func = execution_app.render_results
+    view_func = execution_app.render_results,
+    methods= ["POST", "GET"]
 )
 
 project.register_blueprint(blueprint = execution_app.execution_app)
@@ -90,13 +91,15 @@ project.register_blueprint(blueprint = history_app.history_app)
 
 reports_app.reports_app.add_url_rule(
     rule= '/reports/',
-    view_func= reports_app.render_reports_page
+    view_func= reports_app.render_reports_page,
+    methods= ["POST", "GET"]
 )
 project.register_blueprint(blueprint= reports_app.reports_app)
 
 search_app.search_app.add_url_rule(
     rule = "/search/",
     view_func = search_app.render_search,
+    methods= ["POST", "GET"]
 )
 project.register_blueprint(blueprint=search_app.search_app)
 

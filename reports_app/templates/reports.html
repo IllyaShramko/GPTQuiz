@@ -9,14 +9,16 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="summary-conteiner">
+    <header>
         <h2>Звіти</h2>
+    </header>
+    <div class="summary-conteiner">
         <div class="reports">
             {% for code in redeem_codes %}
 
                 <div class="report">    
-                    <h3>Звіт по коду: {{ code.name }} ({{ code.code_enter }})</h3>
+                    <h3 id="report-{{ code.id }}">Звіт по вікторині: {{ code.name }} ({{ code.code_enter }})</h3>
+                    <img class="preview" src="{{ url_for('library_app.static', filename= code.quiz1.image) }}" alt="">
                     <div class="center">
                         Результати:
                         {% for result in code.results %}
@@ -35,12 +37,23 @@
                                     </div>
                                     <p>Неправильних відповідей: {{ result.all_answers - result.right_answers }}</p>
                                 </div>
-                                <h4>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12</h4>
+                                <h4>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12 ({{ result.right_answers }}/{{ result.all_answers }})</h4>
                             </div>
                         {% endfor %}
                     </div>
+                    <button class="delete-report" id="{{ code.id }}"><img src="{{ url_for('reports_app.static', filename= 'images/delete.png') }}" title="Видалити звіт?"></button>
                 </div>
             {% endfor %}
         </div>
     </div>
+    <div class="blur hideform" id="blur"></div>
+    <form method="post" id="saveForm" class="form hideform" enctype="multipart/form-data">
+        <h2>Ви дійсно хочете видалити цей звіт?</h2>
+        <h3 id="reportName"></h3>
+        <div class="form-btns">
+            <button type="button" name="action" id="saveButton" value="save_quiz">Скасувати</button>
+            <button type="submit" name="action" id="deleteButton" value="delete_quiz;">Видалити</button>
+        </div>
+    </form>
+    <script src="{{ url_for('reports_app.static', filename= 'js/openCloseModel.js') }}"></script>
 {% endblock %}

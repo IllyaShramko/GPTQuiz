@@ -2,10 +2,26 @@
     font-family: 'Inter';
     color: white;
 }
-
+header{
+    position: relative;
+    top: 45px;
+    left: 220px;
+    width: calc(100% - 220px);
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding-left: 130.5px;
+    background-color: #262626;
+}
+header h2{
+    font-family: 'Inter';
+    color: white;
+    font-weight: 300;
+    font-size: 24px;
+}
 
 .summary-conteiner{
-    position: absolute;
+    position: relative;
     top: 45px;
     left: 220px;
     display: flex;
@@ -67,4 +83,122 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+.delete-report{
+    position: absolute;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    
+}
+.delete-report img {
+    width: 30px;
+}
+.hideform {
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.1s ease-in-out;
+}
+
+.showform {
+    visibility: visible;
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+}
+#blur {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    z-index: 10;
+
+
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(2.5px);
+
+}
+
+.form button {
+    width: 155px;
+    height: 41px;
+    background-color: #B26FFF;
+    border: none;
+    font-size: 16px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#SaveAndExit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 10px;
+    background-color: #9C47FF;
+    border: none;
+    cursor: pointer;
+}
+#SaveAndExit p{
+    font-size: 18px;
+    font-weight: 300;
+}
+#SaveAndExit img{
+    width: 22px;
+    height: 22px;
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 365px;
+    padding: 30px 30px;
+    gap: 20px;
+    background-color: #414141;
+    border-radius: 10px;
+    
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11;
+    
+}
+
+.form h2 {
+    font-size: 20px;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+}
+.form h3 {
+    font-size: 18px;
+    color: white;
+    font-weight: 400;
+    text-align: center;
+}
+.form div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+#deleteButton {
+    background: none;
+    font-size: 16px;
+    color: #B26FFF;
+    border: #B26FFF 2px solid;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.preview {
+    width: 600px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
 }

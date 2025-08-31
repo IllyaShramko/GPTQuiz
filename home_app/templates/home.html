@@ -19,15 +19,16 @@
     <h2>Популярні вікторини</h2>
     <div class="quizes">
         {% for quiz in quizes %}
-            <div class="quiz">
+            <a href="/host/{{ quiz.id }}" class="quiz">
+                <img src="{{ url_for('library_app.static', filename= quiz.image) }}" alt="">
                 <h3>{{ quiz.name }}</h3>
-                <h4>Aвтор ID: {{ quiz.author_id }}</h4>
+                <h4>Aвтор: {{ quiz.user.surname }} {{ quiz.user.name }}</h4>
                 <p class="description">Опис: {{ quiz.description }}</p>
                 <hr>
                 <p>{{ quiz.count_questions }} запитань</p>
                 <hr>
                 <p>{{ quiz.codes|length }} переглядів</p>
-            </div>
+            </a>
         {% endfor %}
     </div>
 </div>

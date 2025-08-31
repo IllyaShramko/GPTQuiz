@@ -3,7 +3,7 @@ from library_app.models import Result
 
 def render_history():
     cookie = flask.request.cookies.get("Passed", "Not Found")
-
+    results = []
     if cookie != "Not Found":
         result_ids = cookie.split(",")
 

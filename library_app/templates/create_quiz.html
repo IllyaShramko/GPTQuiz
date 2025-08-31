@@ -109,7 +109,7 @@
                                 </div>
                         </div>
                         <input type="hidden" value="one_answer" name = 'type_question'>
-                        <button name="button" class = 'button-save' type="submit">Створити та зберегти</button>
+                        <button name="button" class = 'button-save' type="submit" disabled>Створити та зберегти</button>
                     </form>
                 {% elif question == "Enter answer" %}
                     <form method="post" class = 'main-create-block'>
@@ -171,14 +171,14 @@
                         </div>
                         <input type="hidden" value="multiple_answers" name = 'type_question'>
                         <div class="button-div">
-                            <button name="button" class = 'button-save' type="submit">Створити та зберегти</button>
+                            <button name="button" class = 'button-save' type="submit" disabled>Створити та зберегти</button>
                         </div>
                        
                     </form>
                 {% endif %}
             {% endif %}
         </main>
-
+        <input type="hidden" name="questions" value="{{ questions|length }}">
         <div class="blur hideform" id="blur"></div>
 
         <form method="post" id="saveForm" class="form hideform" enctype="multipart/form-data">
@@ -202,6 +202,6 @@
             <button type="submit" name="button" value="save_quiz">Зберегти</button>
         </form>
         <script src="{{ url_for('library_app.static',filename= 'js/openCloseModel.js') }}"></script>
-        <script src="{{ url_for('library_app.static',filename= 'js/enterAnswer.js') }}"></script>
+        <script src="{{ url_for('library_app.static',filename= 'js/checkCorrect.js') }}"></script>
     </body>
 </html>

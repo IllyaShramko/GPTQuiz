@@ -34,13 +34,16 @@ Library
     <div class="quizes">
         {% for quiz in created_quizes %}    
             <div class="quiz">
-                <h3>{{ quiz.name }}</h3>
-                <div>
-                    <p id="desc">{{ quiz.description }}</p>
-                    <hr>
-                    <p>{{ quiz.count_questions }} Запитань</p>
-                    <hr>
-                    <p>Було використано для <br> проходженння: {{ quiz.codes|length }}</p>
+                <img src="{{ url_for('library_app.static', filename= quiz.image) }}" alt="">
+                <div class="quiz-info">
+                    <h3>{{ quiz.name }}</h3>
+                    <div>
+                        <p id="desc">{{ quiz.description }}</p>
+                        <hr>
+                        <p>{{ quiz.count_questions }} Запитань</p>
+                        <hr>
+                        <p>Було використано для <br> проходженння: {{ quiz.codes|length }}</p>
+                    </div>
                 </div>
             </div>
         {% endfor %}        

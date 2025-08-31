@@ -92,6 +92,7 @@
 .quiz img {
     width: 100%;
     height: 120px;
+    object-fit: cover;
 }
 .quiz h3 {
     font-family: "inter";

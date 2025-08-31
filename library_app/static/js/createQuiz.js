@@ -1,14 +1,21 @@
 const createBtn = document.getElementById('createQuiz');
 
-console.log(document.cookie.split("; ")[1])
-createBtn.addEventListener('click', () => {
-    const quizCreate = document.getElementById('quizCreate').value
-    if (document.cookie.split("; ")[1]){
-        
+function getCookie(name) {
+    const cookies = document.cookie.split("; ").map(c => c.split("="));
+    for (const [key, value] of cookies) {
+        if (key === name) return decodeURIComponent(value);
     }
-    else {
-        document.cookie =  `draft=${quizCreate}; path=/;`;
+    return null;
+}
+
+createBtn.addEventListener('click', () => {
+    const quizCreate = document.getElementById('quizCreate').value;
+    const draft = getCookie("draft");
+
+    if (draft) {
+
+    } else {
+        document.cookie = `draft=${encodeURIComponent(quizCreate)}; path=/;`;
+
     }
 });
-
-
