@@ -1,0 +1,11 @@
+* {
+    box-sizing: border-box;
+    color: white;
+}
+
+.room-info {
+    position: relative;
+    width: calc(100% - 220px);
+    left: 220px;
+    top: 46px;
+}

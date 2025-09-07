@@ -61,11 +61,6 @@ execution_app.execution_app.add_url_rule(
     methods = ["POST", "GET"]
 )
 
-execution_app.execution_app.add_url_rule(
-    rule = '/execution/<int:code>/',
-    view_func = execution_app.render_execution_page,
-    methods = ["POST","GET"]
-)
 
 execution_app.execution_app.add_url_rule(
     rule= "/quiz/<int:quiz_id>/<int:question_index>/<result_id>",
@@ -106,6 +101,11 @@ project.register_blueprint(blueprint=search_app.search_app)
 host_app.host_app.add_url_rule(
     rule = '/host/<int:quizid>',
     view_func = host_app.render_host_app,
+    methods= ["POST", "GET"]
+)
+host_app.host_app.add_url_rule(
+    rule = '/hosting/<code>/',
+    view_func = host_app.render_hosting_quiz,
     methods= ["POST", "GET"]
 )
 project.register_blueprint(blueprint = host_app.host_app) 

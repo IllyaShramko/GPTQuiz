@@ -1,26 +1,73 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Code</title>
-    <link rel="stylesheet" href="{{ url_for('execution_app.static', filename='css/execution.css') }}">
-</head>
-
-<body>
-    <header>
-        <a href="/"><img src="{{ url_for('execution_app.static', filename='images/atom.svg') }}" style="width: 46px;"></a>
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Enter Code</title>
+        <link rel="stylesheet" href="{{ url_for('execution_app.static', filename='css/execution.css') }}">
+        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <a href="/"><img src="{{ url_for('execution_app.static', filename='images/atom.svg') }}" style="width: 46px;"></a>
+        </header>
     
 
-        <form method="post" class = 'form_enter'>
+        <div id="join-form" method="post" class = 'form_enter'>
             <p>GPTQuiz</p>
             <div class = 'input_code'>
-                <input type="text" name="input-nickname" placeholder="Введіть нікнейм">
-                <button class="button_code" type="submit"><span class = 'button_span'>ДАЛІ</span>→</button> 
+                <input type="text" id="username" name="input-nickname" placeholder="Введіть нікнейм">
+                <button class="button_code" type="button" onclick="join()"><span class = 'button_span'>ДАЛІ</span>→</button>
 
             </div> 
+        </div>
+        <div id="lobby" style="display:none;">
+            <h1 id="quiz-title">{{ quiz_name }}</h1>
+            <h2>Під'єднані:</h2>
+            <ul id="users"></ul>
+        </div>
+        <script>
+            const socket = io();
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get("code");
+            const div = document.getElementById('lobby');
+            const quizId = '{{ quiz.id }}'
 
+            function join() {
+                const username = document.getElementById("username").value;
+                if (!username) return alert("Введіть нікнейм!");
+                if (!code) return alert("Код кімнати не знайдено!");
 
-        </form>
-</body>
+                socket.emit("join_room", { username, code, quizId });
+            }
+
+            socket.on("joined_success", (data) => {
+                document.getElementById("join-form").style.display = "none";
+                document.getElementById("lobby").style.display = "block";
+                document.getElementById("quiz-title").textContent = data.quiz_name;
+            });
+
+            socket.on("quiz_start_student", (data) => {
+                div.innerHTML = '';
+                questionDiv = document.createElement('div');
+                questionDiv.id = 'question';
+                questionDiv.innerHTML = `<h2>${data.name}</h2>`;
+                questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;
+                questionDiv.innerHTML += `<button>1: ${data.variant_1}</button>`;
+                questionDiv.innerHTML += `<button>2: ${data.variant_2}</button>`;
+                questionDiv.innerHTML += `<button>3: ${data.variant_3}</button>`;
+                questionDiv.innerHTML += `<button>4: ${data.variant_4}</button>`;
+                div.appendChild(questionDiv);
+            })
+
+            socket.on("join_error", (data) => {
+                alert(data.message);
+            });
+
+            socket.on("user_list_update", (data) => {
+                const li = document.createElement("li");
+                li.textContent = data.username;
+                document.getElementById("users").appendChild(li);
+            });
+        </script>
+    </body>
 </html>

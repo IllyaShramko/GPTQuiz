@@ -25,8 +25,8 @@
 
 #### Шрамко Ілля 
 - **Роль:** TEAMLEAD
-- **GitHub:** [Перейти](https://github.com/ivaniv)
-  
+- **GitHub:** [Перейти](https://github.com/)
+
 #### Свистун Артем 
 - **Роль:** Програміст, дизайнер, верстка  
 - **GitHub:** [Перейти](https://github.com/asvistun5)

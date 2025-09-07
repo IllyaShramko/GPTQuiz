@@ -4,42 +4,15 @@ from project.settings import DATABASE
 from user_app.models import User
 from flask import session, request, make_response
 
-
-def render_execution_page(code):
-    quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
-    if flask.request.method == "POST":
-        nickname = flask.request.form.get("input-nickname")
-        
-        result = Result(
-            name = quiz.name,
-            description = quiz.description,
-            who_passed= nickname,
-            what_passed= quiz.id,
-            right_answers= 0,
-            by_code= RedeemCode.query.filter_by(code_enter = code).first().id,
-            correct_answers= 0,
-            all_answers= quiz.count_questions,
-            name_teacher = f"{quiz.user.surname} {quiz.user.name} ",
-        )
-        try:
-            DATABASE.session.add(result)
-            DATABASE.session.commit()
-        except:
-            print(Exception)
-        session['code']= code 
-        return flask.redirect(f"/quiz/{quiz.id}/0/{result.id}")
-    print(quiz.name)
-    return flask.render_template(
-        template_name_or_list= 'enter_nickname.html'
-    )
-
 def render_enter_code():
-    if flask.request.method == "POST":
-        code = flask.request.form["input-code"]
-        redeem_code = RedeemCode.query.filter_by(code_enter = code)
-        if redeem_code:
-            return flask.redirect(f"/execution/{code}")
-
+    code = flask.request.args.get("code")
+    print(code)
+    if code:
+        quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
+        return flask.render_template(
+            template_name_or_list= 'enter_nickname.html',
+            quiz=quiz
+        )
     return flask.render_template(
         template_name_or_list="enter_code.html"
     )
@@ -78,10 +51,8 @@ def passing_quiz(quiz_id, question_index, result_id):
             passed_ids = passed_cookie.split(",")
         else:
             passed_ids = []
-        print(75, passed_cookie)
         if str(result.id) not in passed_ids:
             passed_ids.append(str(result.id))
-            print(passed_ids)
 
         response = make_response(flask.redirect(f"/result/{result.id}"))
         response.set_cookie("Passed", ",".join(passed_ids), max_age=60*60*24*30)

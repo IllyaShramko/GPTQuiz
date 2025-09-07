@@ -37,7 +37,17 @@ class RedeemCode(DATABASE.Model):
     quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
     code_enter = DATABASE.Column(DATABASE.Integer)
     hosted_by = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))
+    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
     results = DATABASE.relationship(Result, backref = 'redeemcode', lazy = True)
+
+class Room(DATABASE.Model):
+    __tablename__ = 'room'
+    id = DATABASE.Column(DATABASE.Integer, primary_key=True)
+    students = DATABASE.Column(DATABASE.JSON())
+    index_question = DATABASE.Column(DATABASE.Integer)
+    quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
+    redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
+
 
 class Quiz(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
@@ -49,3 +59,4 @@ class Quiz(DATABASE.Model):
     questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
     codes = DATABASE.relationship(RedeemCode, backref = 'quiz1', lazy = True)
     results = DATABASE.relationship(Result, backref = 'quiz2', lazy=True)
+    rooms = DATABASE.relationship(Room, backref="roomsQuiz", lazy=True)
