@@ -40,13 +40,13 @@
                 socket.emit("join_room", { username, code, quizId });
             }
 
-            socket.on("joined_success", (data) => {
+            socket.on("joined_success", data => {
                 document.getElementById("join-form").style.display = "none";
                 document.getElementById("lobby").style.display = "block";
                 document.getElementById("quiz-title").textContent = data.quiz_name;
             });
 
-            socket.on("quiz_start_student", (data) => {
+            socket.on("quiz_start_student", data => {
                 div.innerHTML = '';
                 questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
@@ -59,11 +59,11 @@
                 div.appendChild(questionDiv);
             })
 
-            socket.on("join_error", (data) => {
+            socket.on("join_error", data => {
                 alert(data.message);
             });
 
-            socket.on("user_list_update", (data) => {
+            socket.on("user_list_update", data => {
                 const li = document.createElement("li");
                 li.textContent = data.username;
                 document.getElementById("users").appendChild(li);

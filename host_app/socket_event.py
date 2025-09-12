@@ -41,8 +41,24 @@ def handle_join(data):
     join_room(room_id)
 
     emit("joined_success", {"quiz_name": redeem.name})
-
     emit("user_list_update", {"username": username}, room=room_id)
+
+    room = Room.query.get(room_id)
+
+    if room.index_question != None and room.index_question < len(quiz.questions):
+        now_question = quiz.questions[room.index_question]
+
+        emit("quiz_start_student", {
+            "quiz_name": quiz.name,
+            "name": now_question.name,
+            "type": now_question.type,
+            "variant_1": now_question.variant_1,
+            "variant_2": now_question.variant_2,
+            "variant_3": now_question.variant_3,
+            "variant_4": now_question.variant_4,
+            "correct_answer": now_question.correct_answer,
+            "image": now_question.image
+        })
 
 @socketio.on("host_join")
 def handle_host_join(data):
