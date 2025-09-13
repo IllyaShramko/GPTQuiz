@@ -30,10 +30,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get("code");
             const div = document.getElementById('lobby');
+            let username;
             const quizId = '{{ quiz.id }}'
 
             function join() {
-                const username = document.getElementById("username").value;
+                username = document.getElementById("username").value;
                 if (!username) return alert("Введіть нікнейм!");
                 if (!code) return alert("Код кімнати не знайдено!");
 
@@ -61,10 +62,10 @@
                 btn3.textContent = `3: ${data.variant_3}`;
                 btn4.textContent = `4: ${data.variant_4}`;
                 console.log(data);
-                btn1.onclick = () => socket.emit("answer", { answer: 1, question_id: data.id });
-                btn2.onclick = () => socket.emit("answer", { answer: 2, question_id: data.id });
-                btn3.onclick = () => socket.emit("answer", { answer: 3, question_id: data.id });
-                btn4.onclick = () => socket.emit("answer", { answer: 4, question_id: data.id });
+                btn1.onclick = () => socket.emit("answer", { answer: 1, question_id: data.id, username, code });
+                btn2.onclick = () => socket.emit("answer", { answer: 2, question_id: data.id, username, code });
+                btn3.onclick = () => socket.emit("answer", { answer: 3, question_id: data.id, username, code });
+                btn4.onclick = () => socket.emit("answer", { answer: 4, question_id: data.id, username, code });
 
                 questionDiv.innerHTML = `<h2>${data.name}</h2>`;
                 questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;

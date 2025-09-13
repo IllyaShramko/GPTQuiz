@@ -114,6 +114,9 @@ def handle_start(data):
 def handle_answer(data):
     question_id = data.get("question_id")
     answer = data.get("answer")
+    username = data.get("username")
+    code_enter = data.get("code")
+
     print(answer, question_id)
     question = Question.query.get(question_id)
     if answer == question.correct_answer:
@@ -125,3 +128,16 @@ def handle_answer(data):
         except Exception as e:
             print("Error occurred while updating result:", e)
         print(f"User answered question {question_id} with answer {answer}")
+
+    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
+    if not redeem:
+        print("Error not found code")
+        return
+
+    room_id = str(redeem.room_id)
+
+    emit('student_answer', {
+        'username': username,
+        'answer': answer,
+        'question_id': question_id
+    }, room=room_id, include_self=False)

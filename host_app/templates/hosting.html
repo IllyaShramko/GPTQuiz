@@ -48,6 +48,18 @@
                 questionDiv.innerHTML += `<p>4: ${data.variant_4}</p>`;
                 div.appendChild(questionDiv);
             })
+
+            socket.on("student_answer", (data) => {
+                const p = document.createElement('p');
+                p.textContent = `${data.username} відповів`;
+                document.body.appendChild(p);
+
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Наступне питання';
+                nextBtn.addEventListener('click', () => {
+                    socket.emit("next_question", { room: code });
+                });
+            })
         
         </script>
     </body>
