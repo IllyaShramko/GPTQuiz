@@ -50,12 +50,28 @@
                 div.innerHTML = '';
                 questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
+
+                const btn1 = document.createElement('button');
+                const btn2 = document.createElement('button');
+                const btn3 = document.createElement('button');
+                const btn4 = document.createElement('button');
+                
+                btn1.textContent = `1: ${data.variant_1}`;
+                btn2.textContent = `2: ${data.variant_2}`;
+                btn3.textContent = `3: ${data.variant_3}`;
+                btn4.textContent = `4: ${data.variant_4}`;
+                console.log(data);
+                btn1.onclick = () => socket.emit("answer", { answer: 1, question_id: data.id });
+                btn2.onclick = () => socket.emit("answer", { answer: 2, question_id: data.id });
+                btn3.onclick = () => socket.emit("answer", { answer: 3, question_id: data.id });
+                btn4.onclick = () => socket.emit("answer", { answer: 4, question_id: data.id });
+
                 questionDiv.innerHTML = `<h2>${data.name}</h2>`;
                 questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;
-                questionDiv.innerHTML += `<button>1: ${data.variant_1}</button>`;
-                questionDiv.innerHTML += `<button>2: ${data.variant_2}</button>`;
-                questionDiv.innerHTML += `<button>3: ${data.variant_3}</button>`;
-                questionDiv.innerHTML += `<button>4: ${data.variant_4}</button>`;
+                questionDiv.appendChild(btn1);
+                questionDiv.appendChild(btn2);
+                questionDiv.appendChild(btn3);
+                questionDiv.appendChild(btn4);
                 div.appendChild(questionDiv);
             })
 

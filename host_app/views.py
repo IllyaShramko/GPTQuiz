@@ -51,4 +51,5 @@ def render_host_app(quizid):
 
 
 def render_hosting_quiz(code):
+    
     return flask.render_template("hosting.html", code=code)

@@ -46,7 +46,10 @@ class Room(DATABASE.Model):
     students = DATABASE.Column(DATABASE.JSON())
     index_question = DATABASE.Column(DATABASE.Integer)
     quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
+    host = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))
+    status = DATABASE.Column(DATABASE.String, default= "waiting")
     redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
+
 
 
 class Quiz(DATABASE.Model):

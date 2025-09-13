@@ -1,6 +1,6 @@
 from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
-from library_app.models import RedeemCode, Result, Quiz, Room
+from library_app.models import RedeemCode, Result, Quiz, Room, Question
 import json
 
 from flask import request, session
@@ -46,6 +46,7 @@ def handle_join(data):
     room = Room.query.get(room_id)
 
     if room.index_question != None and room.index_question < len(quiz.questions):
+        print(room.index_question, quiz.questions[room.index_question])
         now_question = quiz.questions[room.index_question]
 
         emit("quiz_start_student", {
@@ -81,6 +82,7 @@ def handle_start(data):
     room.index_question = 0
     DATABASE.session.commit()
     now_question = quiz.questions[0]
+    print(now_question.id)
     emit("quiz_start_student", {
             "quiz_name": data.get("quiz_name"),
             "name": now_question.name,
@@ -90,11 +92,13 @@ def handle_start(data):
             "variant_3": now_question.variant_3,
             "variant_4": now_question.variant_4,
             "correct_answer": now_question.correct_answer,
-            "image": now_question.image
+            "image": now_question.image,
+            "id": now_question.id
         }, room=room_id
     )
     emit("quiz_start_teacher", {
             "quiz_name": data.get("quiz_name"),
+            "id": now_question.id,
             "name": now_question.name,
             "type": now_question.type,
             "variant_1": now_question.variant_1,
@@ -104,3 +108,20 @@ def handle_start(data):
             "correct_answer": now_question.correct_answer,
             "image": now_question.image
         }, room=room_id)
+
+
+@socketio.on("answer")
+def handle_answer(data):
+    question_id = data.get("question_id")
+    answer = data.get("answer")
+    print(answer, question_id)
+    question = Question.query.get(question_id)
+    if answer == question.correct_answer:
+        result = Result.query.get(session['result_id'])
+        result.correct_answers += 1
+        result.right_answers += 1
+        try:
+            DATABASE.session.commit()
+        except Exception as e:
+            print("Error occurred while updating result:", e)
+        print(f"User answered question {question_id} with answer {answer}")

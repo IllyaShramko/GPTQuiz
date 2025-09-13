@@ -1,54 +1,54 @@
-{% extends "base_admin.html" %}
-
-{% block title %}
-host
-{% endblock %}
-
-{% block head %}
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('host_app.static', filename='css/hostingroom.css') }}">
-{% endblock %}
-
-{% block content %}
-    <div class="room-info">
-        <div id="room">
-            <h1>Код для приєднання: {{ code }}</h1>
-            <button id="start-quiz">Start Quiz</button>
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+        <link rel="stylesheet" href="{{ url_for('host_app.static', filename='css/hostingroom.css') }}">
+        <title>Document</title>
+    </head>
+    <body>
+        
+        <div class="room-info">
+            <div id="room">
+                <h1>Код для приєднання: {{ code }}</h1>
+                <button id="start-quiz">Start Quiz</button>
+            </div>
+            <h2>Участники:</h2>
+            <ul id="users"></ul>
         </div>
-        <h2>Участники:</h2>
-        <ul id="users"></ul>
-    </div>
-
-    <script>
-        const socket = io();
-        const code = "{{ code }}"; 
-        const div = document.getElementById('room');
-        socket.emit("host_join", { room: code });
-
-        const buttonStart = document.getElementById("start-quiz");
-
-        buttonStart.addEventListener("click", () => {
-            socket.emit("quiz_start", {code: code})
-        })
-
-        socket.on("user_list_update", (data) => {
-            const li = document.createElement("li");
-            li.textContent = data.username;
-            document.getElementById("users").appendChild(li);
-        });
-
-        socket.on("quiz_start_teacher", (data) => {
-            div.innerHTML = '';
-            questionDiv = document.createElement('div');
-            questionDiv.id = 'question';
-            questionDiv.innerHTML = `<h2>${data.name}</h2>`;
-            questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;
-            questionDiv.innerHTML += `<p>1: ${data.variant_1}</p>`;
-            questionDiv.innerHTML += `<p>2: ${data.variant_2}</p>`;
-            questionDiv.innerHTML += `<p>3: ${data.variant_3}</p>`;
-            questionDiv.innerHTML += `<p>4: ${data.variant_4}</p>`;
-            div.appendChild(questionDiv);
-        })
-
-    </script>
-{% endblock %}
+        
+        <script>
+            const socket = io();
+            const code = "{{ code }}"; 
+            const div = document.getElementById('room');
+            socket.emit("host_join", { room: code });
+        
+            const buttonStart = document.getElementById("start-quiz");
+        
+            buttonStart.addEventListener("click", () => {
+                socket.emit("quiz_start", {code: code})
+            })
+        
+            socket.on("user_list_update", (data) => {
+                const li = document.createElement("li");
+                li.textContent = data.username;
+                document.getElementById("users").appendChild(li);
+            });
+        
+            socket.on("quiz_start_teacher", (data) => {
+                div.innerHTML = '';
+                questionDiv = document.createElement('div');
+                questionDiv.id = 'question';
+                questionDiv.innerHTML = `<h2>${data.name}</h2>`;
+                questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;
+                questionDiv.innerHTML += `<p>1: ${data.variant_1}</p>`;
+                questionDiv.innerHTML += `<p>2: ${data.variant_2}</p>`;
+                questionDiv.innerHTML += `<p>3: ${data.variant_3}</p>`;
+                questionDiv.innerHTML += `<p>4: ${data.variant_4}</p>`;
+                div.appendChild(questionDiv);
+            })
+        
+        </script>
+    </body>
+</html>
