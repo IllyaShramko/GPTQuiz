@@ -50,12 +50,15 @@
                 document.getElementById("quiz-title").textContent = data.quiz_name;
             });
 
-            function blockPanel() {
+            function blockPanel(msg = "Зачекайте...") {
+                if (document.getElementById('waitingDiv')) {
+                    document.getElementById('waitingDiv').remove();
+                }
                 const waitingDiv = document.createElement('div');
                 waitingDiv.id = 'waitingDiv';
                 waitingDiv.innerHTML = `
                     <img src="{{ url_for('execution_app.static', filename="images/wait.png") }}">
-                    <h2 id="waitingText">Зачекайте...</h2> 
+                    <h2 id="waitingText">${msg}</h2> 
                 `;
                 document.body.appendChild(waitingDiv);
                 waitingDiv.classList.add('waiting-div');
@@ -106,6 +109,10 @@
                 li.textContent = data.username;
                 document.getElementById("users").appendChild(li);
             });
+
+            socket.on("end_msg", data => {
+                blockPanel(data.msg);
+            })
         </script>
     </body>
 </html>

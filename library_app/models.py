@@ -48,6 +48,7 @@ class Room(DATABASE.Model):
     quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
     host = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))
     status = DATABASE.Column(DATABASE.String, default= "waiting")
+    answered_students = DATABASE.Column(DATABASE.Integer, default=0)
     redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
 
 

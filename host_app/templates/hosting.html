@@ -22,6 +22,7 @@
             const socket = io();
             const code = "{{ code }}"; 
             const div = document.getElementById('room');
+            let nextBtn;
             socket.emit("host_join", { room: code });
         
             const buttonStart = document.getElementById("start-quiz");
@@ -55,10 +56,24 @@
                 p.textContent = `${data.username} відповів`;
                 document.body.appendChild(p);
 
-                const nextBtn = document.createElement('button');
+                nextBtn = document.createElement('button');
+                nextBtn.id = 'nextBtn';
+                nextBtn.style.color = 'black';
                 nextBtn.textContent = 'Наступне питання';
                 nextBtn.onclick = () => socket.emit("next_question", { code: code });
                 div.appendChild(nextBtn);
+            })
+
+            
+            socket.on("show_finish_button", data => {
+                if (nextBtn) {
+                    nextBtn.remove();
+                }
+                const endBtn = document.createElement('button');
+                endBtn.textContent = `Завершити вікторину`;
+                endBtn.style.color = 'black';
+                endBtn.onclick = () => socket.emit("quiz_end", { code: code });
+                document.body.appendChild(endBtn);
             })
         
         </script>
