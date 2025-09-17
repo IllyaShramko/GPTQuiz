@@ -20,6 +20,9 @@
 
             </div> 
         </div>
+        <div class="waiting-divdiv">
+            <!-- Waiting div will be appended here -->
+        </div>
         <div id="lobby" style="display:none;">
             <h1 id="quiz-title">{{ quiz_name }}</h1>
             <h2>Під'єднані:</h2>
@@ -47,11 +50,28 @@
                 document.getElementById("quiz-title").textContent = data.quiz_name;
             });
 
+            function blockPanel() {
+                const waitingDiv = document.createElement('div');
+                waitingDiv.id = 'waitingDiv';
+                waitingDiv.innerHTML = `
+                    <img src="{{ url_for('execution_app.static', filename="images/wait.png") }}">
+                    <h2 id="waitingText">Зачекайте...</h2> 
+                `;
+                document.body.appendChild(waitingDiv);
+                waitingDiv.classList.add('waiting-div');
+
+            }
+            
+            function uploadAnswer(answer, questionID) {
+                socket.emit("answer", {answer: answer, question_id: questionID, username, code});
+                blockPanel();
+            }
+
             socket.on("quiz_start_student", data => {
                 div.innerHTML = '';
                 questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
-
+                
                 const btn1 = document.createElement('button');
                 const btn2 = document.createElement('button');
                 const btn3 = document.createElement('button');
@@ -62,11 +82,11 @@
                 btn3.textContent = `3: ${data.variant_3}`;
                 btn4.textContent = `4: ${data.variant_4}`;
                 console.log(data);
-                btn1.onclick = () => socket.emit("answer", { answer: 1, question_id: data.id, username, code });
-                btn2.onclick = () => socket.emit("answer", { answer: 2, question_id: data.id, username, code });
-                btn3.onclick = () => socket.emit("answer", { answer: 3, question_id: data.id, username, code });
-                btn4.onclick = () => socket.emit("answer", { answer: 4, question_id: data.id, username, code });
-
+                btn1.onclick = () => uploadAnswer(1, data.id);
+                btn2.onclick = () => uploadAnswer(2, data.id);
+                btn3.onclick = () => uploadAnswer(3, data.id);
+                btn4.onclick = () => uploadAnswer(4, data.id);
+                
                 questionDiv.innerHTML = `<h2>${data.name}</h2>`;
                 questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;
                 questionDiv.appendChild(btn1);
@@ -74,6 +94,7 @@
                 questionDiv.appendChild(btn3);
                 questionDiv.appendChild(btn4);
                 div.appendChild(questionDiv);
+                document.getElementById('waitingDiv').remove();
             })
 
             socket.on("join_error", data => {

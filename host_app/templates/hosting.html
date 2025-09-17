@@ -46,6 +46,7 @@
                 questionDiv.innerHTML += `<p>2: ${data.variant_2}</p>`;
                 questionDiv.innerHTML += `<p>3: ${data.variant_3}</p>`;
                 questionDiv.innerHTML += `<p>4: ${data.variant_4}</p>`;
+
                 div.appendChild(questionDiv);
             })
 
@@ -56,9 +57,8 @@
 
                 const nextBtn = document.createElement('button');
                 nextBtn.textContent = 'Наступне питання';
-                nextBtn.addEventListener('click', () => {
-                    socket.emit("next_question", { room: code });
-                });
+                nextBtn.onclick = () => socket.emit("next_question", { code: code });
+                div.appendChild(nextBtn);
             })
         
         </script>

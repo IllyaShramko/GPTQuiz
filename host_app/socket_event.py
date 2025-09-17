@@ -141,3 +141,52 @@ def handle_answer(data):
         'answer': answer,
         'question_id': question_id
     }, room=room_id, include_self=False)
+
+@socketio.on("next_question")
+def handle_next(data):
+    code_enter = data.get("code")
+    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
+    if not redeem:
+        return
+
+    room_id = str(redeem.room_id)
+    room = Room.query.get(room_id)
+    quiz = Quiz.query.get(room.quiz)
+
+    if room.index_question is None:
+        room.index_question = 0
+    else:
+        room.index_question += 1
+
+    if room.index_question < len(quiz.questions):
+        now_question = quiz.questions[room.index_question]
+        print(now_question.id)
+        emit("quiz_start_student", {
+                "quiz_name": quiz.name,
+                "name": now_question.name,
+                "type": now_question.type,
+                "variant_1": now_question.variant_1,
+                "variant_2": now_question.variant_2,
+                "variant_3": now_question.variant_3,
+                "variant_4": now_question.variant_4,
+                "correct_answer": now_question.correct_answer,
+                "image": now_question.image,
+                "id": now_question.id
+            }, room=room_id
+        )
+        emit("quiz_start_teacher", {
+                "quiz_name": quiz.name,
+                "id": now_question.id,
+                "name": now_question.name,
+                "type": now_question.type,
+                "variant_1": now_question.variant_1,
+                "variant_2": now_question.variant_2,
+                "variant_3": now_question.variant_3,
+                "variant_4": now_question.variant_4,
+                "correct_answer": now_question.correct_answer,
+                "image": now_question.image
+            }, room=room_id)
+    else:
+        room.index_question = None
+        DATABASE.session.commit()
+        emit("quiz_end", {}, room=room_id)
