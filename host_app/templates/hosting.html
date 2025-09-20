@@ -75,8 +75,42 @@
                 endBtn.style.color = 'black';
                 endBtn.onclick = () => socket.emit("quiz_end_msg", { code: code });
                 document.body.appendChild(endBtn);
-            })
-        
+            });
+            socket.on("end_msg", data => {
+                socket.emit("show_quiz_results", {code: code})
+            }) 
+
+
+            socket.on("quiz_results", data => {
+                document.body.innerHTML = '';
+            
+                const container = document.createElement('div');
+                container.id = 'resultsContainer';
+            
+                data.results.forEach(student => {
+                    const studentDiv = document.createElement('div');
+                    studentDiv.style.border = '1px solid #ccc';
+                    studentDiv.style.padding = '10px';
+                    studentDiv.style.margin = '10px 0';
+                    studentDiv.style.borderRadius = '8px';
+            
+                    // никнейм и процент
+                    studentDiv.innerHTML = `<strong>${student.nickname} - ${student.percent}%</strong><br>`;
+            
+                    // горизонтально показываем ответы
+                    const answersSpan = document.createElement('span');
+                    student.answers.forEach((a, i) => {
+                        const mark = a.is_correct ? "✅" : "❌";
+                        answersSpan.innerHTML += `Q${i + 1}: ${mark} &nbsp; `;
+                    });
+            
+                    studentDiv.appendChild(answersSpan);
+                    container.appendChild(studentDiv);
+                });
+            
+                document.body.appendChild(container);
+            });
+            
         </script>
     </body>
 </html>

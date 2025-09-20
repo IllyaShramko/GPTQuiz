@@ -84,7 +84,7 @@
                 btn2.textContent = `2: ${data.variant_2}`;
                 btn3.textContent = `3: ${data.variant_3}`;
                 btn4.textContent = `4: ${data.variant_4}`;
-                console.log(data);
+
                 btn1.onclick = () => uploadAnswer(1, data.id);
                 btn2.onclick = () => uploadAnswer(2, data.id);
                 btn3.onclick = () => uploadAnswer(3, data.id);
@@ -117,23 +117,30 @@
 
             socket.on("end_quiz", data => {
                 document.body.innerHTML = '';
+            
                 const resultDiv = document.createElement('div');
                 resultDiv.id = 'resultDiv';
                 resultDiv.innerHTML = `<h2>Вікторину завершено!</h2>`;
                 resultDiv.innerHTML += `<p>Правильних відповідей: ${data.correct_answers}</p>`;
-
-                // const participantAnswers = JSON.parse(data.participant_answers);
-                // participantAnswers.forEach(answer => {
-                   // const answerP = document.createElement('p');
-                    //answerP.textContent = `Питання ID: ${answer.question}, Ваша відповідь: ${answer.answer}, Правильна: ${answer.is_correct ? "Так" : "Ні"}`;
-                    //resultDiv.appendChild(answerP);
-                //});
-
+                resultDiv.innerHTML += `<p>Неправильних відповідей: ${data.notcorrect_answers}</p>`;
+                resultDiv.innerHTML += `<p>Відсоток успішності: ${data.percent}%</p>`;
+            
+                const participantAnswers = data.participant_answers; // массив объектов
+                participantAnswers.forEach(answer => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.innerHTML = `<strong>Питання:</strong> ${answer.question_text}<br>`;
+                    questionDiv.innerHTML += `<strong>Варіанти:</strong> ${answer.variants.join(' | ')}<br>`;
+                    questionDiv.innerHTML += `<strong>Ваша відповідь:</strong> ${answer.answer} ${answer.is_correct ? "✅" : "❌"}`;
+                    resultDiv.appendChild(questionDiv);
+                });
+                
+            
                 document.body.appendChild(resultDiv);
-                if (document.getElementById('waitingDiv')) {
-                    document.getElementById('waitingDiv').remove();
-                }
-            })
+            
+                const waitingDiv = document.getElementById('waitingDiv');
+                if (waitingDiv) waitingDiv.remove();
+            });
+            
         </script>
     </body>
 </html>

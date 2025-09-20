@@ -4,22 +4,32 @@ from project.settings import DATABASE
 
 class Question(DATABASE.Model):
     __tablename__ = 'question'
-    id = DATABASE.Column(DATABASE.Integer, primary_key = True)
 
-    name = DATABASE.Column(DATABASE.String(100), nullable = False)
-    type = DATABASE.Column(DATABASE.String(100), nullable = False)
-    variant_1 = DATABASE.Column(DATABASE.String(100), nullable = False)
-    variant_2 = DATABASE.Column(DATABASE.String(100), nullable = True)
-    variant_3 = DATABASE.Column(DATABASE.String(100), nullable = True)
-    variant_4 = DATABASE.Column(DATABASE.String(100), nullable = True)
-    variant_5 = DATABASE.Column(DATABASE.String(100), nullable = True)
+    id = DATABASE.Column(DATABASE.Integer, primary_key=True)
+    name = DATABASE.Column(DATABASE.String(100), nullable=False)
+    type = DATABASE.Column(DATABASE.String(100), nullable=False)
+    variant_1 = DATABASE.Column(DATABASE.String(100), nullable=False)
+    variant_2 = DATABASE.Column(DATABASE.String(100), nullable=True)
+    variant_3 = DATABASE.Column(DATABASE.String(100), nullable=True)
+    variant_4 = DATABASE.Column(DATABASE.String(100), nullable=True)
+    variant_5 = DATABASE.Column(DATABASE.String(100), nullable=True)
+    correct_answer = DATABASE.Column(DATABASE.JSON)
+    quiz_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'), nullable=False)
+    image = DATABASE.Column(DATABASE.String(255), nullable=True)
 
-    correct_answer = DATABASE.Column(DATABASE.JSON())
+    answers = DATABASE.relationship("SessionAnswer", back_populates="question_obj", cascade="all, delete-orphan")
 
-    quiz_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('quiz.id'))
-    image = DATABASE.Column(DATABASE.String(100), nullable = True)
-    answers = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_answer.id"), nullable = True)
-
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "question_text": self.name,
+            "type": self.type,
+            "variants": [v for v in [self.variant_1, self.variant_2, self.variant_3, self.variant_4, self.variant_5] if v],
+            "correct_answer": self.correct_answer,
+            "quiz_id": self.quiz_id,
+            "image": self.image,
+            "answers": [a.to_dict() for a in self.answers] if self.answers else []
+        }
 
 
 class RedeemCode(DATABASE.Model):
@@ -63,10 +73,31 @@ class SessionParticipant(DATABASE.Model):
     
 
 class SessionAnswer(DATABASE.Model):
-    id = DATABASE.Column(DATABASE.Integer, primary_key = True)
-    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('room.id'))
-    question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('question.id'))
-    participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('session_participant.id'))
-    answer = DATABASE.Column(DATABASE.String(100), nullable = False)
-    is_correct = DATABASE.Column(DATABASE.Boolean, default = False)
-    
+    __tablename__ = "session_answer"
+
+    id = DATABASE.Column(DATABASE.Integer, primary_key=True)
+    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
+    question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("question.id"))
+    participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
+    answer = DATABASE.Column(DATABASE.String(100), nullable=False)
+    is_correct = DATABASE.Column(DATABASE.Boolean, default=False)
+
+    question_obj = DATABASE.relationship("Question", back_populates="answers")
+
+    def to_dict(self):
+        question = self.question_obj
+        return {
+            "id": self.id,
+            "participant_id": self.participant_id,
+            "question": self.question,
+            "question_text": question.name if question else "",
+            "variants": [v for v in [
+                question.variant_1,
+                question.variant_2,
+                question.variant_3,
+                question.variant_4,
+                question.variant_5
+            ] if v] if question else [],
+            "answer": self.answer,
+            "is_correct": self.is_correct
+        }

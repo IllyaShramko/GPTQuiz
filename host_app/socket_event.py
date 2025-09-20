@@ -3,7 +3,7 @@ from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
 from library_app.models import RedeemCode, Quiz, Room, Question, SessionParticipant, SessionAnswer
 import json
-
+from sqlalchemy import func
 from flask import request, session
 
 @socketio.on("join_room")
@@ -125,20 +125,17 @@ def handle_answer(data):
         print("question_id is None or missing in data")
         return
 
-    # Получаем вопрос
     question = Question.query.get(question_id)
     if not question:
         print(f"No question found with id: {question_id}")
         return
 
     print(session)
-    # Повторно загружаем объект из базы данных, чтобы убедиться, что изменения сохранились
     participant = SessionParticipant.query.get(session['participant_id'])
 
 
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     room = Room.query.get(redeem.room_id)
-    # Если ответ правильный, обновляем счетчик
     if answer == question.correct_answer or f"{answer}" == f"{question.correct_answer}":
         session_answer = SessionAnswer(
             room_id = room.id,
@@ -148,7 +145,6 @@ def handle_answer(data):
             is_correct = True
         )
 
-        # Сохраняем изменения в базе данных
         try:
             db.session.add(session_answer)
             db.session.commit()
@@ -254,6 +250,8 @@ def handle_quiz_end_msg(data):
     room = Room.query.get(redeem.room_id)
     emit("end_msg", {}, room=str(room.id))
 
+
+
 @socketio.on("end_quiz")
 def handle_quiz_end(data):
     code_enter = data.get("code")
@@ -261,10 +259,71 @@ def handle_quiz_end(data):
     if not redeem:
         return
 
+    quiz = Quiz.query.get(redeem.quiz)
     room = Room.query.get(redeem.room_id)
-    print(session)
+
     participant = SessionParticipant.query.get(session['participant_id'])
-    participiants_answers = SessionAnswer.query.filter_by(participant_id=participant.id, room_id=room.id).all()
-    correct_answers = sum(1 for answer in participiants_answers if answer.is_correct)
-    jsonlist = json.dumps(correct_answers)
-    emit("end_quiz", {"correct_answers": correct_answers, "participant_answers": jsonlist}, room=str(room.id))
+    participant_answers = SessionAnswer.query.filter_by(
+        participant_id=participant.id,
+        room_id=room.id
+    ).all()
+
+    correct_answers = sum(1 for ans in participant_answers if ans.is_correct)
+    notcorrect_answers = len(participant_answers) - correct_answers
+    percent_successful = f"{correct_answers * 100 // len(quiz.questions)}" if quiz.questions else "0"
+
+    # сериализуем ответы через to_dict()
+    jsonlist = [ans.to_dict() for ans in participant_answers]
+
+    emit(
+        "end_quiz",
+        {
+            "correct_answers": correct_answers,
+            "participant_answers": jsonlist,
+            "percent": percent_successful,
+            "notcorrect_answers": notcorrect_answers
+        },
+        room=str(room.id)
+    )
+
+@socketio.on("show_quiz_results")
+def handle_show_quiz_results(data):
+    code_enter = data.get("code")
+    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
+    if not redeem:
+        return
+
+    room = Room.query.get(redeem.room_id)
+    if not room:
+        return
+
+    participants = SessionParticipant.query.filter_by(room_id=room.id).all()
+    results = []
+
+    for p in participants:
+        answers = SessionAnswer.query.filter_by(room_id=room.id, participant_id=p.id).all()
+        total = len(answers)
+        correct = sum(1 for a in answers if a.is_correct)
+        percent = (correct * 100 // total) if total else 0
+
+        answers_info = [
+            {
+                "question_text": a.question_obj.name if a.question_obj else "",
+                "is_correct": a.is_correct
+            } 
+            for a in answers
+        ]
+
+        results.append({
+            "nickname": p.nickname,
+            "percent": percent,
+            "answers": answers_info
+        })
+
+    results.sort(key=lambda x: x["percent"], reverse=True)
+
+    emit(
+        "quiz_results",
+        {"results": results},
+        room=str(room.id) 
+    )
