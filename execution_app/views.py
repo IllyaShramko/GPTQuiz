@@ -1,5 +1,5 @@
 import flask, flask_login 
-from library_app.models import RedeemCode, Quiz, Question, Result
+from library_app.models import RedeemCode, Quiz, Question, SessionAnswer, SessionParticipant
 from project.settings import DATABASE
 from user_app.models import User
 from flask import session, request, make_response
@@ -7,6 +7,7 @@ from flask import session, request, make_response
 def render_enter_code():
     code = flask.request.args.get("code")
     print(code)
+    print(flask.session)
     if code:
         quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
         return flask.render_template(
@@ -16,6 +17,7 @@ def render_enter_code():
     return flask.render_template(
         template_name_or_list="enter_code.html"
     )
+
 def passing_quiz(quiz_id, question_index, result_id):
     quiz = Quiz.query.get(quiz_id)
     if not quiz:

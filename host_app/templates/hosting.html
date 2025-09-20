@@ -34,6 +34,7 @@
             socket.on("user_list_update", (data) => {
                 const li = document.createElement("li");
                 li.textContent = data.username;
+                console.log(data.username);
                 document.getElementById("users").appendChild(li);
             });
         
@@ -72,7 +73,7 @@
                 const endBtn = document.createElement('button');
                 endBtn.textContent = `Завершити вікторину`;
                 endBtn.style.color = 'black';
-                endBtn.onclick = () => socket.emit("quiz_end", { code: code });
+                endBtn.onclick = () => socket.emit("quiz_end_msg", { code: code });
                 document.body.appendChild(endBtn);
             })
         

@@ -111,7 +111,28 @@
             });
 
             socket.on("end_msg", data => {
-                blockPanel(data.msg);
+                socket.emit("end_quiz", { code: code });
+            });
+
+
+            socket.on("end_quiz", data => {
+                document.body.innerHTML = '';
+                const resultDiv = document.createElement('div');
+                resultDiv.id = 'resultDiv';
+                resultDiv.innerHTML = `<h2>Вікторину завершено!</h2>`;
+                resultDiv.innerHTML += `<p>Правильних відповідей: ${data.correct_answers}</p>`;
+
+                // const participantAnswers = JSON.parse(data.participant_answers);
+                // participantAnswers.forEach(answer => {
+                   // const answerP = document.createElement('p');
+                    //answerP.textContent = `Питання ID: ${answer.question}, Ваша відповідь: ${answer.answer}, Правильна: ${answer.is_correct ? "Так" : "Ні"}`;
+                    //resultDiv.appendChild(answerP);
+                //});
+
+                document.body.appendChild(resultDiv);
+                if (document.getElementById('waitingDiv')) {
+                    document.getElementById('waitingDiv').remove();
+                }
             })
         </script>
     </body>

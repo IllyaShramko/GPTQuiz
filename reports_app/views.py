@@ -1,5 +1,5 @@
 import flask, flask_login
-from library_app.models import Quiz, RedeemCode, Result
+from library_app.models import Quiz, RedeemCode
 from project.settings import DATABASE
 
 def render_reports_page():

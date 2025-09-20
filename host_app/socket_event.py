@@ -1,6 +1,7 @@
+from project import DATABASE as db
 from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
-from library_app.models import RedeemCode, Result, Quiz, Room, Question
+from library_app.models import RedeemCode, Quiz, Room, Question, SessionParticipant, SessionAnswer
 import json
 
 from flask import request, session
@@ -18,22 +19,17 @@ def handle_join(data):
 
     quiz = Quiz.query.get(quiz_id)
 
-    result = Result(
-        name=quiz.name,
-        description=quiz.description,
-        who_passed=username,
-        what_passed=quiz_id,
-        by_code=redeem.id,
-        correct_answers=0,
-        right_answers=0,
-        all_answers=len(quiz.questions),
-        name_teacher=redeem.hosted.name
+    room = Room.query.get(redeem.room_id)
+    session_participiant = SessionParticipant(
+        nickname = username,
+        room_id = room.id
     )
 
     try:
-        DATABASE.session.add(result)
+        DATABASE.session.add(session_participiant)
         DATABASE.session.commit()
-        session['result_id'] = result.id
+        session['participant_id'] = session_participiant.id
+        print(session)
     except Exception as e:
         print("Error occurred while adding result:", e)
 
@@ -129,25 +125,56 @@ def handle_answer(data):
         print("question_id is None or missing in data")
         return
 
+    # Получаем вопрос
     question = Question.query.get(question_id)
     if not question:
         print(f"No question found with id: {question_id}")
         return
 
-    if answer == question.correct_answer:
-        result = Result.query.get(session['result_id'])
-        result.correct_answers += 1
-        result.right_answers += 1
-        try:
-            DATABASE.session.commit()
-        except Exception as e:
-            print("Error occurred while updating result:", e)
+    print(session)
+    # Повторно загружаем объект из базы данных, чтобы убедиться, что изменения сохранились
+    participant = SessionParticipant.query.get(session['participant_id'])
+
 
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
+    room = Room.query.get(redeem.room_id)
+    # Если ответ правильный, обновляем счетчик
+    if answer == question.correct_answer or f"{answer}" == f"{question.correct_answer}":
+        session_answer = SessionAnswer(
+            room_id = room.id,
+            question = question.id,
+            participant_id = participant.id,
+            answer = answer,
+            is_correct = True
+        )
+
+        # Сохраняем изменения в базе данных
+        try:
+            db.session.add(session_answer)
+            db.session.commit()
+            print("Result updated successfully.")
+        except Exception as e:
+            db.session.rollback()
+            print("Error occurred while updating result:3 ", e)
+    else:
+        session_answer = SessionAnswer(
+            room_id = room.id,
+            question = question.id,
+            participant_id = participant.id,
+            answer = answer,
+            is_correct = False
+        )
+
+        try:
+            db.session.add(session_answer)
+            db.session.commit()
+            print("Result updated successfully.")
+        except Exception as e:
+            db.session.rollback()
+            print("Error occurred while updating result: 2 ", e)
     if not redeem:
         return
 
-    room = Room.query.get(redeem.room_id)
     room.answered_students = (room.answered_students or 0) + 1
     DATABASE.session.commit()
 
@@ -182,6 +209,7 @@ def handle_next(data):
         room.index_question = 0
     else:
         room.index_question += 1
+    room.answered_students = 0
 
     DATABASE.session.commit()
 
@@ -215,10 +243,18 @@ def handle_next(data):
             }, room=room_id)
     else:
         room.index_question = None
-        room.answered_students = 0
         DATABASE.session.commit()
 
-@socketio.on("quiz_end")
+@socketio.on("quiz_end_msg")
+def handle_quiz_end_msg(data):
+    code_enter = data.get("code")
+    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
+    if not redeem:
+        return
+    room = Room.query.get(redeem.room_id)
+    emit("end_msg", {}, room=str(room.id))
+
+@socketio.on("end_quiz")
 def handle_quiz_end(data):
     code_enter = data.get("code")
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
@@ -226,6 +262,9 @@ def handle_quiz_end(data):
         return
 
     room = Room.query.get(redeem.room_id)
-
-    
-    emit("end_msg", {"msg": "Вікторину завершено."}, room=str(room.id))
+    print(session)
+    participant = SessionParticipant.query.get(session['participant_id'])
+    participiants_answers = SessionAnswer.query.filter_by(participant_id=participant.id, room_id=room.id).all()
+    correct_answers = sum(1 for answer in participiants_answers if answer.is_correct)
+    jsonlist = json.dumps(correct_answers)
+    emit("end_quiz", {"correct_answers": correct_answers, "participant_answers": jsonlist}, room=str(room.id))
