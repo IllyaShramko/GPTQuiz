@@ -8,18 +8,27 @@
     <div class="report">
         <h2 class="mb-4">Звіт: кімната {{ room.id }}</h2>
     
+        <!-- кнопка -->
+        <p>Сортирувати за: <button id="sortBtn"><</button></p>
+
+        <!-- контейнер с карточками -->
+        <div id="studentsContainer">
         {% for student in report %}
             <div class="student-card">
-                <h5>{{ student.nickname }} — {{ student.percent }}%</h5>
-                <div>
-                    {% for ans in student.answers %}
-                        <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}">
-                            Q{{ ans.question_id }}: 
-                            {% if ans.is_correct %}✓{% else %}✗{% endif %}
-                        </span>
-                    {% endfor %}
-                </div>
+            <h5 class="nickname">{{ student.nickname }}</h5>
+            <div class="successful-a">
+                {% for ans in student.answers %}
+                <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
+                {% endfor %}
+            </div>
+            <h5 class="percent">{{ student.percent }}%</h5>
             </div>
         {% endfor %}
+        </div>
+
+        <!-- подключение скрипта -->
+
+
     </div>
+    <script src="{{ url_for('reports_app.static', filename='js/sort.js') }}"></script>
 {% endblock %}
