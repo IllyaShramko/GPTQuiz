@@ -1,20 +1,19 @@
 // static/js/sort.js
 document.addEventListener("DOMContentLoaded", function () {
-    let ascending = true; // начальное направление (true = по возрастанию)
+    let ascending = true; 
 
     const sortBtn = document.getElementById("sortBtn");
     const container = document.getElementById("studentsContainer");
 
-    if (!sortBtn || !container) return; // если элементов нет — выходим
+    if (!sortBtn || !container) return; 
 
-    // выставляем начальный текст кнопки
+    
     sortBtn.textContent = ascending ? "<" : ">";
 
     sortBtn.addEventListener("click", () => {
         const students = Array.from(container.querySelectorAll(".student-card"));
 
         students.sort((a, b) => {
-            // берём текст .percent и вытаскиваем только цифры (на случай, если есть '%')
             const getPercent = el => {
                 const node = el.querySelector(".percent");
                 if (!node) return 0;
@@ -28,10 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return ascending ? percentA - percentB : percentB - percentA;
         });
 
-        // переупорядочиваем DOM
         students.forEach(student => container.appendChild(student));
 
-        // меняем направление и текст кнопки
         ascending = !ascending;
         sortBtn.textContent = ascending ? "<" : ">";
     });

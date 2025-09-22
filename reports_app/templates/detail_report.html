@@ -8,10 +8,8 @@
     <div class="report">
         <h2 class="mb-4">Звіт: кімната {{ room.id }}</h2>
     
-        <!-- кнопка -->
         <p>Сортирувати за: <button id="sortBtn"><</button></p>
 
-        <!-- контейнер с карточками -->
         <div id="studentsContainer">
         {% for student in report %}
             <div class="student-card">
@@ -25,10 +23,6 @@
             </div>
         {% endfor %}
         </div>
-
-        <!-- подключение скрипта -->
-
-
     </div>
     <script src="{{ url_for('reports_app.static', filename='js/sort.js') }}"></script>
 {% endblock %}
