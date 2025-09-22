@@ -22,7 +22,7 @@ def render_host_app(quizid):
     if flask.request.method == "POST":
         redeem_code= generate_code()
         
-        room = Room(quiz = quiz.id)
+        room = Room(quiz = quiz.id, host= flask_login.current_user.id)
         DATABASE.session.add(room)
         DATABASE.session.flush()
         

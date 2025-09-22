@@ -51,6 +51,36 @@ class Room(DATABASE.Model):
     answered_students = DATABASE.Column(DATABASE.Integer, default=0)
     redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
     participants = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"), nullable=True)
+    def get_report(self):
+        from .models import SessionParticipant, SessionAnswer, Question
+
+        participants = SessionParticipant.query.filter_by(room_id=self.id).all()
+        report = []
+
+        for p in participants:
+            answers = SessionAnswer.query.filter_by(room_id=self.id, participant_id=p.id).all()
+            total_questions = len(answers)
+            correct = sum(1 for a in answers if a.is_correct)
+            percent = (correct * 100 // total_questions) if total_questions else 0
+
+            answers_data = []
+            for a in answers:
+                q = Question.query.get(a.question)
+                answers_data.append({
+                    "question_id": q.id,
+                    "question_text": q.name,
+                    "your_answer": a.answer,
+                    "is_correct": a.is_correct
+                })
+
+            report.append({
+                "participant_id": p.id,
+                "nickname": p.nickname,
+                "percent": percent,
+                "answers": answers_data
+            })
+
+        return sorted(report, key=lambda x: x["percent"], reverse=True)
 
 
 

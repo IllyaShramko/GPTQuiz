@@ -14,35 +14,13 @@
     </header>
     <div class="summary-conteiner">
         <div class="reports">
-            {% for code in redeem_codes %}
-
-                <div class="report">    
-                    <h3 id="report-{{ code.id }}">Звіт по вікторині: {{ code.name }} ({{ code.code_enter }})</h3>
-                    <img class="preview" src="{{ url_for('library_app.static', filename= code.quiz1.image) }}" alt="">
-                    <div class="center">
-                        Результати:
-                        {% for result in code.results %}
-                            <div class="line"></div>
-                            <div class="information">
-                                <h4>Пройшов: {{ result.who_passed }}</h4>
-                                <div class="info">
-                                    <div>
-                                        <img src="{{ url_for('reports_app.static', filename= 'images/correct.svg') }}">
-                                    </div>
-                                    <p>Правильних відповідей: {{ result.right_answers }} </p>
-                                </div>
-                                <div class="info" >
-                                    <div id="fail">
-                                        <img src="{{ url_for('reports_app.static', filename= 'images/cross.svg') }}">
-                                    </div>
-                                    <p>Неправильних відповідей: {{ result.all_answers - result.right_answers }}</p>
-                                </div>
-                                <h4>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12 ({{ result.right_answers }}/{{ result.all_answers }})</h4>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <button class="delete-report" id="{{ code.id }}"><img src="{{ url_for('reports_app.static', filename= 'images/delete.png') }}" title="Видалити звіт?"></button>
-                </div>
+            {% for room in rooms %}
+3
+                <a href="/report/{{ room.id }}" class="report">    
+                    <h3 id="report-{{ room.id }}">Звіт по вікторині: {{ room.roomsQuiz }} ({{ room.id }})</h3>
+                    <img class="preview" src="{{ url_for('library_app.static', filename= room.roomsQuiz.image) }}" alt="">
+                    <button class="delete-report" id="{{ room.id }}"><img src="{{ url_for('reports_app.static', filename= 'images/delete.png') }}" title="Видалити звіт?"></button>
+                </a>
             {% endfor %}
         </div>
     </div>

@@ -1,0 +1,9 @@
+* {
+    color: white;
+}
+.report {
+    position: absolute;
+    left: 220px;
+    top: 60px;
+    width: calc(100%-220px);
+}

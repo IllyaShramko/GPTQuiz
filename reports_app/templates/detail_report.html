@@ -1,0 +1,25 @@
+{% extends 'base_admin.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('reports_app.static', filename='css/detail_report.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="report">
+        <h2 class="mb-4">Звіт: кімната {{ room.id }}</h2>
+    
+        {% for student in report %}
+            <div class="student-card">
+                <h5>{{ student.nickname }} — {{ student.percent }}%</h5>
+                <div>
+                    {% for ans in student.answers %}
+                        <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}">
+                            Q{{ ans.question_id }}: 
+                            {% if ans.is_correct %}✓{% else %}✗{% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

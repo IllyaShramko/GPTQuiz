@@ -89,6 +89,11 @@ reports_app.reports_app.add_url_rule(
     view_func= reports_app.render_reports_page,
     methods= ["POST", "GET"]
 )
+reports_app.reports_app.add_url_rule(
+    rule="/report/<int:room_id>/",
+    view_func=reports_app.render_detail_report,
+    methods = ["GET", "POST"]
+)
 project.register_blueprint(blueprint= reports_app.reports_app)
 
 search_app.search_app.add_url_rule(
