@@ -2,7 +2,7 @@ from project import DATABASE as db
 from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
 from library_app.models import RedeemCode, Quiz, Room, Question, SessionParticipant, SessionAnswer
-import json
+import json, flask
 from sqlalchemy import func
 from flask import request, session
 
@@ -296,34 +296,33 @@ def handle_show_quiz_results(data):
     room = Room.query.get(redeem.room_id)
     if not room:
         return
+    emit("quiz_results", {"url": f"/report/{room.id}"})
+    # participants = SessionParticipant.query.filter_by(room_id=room.id).all()
+    # results = []
 
-    participants = SessionParticipant.query.filter_by(room_id=room.id).all()
-    results = []
+    # for p in participants:
+    #     answers = SessionAnswer.query.filter_by(room_id=room.id, participant_id=p.id).all()
+    #     total = len(answers)
+    #     correct = sum(1 for a in answers if a.is_correct)
+    #     percent = (correct * 100 // total) if total else 0
 
-    for p in participants:
-        answers = SessionAnswer.query.filter_by(room_id=room.id, participant_id=p.id).all()
-        total = len(answers)
-        correct = sum(1 for a in answers if a.is_correct)
-        percent = (correct * 100 // total) if total else 0
+    #     answers_info = [
+    #         {
+    #             "question_text": a.question_obj.name if a.question_obj else "",
+    #             "is_correct": a.is_correct
+    #         } 
+    #         for a in answers
+    #     ]
 
-        answers_info = [
-            {
-                "question_text": a.question_obj.name if a.question_obj else "",
-                "is_correct": a.is_correct
-            } 
-            for a in answers
-        ]
+    #     results.append({
+    #         "nickname": p.nickname,
+    #         "percent": percent,
+    #         "answers": answers_info
+    #     })
 
-        results.append({
-            "nickname": p.nickname,
-            "percent": percent,
-            "answers": answers_info
-        })
-
-    results.sort(key=lambda x: x["percent"], reverse=True)
-
-    emit(
-        "quiz_results",
-        {"results": results},
-        room=str(room.id) 
-    )
+    # results.sort(key=lambda x: x["percent"], reverse=True)
+    # emit(
+    #     "quiz_results",
+    #     {"results": results},
+    #     room=str(room.id) 
+    # )

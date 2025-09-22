@@ -5,23 +5,51 @@
 {% endblock %}
 
 {% block content %}
-    <div class="report">
-        <h2 class="mb-4">Звіт: кімната {{ room.id }}</h2>
-    
-        <p>Сортирувати за: <button id="sortBtn"><</button></p>
-
-        <div id="studentsContainer">
-        {% for student in report %}
-            <div class="student-card">
-            <h5 class="nickname">{{ student.nickname }}</h5>
-            <div class="successful-a">
-                {% for ans in student.answers %}
-                <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
+    <div class = 'wrapper'>
+        <h2>Результати вікторини</h2>
+        <h1>{{room.roomsQuiz.name}}</h1>
+        <div class="report">
+            <div class="header-report">
+                <div class="tabs">
+                    <button class="tab selected">Студенти</button>
+                    <button class="tab not">Питання</button>
+                    <button class="tab not">Заг. огляд</button>
+                </div>
+                <div class="sorting">
+                    <p>Сортирувати за: <button id="sortBtn"><</button></p>
+                </div>
+            </div>
+            <div class="judah">
+                <div class="participants-info">
+                    <div class="colors-of-correctness">
+                        <div>
+                            <span id="correct"></span>
+                            <p>Правильні</p>
+                        </div>
+                        <div>
+                            <span id="wrong"></span>
+                            <p>Помилка</p>
+                        </div>
+                        <div>
+                            <span id="passed"></span>
+                            <p>Пропущені</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="studentsContainer">
+                {% for student in report %}
+                    <div class="student-card">
+                    <h5 class="nickname">{{ student.nickname }}</h5>
+                    <div class="successful-a">
+                        {% for ans in student.answers %}
+                        <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
+                        {% endfor %}
+                    </div>
+                    <h5 class="percent">{{ student.percent }}%</h5>
+                    </div>
                 {% endfor %}
+                </div>
             </div>
-            <h5 class="percent">{{ student.percent }}%</h5>
-            </div>
-        {% endfor %}
         </div>
     </div>
     <script src="{{ url_for('reports_app.static', filename='js/sort.js') }}"></script>
