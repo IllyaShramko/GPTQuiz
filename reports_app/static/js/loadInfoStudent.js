@@ -5,27 +5,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalTitle = document.getElementById("modalTitle");
     const modalAnswers = document.getElementById("modalAnswers");
 
-    // открыть
     function openModal() {
         modal.classList.add("show");
         modal.style.display = "block";
     }
 
-    // закрыть
     function hideModal() {
         modal.classList.remove("show");
         setTimeout(() => modal.style.display = "none", 400);
     }
 
-    // крестик
     closeModal.addEventListener("click", hideModal);
 
-    // клик по фону
     window.addEventListener("click", e => {
         if (e.target === modal) hideModal();
     });
 
-    // клик по ученику
     students.forEach(student => {
         student.addEventListener("click", () => {
             const studentId = student.dataset.studentId;
@@ -33,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fetch(`/report/student/${studentId}`)
                 .then(res => res.json())
                 .then(data => {
-                    modalTitle.textContent = data.nickname; // <-- было data.student
+                    modalTitle.textContent = data.nickname;
                     modalAnswers.innerHTML = "";
 
                     data.answers.forEach((ans, index) => {

@@ -21,7 +21,7 @@
             </div> 
         </div>
         <div class="waiting-divdiv">
-            <!-- Waiting div will be appended here -->
+
         </div>
         <div id="lobby" style="display:none;">
             <h1 id="quiz-title">{{ quiz_name }}</h1>
@@ -74,32 +74,65 @@
                 div.innerHTML = '';
                 questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
-                
-                const btn1 = document.createElement('button');
-                const btn2 = document.createElement('button');
-                const btn3 = document.createElement('button');
-                const btn4 = document.createElement('button');
-                
-                btn1.textContent = `1: ${data.variant_1}`;
-                btn2.textContent = `2: ${data.variant_2}`;
-                btn3.textContent = `3: ${data.variant_3}`;
-                btn4.textContent = `4: ${data.variant_4}`;
 
-                btn1.onclick = () => uploadAnswer(1, data.id);
-                btn2.onclick = () => uploadAnswer(2, data.id);
-                btn3.onclick = () => uploadAnswer(3, data.id);
-                btn4.onclick = () => uploadAnswer(4, data.id);
-                
-                questionDiv.innerHTML = `<h2>${data.name}</h2>`;
-                questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;
-                questionDiv.appendChild(btn1);
-                questionDiv.appendChild(btn2);
-                questionDiv.appendChild(btn3);
-                questionDiv.appendChild(btn4);
+                const title = document.createElement('h2');
+                title.textContent = data.name;
+                const type = document.createElement('p');
+                type.textContent = `Type: ${data.type}`;
+                questionDiv.appendChild(title);
+                questionDiv.appendChild(type);
+
+                if (data.type === "multiple answers") {
+                    const variants = [data.variant_1, data.variant_2, data.variant_3, data.variant_4];
+                    variants.forEach((variant, index) => {
+                        const label = document.createElement('label');
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = `${index + 1}`;
+                        label.appendChild(checkbox);
+                        label.append(` ${variant}`);
+                        questionDiv.appendChild(label);
+                        questionDiv.appendChild(document.createElement('br'));
+                    });
+
+                    const sendBtn = document.createElement('button');
+                    sendBtn.textContent = "Отправить ответы";
+                    sendBtn.onclick = () => {
+                        const checked = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
+                        if (checked.length === 0) {
+                            alert("Выбери хотя бы один вариант!");
+                            return;
+                        }
+                        uploadAnswer(checked, data.id);
+                    };
+                    questionDiv.appendChild(sendBtn);
+
+                } else {
+                    const btn1 = document.createElement('button');
+                    const btn2 = document.createElement('button');
+                    const btn3 = document.createElement('button');
+                    const btn4 = document.createElement('button');
+
+                    btn1.textContent = `1: ${data.variant_1}`;
+                    btn2.textContent = `2: ${data.variant_2}`;
+                    btn3.textContent = `3: ${data.variant_3}`;
+                    btn4.textContent = `4: ${data.variant_4}`;
+
+                    btn1.onclick = () => uploadAnswer(1, data.id);
+                    btn2.onclick = () => uploadAnswer(2, data.id);
+                    btn3.onclick = () => uploadAnswer(3, data.id);
+                    btn4.onclick = () => uploadAnswer(4, data.id);
+
+                    questionDiv.appendChild(btn1);
+                    questionDiv.appendChild(btn2);
+                    questionDiv.appendChild(btn3);
+                    questionDiv.appendChild(btn4);
+                }
+
                 div.appendChild(questionDiv);
                 document.getElementById('waitingDiv').remove();
-            })
-
+            });
+            
             socket.on("join_error", data => {
                 alert(data.message);
             });
@@ -125,7 +158,7 @@
                 resultDiv.innerHTML += `<p>Неправильних відповідей: ${data.notcorrect_answers}</p>`;
                 resultDiv.innerHTML += `<p>Відсоток успішності: ${data.percent}%</p>`;
             
-                const participantAnswers = data.participant_answers; // массив объектов
+                const participantAnswers = data.participant_answers; 
                 participantAnswers.forEach(answer => {
                     const questionDiv = document.createElement('div');
                     questionDiv.innerHTML = `<strong>Питання:</strong> ${answer.question_text}<br>`;

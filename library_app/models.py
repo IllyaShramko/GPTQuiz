@@ -1,4 +1,5 @@
 import flask
+from sqlalchemy import UniqueConstraint
 from project.settings import DATABASE
 # from user_app.models import User
 
@@ -115,6 +116,7 @@ class SessionAnswer(DATABASE.Model):
     is_correct = DATABASE.Column(DATABASE.Boolean, default=False)
 
     question_obj = DATABASE.relationship("Question", back_populates="answers")
+    __table_args__ = (UniqueConstraint('room_id', 'participant_id', 'question', name='uq_answer_once'),)
 
     def to_dict(self):
         question = self.question_obj
@@ -193,3 +195,5 @@ class SessionAnswer(DATABASE.Model):
                     elif ans == 5:
                         answers.append(question.variant_5)
                 return answers
+        elif question.type == "enter answer":
+            return answersswer

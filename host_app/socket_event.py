@@ -117,7 +117,7 @@ def handle_start(data):
 @socketio.on("answer")
 def handle_answer(data):
     question_id = data.get("question_id")
-    answer = data.get("answer")
+    answer = data.get("answer")   # может быть int или список
     username = data.get("username")
     code_enter = data.get("code")
 
@@ -130,65 +130,67 @@ def handle_answer(data):
         print(f"No question found with id: {question_id}")
         return
 
-    print(session)
     participant = SessionParticipant.query.get(session['participant_id'])
-
-
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
-    room = Room.query.get(redeem.room_id)
-    if answer == question.correct_answer or f"{answer}" == f"{question.correct_answer}":
-        session_answer = SessionAnswer(
-            room_id = room.id,
-            question = question.id,
-            participant_id = participant.id,
-            answer = answer,
-            is_correct = True
-        )
+    room = Room.query.get(redeem.room_id) if redeem else None
 
-        try:
-            db.session.add(session_answer)
-            db.session.commit()
-            print("Result updated successfully.")
-        except Exception as e:
-            db.session.rollback()
-            print("Error occurred while updating result:3 ", e)
+    is_correct = False
+
+    if question.type == "multiple answers":
+        # answer = список, correct_answer = "1,3" или что-то такое
+        if isinstance(answer, str):
+            try:
+                # если пришла строка — пробуем превратить в список
+                answer = json.loads(answer)
+            except:
+                answer = [int(x) for x in answer.split(",")]
+
+        if isinstance(question.correct_answer, str):
+            try:
+                correct = json.loads(question.correct_answer)
+            except:
+                correct = [int(x) for x in question.correct_answer.split(",")]
+        else:
+            correct = question.correct_answer
+
+        # сравниваем как множества (чтобы порядок не имел значения)
+        is_correct = set(map(int, answer)) == set(map(int, correct))
+
     else:
-        session_answer = SessionAnswer(
-            room_id = room.id,
-            question = question.id,
-            participant_id = participant.id,
-            answer = answer,
-            is_correct = False
-        )
+        is_correct = str(answer) == str(question.correct_answer)
 
-        try:
-            db.session.add(session_answer)
-            db.session.commit()
-            print("Result updated successfully.")
-        except Exception as e:
-            db.session.rollback()
-            print("Error occurred while updating result: 2 ", e)
-    if not redeem:
-        return
+    session_answer = SessionAnswer(
+        room_id = room.id if room else None,
+        question = question.id,
+        participant_id = participant.id,
+        answer = json.dumps(answer) if isinstance(answer, list) else str(answer),
+        is_correct = is_correct
+    )
 
-    room.answered_students = (room.answered_students or 0) + 1
-    DATABASE.session.commit()
+    try:
+        db.session.add(session_answer)
+        db.session.commit()
+        print("Result updated successfully.")
+    except Exception as e:
+        db.session.rollback()
+        print("Error occurred while updating result:", e)
 
-    quiz = Quiz.query.get(room.quiz)
-    total_students = len(room.students or [])
-    print(f"room.answered_students = {room.answered_students}")
-    print(f"total_students = {total_students}")
-    print(f"room.index_question = {room.index_question}")
-    print(f"total_questions = {len(quiz.questions)}")
+    if redeem and room:
+        room.answered_students = (room.answered_students or 0) + 1
+        db.session.commit()
 
-    if room.answered_students == total_students and room.index_question == len(quiz.questions) - 1:
-        emit('show_finish_button', {}, room=str(room.id))
+        quiz = Quiz.query.get(room.quiz)
+        total_students = len(room.students or [])
 
-    emit('student_answer', {
-        'username': username,
-        'answer': answer,
-        'question_id': question_id
-    }, room=str(room.id), include_self=False)
+        if room.answered_students == total_students and room.index_question == len(quiz.questions) - 1:
+            emit('show_finish_button', {}, room=str(room.id))
+
+        emit('student_answer', {
+            'username': username,
+            'answer': answer,
+            'question_id': question_id
+        }, room=str(room.id), include_self=False)
+
 
 @socketio.on("next_question")
 def handle_next(data):
