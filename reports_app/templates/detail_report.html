@@ -37,20 +37,28 @@
                     </div>
                 </div>
                 <div id="studentsContainer">
-                {% for student in report %}
-                    <div class="student-card">
-                    <h5 class="nickname">{{ student.nickname }}</h5>
-                    <div class="successful-a">
-                        {% for ans in student.answers %}
-                        <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
-                        {% endfor %}
-                    </div>
-                    <h5 class="percent">{{ student.percent }}%</h5>
-                    </div>
-                {% endfor %}
+                    {% for student in report %}
+                        <div class="student-card" data-student-id="{{ student.participant_id }}">
+                            <h5 class="nickname">{{ student.nickname }}</h5>
+                            <div class="successful-a">
+                                {% for ans in student.answers %}
+                                    <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
+                                {% endfor %}
+                            </div>
+                            <h5 class="percent">{{ student.percent }}%</h5>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <div id="modalAnswers"></div>
+        </div>
+    </div>
     <script src="{{ url_for('reports_app.static', filename='js/sort.js') }}"></script>
+    <script src="{{ url_for('reports_app.static', filename='js/loadInfoStudent.js') }}"></script>
 {% endblock %}

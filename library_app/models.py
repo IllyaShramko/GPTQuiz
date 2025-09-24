@@ -30,6 +30,8 @@ class Question(DATABASE.Model):
             "image": self.image,
             "answers": [a.to_dict() for a in self.answers] if self.answers else []
         }
+    
+
 
 
 class RedeemCode(DATABASE.Model):
@@ -131,3 +133,63 @@ class SessionAnswer(DATABASE.Model):
             "answer": self.answer,
             "is_correct": self.is_correct
         }
+    def right_answers(self):
+        question = self.question_obj
+        print(question.type)
+        if not question:
+            return []
+        if question.type == "one answer":
+            if int(question.correct_answer) == 1:
+                return [question.variant_1]
+            elif int(question.correct_answer) == 2:
+                return [question.variant_2]
+            elif int(question.correct_answer) == 3:
+                return [question.variant_3]
+            elif int(question.correct_answer) == 4:
+                return [question.variant_4]
+            elif int(question.correct_answer) == 5:
+                return [question.variant_5]
+        elif question.type == "multiple answers":
+            if isinstance(question.correct_answer, list):
+                answers = []
+                for ans in question.correct_answer:
+                    if ans == 1:
+                        answers.append(question.variant_1)
+                    elif ans == 2:
+                        answers.append(question.variant_2)
+                    elif ans == 3:
+                        answers.append(question.variant_3)
+                    elif ans == 4:
+                        answers.append(question.variant_4)
+                    elif ans == 5:
+                        answers.append(question.variant_5)
+                return answers
+        return []
+    def get_answer(self, answersswer):
+        question = self.question_obj
+        if question.type == "one answer":
+            if int(answersswer) == 1:
+                return [question.variant_1]
+            elif int(answersswer) == 2:
+                return [question.variant_2]
+            elif int(answersswer) == 3:
+                return [question.variant_3]
+            elif int(answersswer) == 4:
+                return [question.variant_4]
+            elif int(answersswer) == 5:
+                return [question.variant_5]
+        elif question.type == "multiple answers":
+            if isinstance(question.correct_answer, list):
+                answers = []
+                for ans in answersswer:
+                    if ans == 1:
+                        answers.append(question.variant_1)
+                    elif ans == 2:
+                        answers.append(question.variant_2)
+                    elif ans == 3:
+                        answers.append(question.variant_3)
+                    elif ans == 4:
+                        answers.append(question.variant_4)
+                    elif ans == 5:
+                        answers.append(question.variant_5)
+                return answers
