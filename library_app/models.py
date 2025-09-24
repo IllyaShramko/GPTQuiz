@@ -112,7 +112,7 @@ class SessionAnswer(DATABASE.Model):
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
     question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("question.id"))
     participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
-    answer = DATABASE.Column(DATABASE.String(100), nullable=False)
+    answer = DATABASE.Column(DATABASE.JSON(), nullable=False)
     is_correct = DATABASE.Column(DATABASE.Boolean, default=False)
 
     question_obj = DATABASE.relationship("Question", back_populates="answers")
@@ -137,7 +137,6 @@ class SessionAnswer(DATABASE.Model):
         }
     def right_answers(self):
         question = self.question_obj
-        print(question.type)
         if not question:
             return []
         if question.type == "one answer":
@@ -152,20 +151,20 @@ class SessionAnswer(DATABASE.Model):
             elif int(question.correct_answer) == 5:
                 return [question.variant_5]
         elif question.type == "multiple answers":
-            if isinstance(question.correct_answer, list):
-                answers = []
-                for ans in question.correct_answer:
-                    if ans == 1:
-                        answers.append(question.variant_1)
-                    elif ans == 2:
-                        answers.append(question.variant_2)
-                    elif ans == 3:
-                        answers.append(question.variant_3)
-                    elif ans == 4:
-                        answers.append(question.variant_4)
-                    elif ans == 5:
-                        answers.append(question.variant_5)
-                return answers
+            answers = []
+            for ans in question.correct_answer:
+                if ans == "1":
+                    answers.append(question.variant_1)
+                elif ans == "2":
+                    answers.append(question.variant_2)
+                elif ans == "3":
+                    answers.append(question.variant_3)
+                elif ans == "4":
+                    answers.append(question.variant_4)
+                elif ans == "5":
+                    answers.append(question.variant_5)
+            print(question.type, answers)
+            return answers
         return []
     def get_answer(self, answersswer):
         question = self.question_obj
@@ -183,17 +182,19 @@ class SessionAnswer(DATABASE.Model):
         elif question.type == "multiple answers":
             if isinstance(question.correct_answer, list):
                 answers = []
+                print(answersswer, type(answersswer))
                 for ans in answersswer:
-                    if ans == 1:
+                    if int(ans) == 1:
                         answers.append(question.variant_1)
-                    elif ans == 2:
+                    elif int(ans) == 2:
                         answers.append(question.variant_2)
-                    elif ans == 3:
+                    elif int(ans) == 3:
                         answers.append(question.variant_3)
-                    elif ans == 4:
+                    elif int(ans) == 4:
                         answers.append(question.variant_4)
-                    elif ans == 5:
+                    elif int(ans) == 5:
                         answers.append(question.variant_5)
+                print(question.type, answers)
                 return answers
         elif question.type == "enter answer":
             return answersswer

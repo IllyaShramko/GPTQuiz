@@ -34,10 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.answers.forEach((ans, index) => {
                         const el = document.createElement("p");
                         el.classList.add("modal-answer");
+
+                        const userAnswer = Array.isArray(ans.answer) ? ans.answer.join(", ") : ans.answer;
+                        const correctAnswer = Array.isArray(ans.correct_answer) ? ans.correct_answer.join(", ") : ans.correct_answer;
+
                         el.innerHTML = `
                             <b>Q${index + 1}:</b> ${ans.question_text}<br>
-                            <b>Твоя відповідь:</b> ${ans.answer} ${ans.is_correct ? "✅" : "❌"}<br>
-                            <b>Правильна:</b> ${ans.correct_answer}
+                            <b>Твоя відповідь:</b> ${userAnswer} ${ans.is_correct ? "✅" : "❌"}<br>
+                            <b>Правильна:</b> ${correctAnswer}
                         `;
                         modalAnswers.appendChild(el);
                     });

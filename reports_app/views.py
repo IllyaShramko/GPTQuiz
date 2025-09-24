@@ -22,15 +22,14 @@ def get_student_report(student_id):
         return {"error": "not found"}, 404
 
     answers = SessionAnswer.query.filter_by(participant_id=student.id).all()
-    for ans in answers:
-        print(ans.right_answers())
+
     return {
         "id": student.id,
         "nickname": student.nickname,
         "answers": [
             {
                 "question_text": ans.question_obj.name if ans.question_obj else "",
-                "answer": ans.get_answer(ans.answer),
+                "answer": ans.get_answer(ans.answer) if ans.question_obj else ans.answer,
                 "is_correct": ans.is_correct,
                 "correct_answer": ans.right_answers() if ans.question_obj else None
             }

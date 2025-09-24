@@ -117,7 +117,7 @@ def handle_start(data):
 @socketio.on("answer")
 def handle_answer(data):
     question_id = data.get("question_id")
-    answer = data.get("answer")   # может быть int или список
+    answer = data.get("answer")   
     username = data.get("username")
     code_enter = data.get("code")
 
@@ -137,10 +137,8 @@ def handle_answer(data):
     is_correct = False
 
     if question.type == "multiple answers":
-        # answer = список, correct_answer = "1,3" или что-то такое
         if isinstance(answer, str):
             try:
-                # если пришла строка — пробуем превратить в список
                 answer = json.loads(answer)
             except:
                 answer = [int(x) for x in answer.split(",")]
@@ -153,7 +151,6 @@ def handle_answer(data):
         else:
             correct = question.correct_answer
 
-        # сравниваем как множества (чтобы порядок не имел значения)
         is_correct = set(map(int, answer)) == set(map(int, correct))
 
     else:
@@ -163,7 +160,7 @@ def handle_answer(data):
         room_id = room.id if room else None,
         question = question.id,
         participant_id = participant.id,
-        answer = json.dumps(answer) if isinstance(answer, list) else str(answer),
+        answer = answer,
         is_correct = is_correct
     )
 
