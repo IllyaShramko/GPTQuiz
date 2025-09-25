@@ -11,8 +11,7 @@ Library
 {% block content %}
     <div class = "created-by-me-create">
         <h2>Створено мною</h2>
-        <button id = 'createQuiz' class="create-btn-ripple">
-            <input type="hidden" id="quizCreate" value="{{ create_quiz_id }}">
+        <button id = 'createQuiz' class="create-btn-ripple createQuiz">
             <a href="/create-quiz/">
                 + Створити
             </a>
@@ -49,5 +48,4 @@ Library
         {% endfor %}        
     </div>
 
-    <script src="{{ url_for('library_app.static', filename = 'js/createQuiz.js')}}"></script>
 {% endblock %}

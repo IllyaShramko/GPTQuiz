@@ -7,12 +7,7 @@
         <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     </head>
     <body>
-        <header>
-            <a href="/"><img src="{{ url_for('execution_app.static', filename='images/atom.svg') }}" style="width: 46px;"></a>
-        </header>
-    
-
-        <div id="join-form" method="post" class = 'form_enter'>
+         <div id="join-form" method="post" class = 'form_enter'>
             <p>GPTQuiz</p>
             <div class = 'input_code'>
                 <input type="text" id="username" name="input-nickname" placeholder="Введіть нікнейм">
@@ -25,7 +20,7 @@
         </div>
         <div id="lobby" style="display:none;">
             <h1 id="quiz-title">{{ quiz_name }}</h1>
-            <h2>Під'єднані:</h2>
+            <h2>Під'єднані користувачі:</h2>
             <ul id="users"></ul>
         </div>
         <script>
@@ -46,7 +41,7 @@
 
             socket.on("joined_success", data => {
                 document.getElementById("join-form").style.display = "none";
-                document.getElementById("lobby").style.display = "block";
+                document.getElementById("lobby").style.display = "flex";
                 document.getElementById("quiz-title").textContent = data.quiz_name;
             });
 
@@ -71,16 +66,19 @@
             }
 
             socket.on("quiz_start_student", data => {
-                div.innerHTML = '';
-                questionDiv = document.createElement('div');
-                questionDiv.id = 'question';
+                div.style.display = 'none';
+                document.getElementById("general")?.remove();
 
+                const generalDiv = document.createElement('div');
+                generalDiv.id = 'general';
+                const questionDiv = document.createElement('div');
+                questionDiv.id = 'question';
                 const title = document.createElement('h2');
                 title.textContent = data.name;
-                const type = document.createElement('p');
-                type.textContent = `Type: ${data.type}`;
+                console.log(questionDiv, title, generalDiv);
                 questionDiv.appendChild(title);
-                questionDiv.appendChild(type);
+                const answersDiv = document.createElement('div');
+                answersDiv.id = 'answers';
 
                 if (data.type === "multiple answers") {
                     const variants = [data.variant_1, data.variant_2, data.variant_3, data.variant_4];
@@ -89,23 +87,24 @@
                         const checkbox = document.createElement('input');
                         checkbox.type = 'checkbox';
                         checkbox.value = `${index + 1}`;
+                        label.id = `answerBtn${index + 1}`;
                         label.appendChild(checkbox);
-                        label.append(` ${variant}`);
-                        questionDiv.appendChild(label);
-                        questionDiv.appendChild(document.createElement('br'));
+                        label.append(`${variant}`);
+                        answersDiv.appendChild(label);
                     });
 
                     const sendBtn = document.createElement('button');
-                    sendBtn.textContent = "Отправить ответы";
+                    sendBtn.id = 'sendBtn';
+                    sendBtn.textContent = "Відправити -->";
                     sendBtn.onclick = () => {
-                        const checked = Array.from(questionDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
+                        const checked = Array.from(answersDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
                         if (checked.length === 0) {
                             alert("Выбери хотя бы один вариант!");
                             return;
                         }
                         uploadAnswer(checked, data.id);
                     };
-                    questionDiv.appendChild(sendBtn);
+                    generalDiv.appendChild(sendBtn);
 
                 } else {
                     const btn1 = document.createElement('button');
@@ -113,23 +112,29 @@
                     const btn3 = document.createElement('button');
                     const btn4 = document.createElement('button');
 
-                    btn1.textContent = `1: ${data.variant_1}`;
-                    btn2.textContent = `2: ${data.variant_2}`;
-                    btn3.textContent = `3: ${data.variant_3}`;
-                    btn4.textContent = `4: ${data.variant_4}`;
+                    btn1.textContent = `${data.variant_1}`;
+                    btn2.textContent = `${data.variant_2}`;
+                    btn3.textContent = `${data.variant_3}`;
+                    btn4.textContent = `${data.variant_4}`;
+
+                    btn1.id = 'answerBtn1';
+                    btn2.id = 'answerBtn2';
+                    btn3.id = 'answerBtn3';
+                    btn4.id = 'answerBtn4';
 
                     btn1.onclick = () => uploadAnswer(1, data.id);
                     btn2.onclick = () => uploadAnswer(2, data.id);
                     btn3.onclick = () => uploadAnswer(3, data.id);
                     btn4.onclick = () => uploadAnswer(4, data.id);
 
-                    questionDiv.appendChild(btn1);
-                    questionDiv.appendChild(btn2);
-                    questionDiv.appendChild(btn3);
-                    questionDiv.appendChild(btn4);
+                    answersDiv.appendChild(btn1);
+                    answersDiv.appendChild(btn2);
+                    answersDiv.appendChild(btn3);
+                    answersDiv.appendChild(btn4);
                 }
-
-                div.appendChild(questionDiv);
+                generalDiv.appendChild(questionDiv);
+                generalDiv.appendChild(answersDiv);
+                document.body.appendChild(generalDiv);
                 document.getElementById('waitingDiv').remove();
             });
             
@@ -138,9 +143,14 @@
             });
 
             socket.on("user_list_update", data => {
-                const li = document.createElement("li");
-                li.textContent = data.username;
-                document.getElementById("users").appendChild(li);
+                const userList = document.getElementById("users");
+                userList.innerHTML = ""; 
+                console.log(data.students);
+                data.students.forEach(student => {
+                    const li = document.createElement("li");
+                    li.textContent = student;
+                    userList.appendChild(li);
+                });
             });
 
             socket.on("end_msg", data => {

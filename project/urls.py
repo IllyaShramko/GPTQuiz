@@ -41,9 +41,9 @@ library_app.library_app.add_url_rule(
 )
 
 library_app.library_app.add_url_rule(
-    rule= '/create-quiz/',
-    view_func= library_app.render_create_quiz,
-    methods= ["POST", "GET"]
+    rule= '/get-draft/',
+    view_func= library_app.get_draft,
+    methods= ["GET"]
 )
 
 library_app.library_app.add_url_rule(
@@ -52,6 +52,11 @@ library_app.library_app.add_url_rule(
     methods= ["POST", "GET"]
 )
 
+library_app.library_app.add_url_rule(
+    rule= '/create-quiz/',
+    view_func= library_app.render_create_quiz,
+    methods= ["POST", "GET"]
+)
 
 project.register_blueprint(blueprint= library_app.library_app)
 

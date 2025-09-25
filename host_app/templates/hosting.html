@@ -12,6 +12,7 @@
         <div class="room-info">
             <div id="room">
                 <h1>Код для приєднання: {{ code }}</h1>
+                <p>Посилання для приєднання: <a href="http://127.0.0.1:5000/execution/?code={{ code }}">http://127.0.0.1:5000/execution/?code={{ code }}</a></p>
                 <button id="start-quiz">Start Quiz</button>
             </div>
             <h2>Участники:</h2>
@@ -32,10 +33,14 @@
             })
         
             socket.on("user_list_update", (data) => {
-                const li = document.createElement("li");
-                li.textContent = data.username;
-                console.log(data.username);
-                document.getElementById("users").appendChild(li);
+                const usersList = document.getElementById("users");
+                console.log(data.students);
+                usersList.innerHTML = '';
+                data.students.forEach(student => {
+                    const li = document.createElement("li");
+                    li.textContent = student;
+                    usersList.appendChild(li);
+                });
             });
         
             socket.on("quiz_start_teacher", (data) => {

@@ -12,44 +12,51 @@ def handle_join(data):
     code_enter = data.get("code")
     quiz_id = data.get("quizId")
 
+    # Проверяем код
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     if not redeem:
         emit("join_error", {"message": "Код не найден"})
         return
 
+    # Проверяем викторину
     quiz = Quiz.query.get(quiz_id)
+    if not quiz:
+        emit("join_error", {"message": "Викторина не найдена"})
+        return
 
+    # Проверяем комнату
     room = Room.query.get(redeem.room_id)
-    session_participiant = SessionParticipant(
-        nickname = username,
-        room_id = room.id
+    if not room:
+        emit("join_error", {"message": "Комната не найдена"})
+        return
+
+    # Добавляем участника
+    participant = SessionParticipant(
+        nickname=username,
+        room_id=room.id
     )
-
     try:
-        DATABASE.session.add(session_participiant)
+        DATABASE.session.add(participant)
         DATABASE.session.commit()
-        session['participant_id'] = session_participiant.id
-        print(session)
+        session['participant_id'] = participant.id
     except Exception as e:
-        print("Error occurred while adding result:", e)
+        DATABASE.session.rollback()
+        print("Ошибка при добавлении участника:", e)
+        emit("join_error", {"message": "Не удалось добавить участника"})
+        return
 
-    room_id = str(redeem.room_id)
-    join_room(room_id)
+    join_room(str(room.id))
 
-    room = Room.query.get(room_id)
-
-    if not isinstance(room.students, list):
-        room.students = []
-
-    if username not in room.students:
-        room.students.append(username)
-
+    participants = SessionParticipant.query.filter_by(room_id=room.id).all()
+    students = [p.nickname for p in participants]
+    room.students = students
     DATABASE.session.commit()
 
-    emit("joined_success", {"quiz_name": redeem.name})
-    emit("user_list_update", {"username": username}, room=room_id)
 
-    if room.index_question is not None and room.index_question < len(quiz.questions):
+    emit("joined_success", {"quiz_name": redeem.name})
+    emit("user_list_update", {"students": students}, room=str(room.id))
+
+    if room.index_question is not None and 0 <= room.index_question < len(quiz.questions):
         now_question = quiz.questions[room.index_question]
 
         emit("quiz_start_student", {
@@ -64,6 +71,36 @@ def handle_join(data):
             "image": now_question.image,
             "id": now_question.id
         })
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    participant_id = session.get("participant_id")
+    if not participant_id:
+        return  
+
+    participant = SessionParticipant.query.get(participant_id)
+    if not participant:
+        return
+
+    room_id = participant.room_id
+
+    try:
+        DATABASE.session.delete(participant)
+        DATABASE.session.commit()
+    except Exception as e:
+        DATABASE.session.rollback()
+        print("Ошибка при удалении участника:", e)
+        return
+
+    participants = SessionParticipant.query.filter_by(room_id=room_id).all()
+    students = [p.nickname for p in participants]
+    room = Room.query.get(room_id)
+    if room:
+        room.students = students
+        DATABASE.session.commit()
+
+    emit("user_list_update", {"students": students}, room=str(room_id))
+
 
 @socketio.on("host_join")
 def handle_host_join(data):
@@ -132,7 +169,7 @@ def handle_answer(data):
 
     participant = SessionParticipant.query.get(session['participant_id'])
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
-    room = Room.query.get(redeem.room_id) if redeem else None
+    room = Room.query.get(redeem.room_id)
 
     is_correct = False
 
@@ -178,7 +215,8 @@ def handle_answer(data):
 
         quiz = Quiz.query.get(room.quiz)
         total_students = len(room.students or [])
-
+        print(f"{room.students}, {room}")
+        print(f"Answered: {room.answered_students}, Total: {total_students}, Question Index: {room.index_question}, Total Questions: {len(quiz.questions)}")
         if room.answered_students == total_students and room.index_question == len(quiz.questions) - 1:
             emit('show_finish_button', {}, room=str(room.id))
 

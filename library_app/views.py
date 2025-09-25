@@ -14,6 +14,10 @@ def render_library():
         created_quizes = flask_login.current_user.created_quizes
         )
 
+def get_draft():
+    create_quiz_id = len(Quiz.query.all()) + 1
+    return {"create_quiz_id": create_quiz_id}
+
 def render_create_quiz():
     questions = []
     question = None

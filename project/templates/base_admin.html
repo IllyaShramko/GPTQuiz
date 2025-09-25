@@ -13,9 +13,10 @@
                 GPTQuiz
             </a>
             
-            <button class="create-btn-ripple">
+            <button class="create-btn-ripple createQuiz">
                 + Створити
             </button>
+            <input type="hidden" id="quizCreate" value="">
             <div class="links">
                 <a class="tab-link" href="/search/">
                     <div>
@@ -64,5 +65,7 @@
         
         {% endblock %}
     </body>
+    <script src="{{ url_for('static', filename= 'js/getDraft.js') }}"></script>
     <script src="{{ url_for('static', filename= 'js/ripple.js') }}"></script>
+    <script src="{{ url_for('library_app.static', filename = 'js/createQuiz.js')}}"></script>
 </html>
