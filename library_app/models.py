@@ -165,6 +165,8 @@ class SessionAnswer(DATABASE.Model):
                     answers.append(question.variant_5)
             print(question.type, answers)
             return answers
+        elif question.type == "enter answer":
+            return question.correct_answer if question.correct_answer else []
         return []
     def get_answer(self, answersswer):
         question = self.question_obj

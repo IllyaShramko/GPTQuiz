@@ -106,6 +106,24 @@
                     };
                     generalDiv.appendChild(sendBtn);
 
+                } else if (data.type === "enter answer") {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = 'textAnswer';
+                    input.placeholder = 'Введіть вашу відповідь тут...';
+                    answersDiv.appendChild(input);
+                    const sendBtn = document.createElement('button');
+                    sendBtn.id = 'sendBtn';
+                    sendBtn.textContent = "Відправити -->";
+                    sendBtn.onclick = () => {
+                        const answer = input.value.trim();
+                        if (!answer) {
+                            alert("Будь ласка, введіть вашу відповідь.");
+                            return;
+                        }
+                        uploadAnswer(answer, data.id);
+                    };
+                    answersDiv.appendChild(sendBtn);
                 } else {
                     const btn1 = document.createElement('button');
                     const btn2 = document.createElement('button');
