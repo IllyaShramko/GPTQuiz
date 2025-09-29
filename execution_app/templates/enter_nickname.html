@@ -7,14 +7,14 @@
         <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     </head>
     <body>
-         <div id="join-form" method="post" class = 'form_enter'>
-            <p>GPTQuiz</p>
-            <div class = 'input_code'>
-                <input type="text" id="username" name="input-nickname" placeholder="Введіть нікнейм">
-                <button class="button_code" type="button" onclick="join()"><span class = 'button_span'>ДАЛІ</span>→</button>
-
-            </div> 
-        </div>
+        <div id="student-result"></div>
+            <div id="join-form" method="post" class = 'form_enter'>
+                <p>GPTQuiz</p>
+                <div class = 'input_code'>
+                    <input type="text" id="username" name="input-nickname" placeholder="Введіть нікнейм">
+                    <button class="button_code" type="button" onclick="join()"><span class = 'button_span'>ДАЛІ</span>→</button>
+                </div> 
+            </div>
         <div class="waiting-divdiv">
 
         </div>
@@ -28,6 +28,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get("code");
             const div = document.getElementById('lobby');
+            let answered = false;
             let username;
             const quizId = '{{ quiz.id }}'
 
@@ -58,15 +59,23 @@
                 document.body.appendChild(waitingDiv);
                 waitingDiv.classList.add('waiting-div');
 
+
             }
             
             function uploadAnswer(answer, questionID) {
+                if (answered) {
+                    return
+                }
+                answered = !answered
                 socket.emit("answer", {answer: answer, question_id: questionID, username, code});
                 blockPanel();
             }
 
             socket.on("quiz_start_student", data => {
                 div.style.display = 'none';
+                if (answered) {
+                    answered = !answered
+                }
                 document.getElementById("general")?.remove();
 
                 const generalDiv = document.createElement('div');
@@ -170,6 +179,17 @@
                     li.textContent = student;
                     userList.appendChild(li);
                 });
+            });
+
+            socket.on("student_result", (data) => {
+                console.log("👉 Результат студента:", data);
+
+                const resultDiv = document.getElementById("student-result");
+                resultDiv.innerHTML = `
+                    <p>Твой ответ: <b>${data.your_answer}</b></p>
+                    <p>${data.is_correct ? "✅ Правильно!" : "❌ Неправильно!"}</p>
+                    <p>Правильный ответ: <b>${data.correct_answer}</b></p>
+                `;
             });
 
             socket.on("end_msg", data => {

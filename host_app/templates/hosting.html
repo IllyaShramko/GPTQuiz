@@ -10,64 +10,203 @@
     <body>
         
         <div class="room-info">
-            <div id="room">
-                <h1>Код для приєднання: {{ code }}</h1>
-                <p>Посилання для приєднання: <a href="http://127.0.0.1:5000/execution/?code={{ code }}">http://127.0.0.1:5000/execution/?code={{ code }}</a></p>
-                <button id="start-quiz">Start Quiz</button>
+            <div class="bottom-box" style="display: none;">
+                <div id="timerDiv">
+                    <img id="timerIMG" src="{{ url_for('host_app.static', filename='images/timer.svg') }}">
+                    <div id="timer"></div>
+                </div>
+                <div id="timeControl">
+                    <button id="15sAdd" class="controlers">+15</button>
+                    
+                </div>
             </div>
-            <h2>Участники:</h2>
-            <ul id="users"></ul>
+            <div id="resultsContainer"></div>
+            <div id="QandR"></div>
+            <div id="room">
+                <div class="how-to-join">
+                    <div>
+                        <h3>1</h3>
+                    </div>
+                    <h4>Приєднайтеся за посиланням</h4>
+                    <button id="copy-url"><img src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
+                </div>
+                <a href="http://127.0.0.1:5000/execution/?code={{ code }}" target="__blank" id="linkToJoin">joinqptquiz.com</a>
+                <div class="line"></div>
+                <div class="how-to-join">
+                    <div>
+                        <h3>2</h3>
+                    </div>
+                    <h4>Приєднайтеся за кодом</h4>
+                    <button id="copy-code"><img src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
+                </div>
+                <h2 id="codeDisplay">{{ code }}</h2>
+                <button id="start-quiz">
+                    <img src="{{ url_for('host_app.static', filename='images/start.svg') }}">
+                    <p>Почати вікторину</p>
+                </button>
+            </div>
+            <div class="participants">
+                <h2 id="usersText">Участники:</h2>
+                <ul id="users"></ul>
+            </div>
+        </div>
+        <div class="mini-menu">
+            
         </div>
         
         <script>
             const socket = io();
             const code = "{{ code }}"; 
-            const div = document.getElementById('room');
+            const div = document.getElementById('QandR');
             let nextBtn;
+            nextBtn = document.createElement('button');
+            nextBtn.id = 'nextBtn';
+            nextBtn.classList.add("controlers")
+            const imgBtn = document.createElement("img")
+            imgBtn.src = "{{ url_for('host_app.static', filename= 'images/next.svg') }}"
+            nextBtn.appendChild(imgBtn)
+
+            let timerInterval = null;
             socket.emit("host_join", { room: code });
         
             const buttonStart = document.getElementById("start-quiz");
-        
+            
+            
+
             buttonStart.addEventListener("click", () => {
                 socket.emit("quiz_start", {code: code})
             })
         
             socket.on("user_list_update", (data) => {
                 const usersList = document.getElementById("users");
+                const usersText = document.getElementById("usersText");
                 console.log(data.students);
                 usersList.innerHTML = '';
+                usersText.textContent = `Участники: (${data.students.length})`;
                 data.students.forEach(student => {
                     const li = document.createElement("li");
                     li.textContent = student;
+                    li.id = student;
                     usersList.appendChild(li);
                 });
             });
-        
+
+            socket.on("teacher_results", (data) => {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                document.getElementById('timerText').innerHTML = '0';
+                const container = document.getElementById("resultsContainer");
+                container.innerHTML = "";
+                console.log("Received teacher_results:", data.results);
+                div.innerHTML = ""
+                data.results.forEach(res => {
+                    const div = document.createElement("div");
+                    div.innerHTML = `
+                        <b>${res.nickname}</b> — ${res.answer} 
+                        ${res.is_correct ? "✅" : "❌"}
+                    `;
+                    container.appendChild(div);
+                });
+
+                
+                console.log(data)
+                if (data.index_question == data.total_questions-1) {
+                    nextBtn.innerText = "Кінець";
+                    nextBtn.onclick = () => socket.emit("quiz_end_msg", { code: code });
+                } else {
+                    nextBtn.onclick = () => socket.emit("next_question", { code: code });
+                }
+            });
+
+            
+
+            let endTime = 0;
+            socket.on("question_timer", (data) => {
+                endTime = data.end_time;
+                const duration = data.duration;
+                const currentTime = Math.floor(Date.now() / 1000);
+                let remainingTime = endTime - currentTime;
+
+                document.getElementById("15sAdd").onclick = () => {
+                    endTime += 15; 
+                    console.log("Добавили 15 секунд. Новый endTime: " + endTime);
+                }
+
+                const timerDiv = document.getElementById('timer');
+                timerDiv.innerHTML = '';
+                const timerText = document.createElement('h2');
+                timerText.id = 'timerText';
+                timerText.innerHTML = `${duration}`;
+                timerDiv.appendChild(timerText);
+
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+
+                if (remainingTime > 0) {
+                    timerInterval = setInterval(() => {
+                        const currentTime = Math.floor(Date.now() / 1000);
+                        const remainingTime = endTime - currentTime;
+
+                        timerText.textContent = remainingTime;
+
+                        if (remainingTime <= 0) {
+                            console.log("Время вышло!");
+                            socket.emit("end_question", { code: code });
+                            clearInterval(timerInterval);
+                        }
+                    }, 250);
+                }
+            });
             socket.on("quiz_start_teacher", (data) => {
+                const checkMarks = document.getElementsByClassName('check_mark');
+                console.log(checkMarks);
+
+                if (checkMarks.length) {
+                    const checkMarksArray = Array.from(checkMarks);
+                    
+                    checkMarksArray.forEach(mark => {
+                        mark.remove();
+                    });
+                }  
+
+                document.querySelector(".bottom-box").style.display = "flex";
+                const container = document.getElementById("resultsContainer");
+                container.innerHTML = "";
+                if (nextBtn) {
+                    nextBtn.remove();
+                }
                 div.innerHTML = '';
+                
+                try {
+                    document.getElementById("room").remove();
+                } catch {
+                }
                 questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
                 questionDiv.innerHTML = `<h2>${data.name}</h2>`;
-                questionDiv.innerHTML += `<p>Type: ${data.type}</p>`;
-                questionDiv.innerHTML += `<p>1: ${data.variant_1}</p>`;
-                questionDiv.innerHTML += `<p>2: ${data.variant_2}</p>`;
-                questionDiv.innerHTML += `<p>3: ${data.variant_3}</p>`;
-                questionDiv.innerHTML += `<p>4: ${data.variant_4}</p>`;
-
+                const answersDiv = document.createElement("div")
+                answersDiv.id = 'answerDiv'
+                if (data.type != "enter answer") {
+                    answersDiv.innerHTML += `<p class="answerv">${data.variant_1}</p>`;
+                    answersDiv.innerHTML += `<p class="answerv">${data.variant_2}</p>`;
+                    answersDiv.innerHTML += `<p class="answerv">${data.variant_3}</p>`;
+                    answersDiv.innerHTML += `<p class="answerv">${data.variant_4}</p>`;
+                }
                 div.appendChild(questionDiv);
+                div.appendChild(answersDiv)
+                nextBtn.onclick = () => socket.emit("end_question", { code: code });
+                document.getElementById("timeControl").appendChild(nextBtn);
+
             })
 
             socket.on("student_answer", (data) => {
-                const p = document.createElement('p');
-                p.textContent = `${data.username} відповів`;
-                document.body.appendChild(p);
-
-                nextBtn = document.createElement('button');
-                nextBtn.id = 'nextBtn';
-                nextBtn.style.color = 'black';
-                nextBtn.textContent = 'Наступне питання';
-                nextBtn.onclick = () => socket.emit("next_question", { code: code });
-                div.appendChild(nextBtn);
+                const user = document.getElementById(data.username)
+                const checkMark = document.createElement('img') 
+                checkMark.src = '{{ url_for("host_app.static", filename = "images/check-mark.svg") }}'
+                checkMark.classList.add('check_mark')
+                user.appendChild(checkMark)
             })
 
             
@@ -93,5 +232,6 @@
             });
             
         </script>
+        <script src="{{ url_for('host_app.static', filename='js/copy.js') }}"></script>
     </body>
 </html>

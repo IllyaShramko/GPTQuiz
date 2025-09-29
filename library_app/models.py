@@ -112,7 +112,7 @@ class SessionAnswer(DATABASE.Model):
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
     question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("question.id"))
     participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
-    answer = DATABASE.Column(DATABASE.JSON(), nullable=False)
+    answer = DATABASE.Column(DATABASE.JSON(), nullable=True)
     is_correct = DATABASE.Column(DATABASE.Boolean, default=False)
 
     question_obj = DATABASE.relationship("Question", back_populates="answers")
@@ -171,6 +171,9 @@ class SessionAnswer(DATABASE.Model):
     def get_answer(self, answersswer):
         question = self.question_obj
         if question.type == "one answer":
+            print(answersswer, "Adlsldsldladl")
+            if "Пропущений..." in [answersswer]:
+                return ["Пропущений"]
             if int(answersswer) == 1:
                 return [question.variant_1]
             elif int(answersswer) == 2:
@@ -185,6 +188,9 @@ class SessionAnswer(DATABASE.Model):
             if isinstance(question.correct_answer, list):
                 answers = []
                 print(answersswer, type(answersswer))
+                if not answersswer or "Пропущений..." in answersswer:
+                    answers.append("Пропущений")
+                    return answers
                 for ans in answersswer:
                     if int(ans) == 1:
                         answers.append(question.variant_1)
