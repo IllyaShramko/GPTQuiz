@@ -16,11 +16,17 @@ host
         <h2>Кількість запитань: {{ quiz.count_questions }}</h2>
         <h2>Автор: {{ quiz.user.surname }} {{ quiz.user.name }}</h2>
         <form method="post">
-            <button id="submit-btn" type="submit">Задати на виконання</button>
+            <button id="submit-btn" type="submit" name="btn" value="host">Задати на виконання</button>
             {% if code != 000000 %}
                 <h2 id="generated-code">Сгенерований код: {{ code }}</h2>
             {% endif %}
         </form>
+        {% if user.id == quiz.author_id %}
+            <form method="post">
+                <button type="submit" name="btn" value="delete" style="background-color: red;">Видалити вікторину</button>
+            </form>
+        {% endif %}
+        
         <div class="questions">
             {% for question in quiz.questions %}
                 <hr>
