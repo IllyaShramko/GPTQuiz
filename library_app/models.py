@@ -103,7 +103,7 @@ class SessionParticipant(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('room.id'))
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
-    
+    session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
 
 class SessionAnswer(DATABASE.Model):
     __tablename__ = "session_answer"

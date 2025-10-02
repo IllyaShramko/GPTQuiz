@@ -26,8 +26,10 @@ def handle_join(data):
     if not room:
         emit("join_error", {"message": "Комната не найдена"})
         return
+    
+    session_id = session.sid if hasattr(session, 'sid') else request.sid
+    participant = SessionParticipant(nickname=username, room_id=room.id, session_id=session_id)
 
-    participant = SessionParticipant(nickname=username, room_id=room.id)
     try:
         DATABASE.session.add(participant)
         DATABASE.session.commit()
