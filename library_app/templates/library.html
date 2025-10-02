@@ -32,7 +32,7 @@ Library
 
     <div class="quizes">
         {% for quiz in created_quizes %}    
-            <div class="quiz">
+            <a href="/host/{{ quiz.id }}" class="quiz">
                 <img src="{{ url_for('library_app.static', filename= quiz.image) }}" alt="">
                 <div class="quiz-info">
                     <h3>{{ quiz.name }}</h3>
@@ -44,7 +44,7 @@ Library
                         <p>Було використано для <br> проходженння: {{ quiz.codes|length }}</p>
                     </div>
                 </div>
-            </div>
+            </a>
         {% endfor %}        
     </div>
 
