@@ -30,7 +30,7 @@
                     <h4>Приєднайтеся за посиланням</h4>
                     <button id="copy-url"><img src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
                 </div>
-                <a href="http://127.0.0.1:5000/execution/?code={{ code }}" target="__blank" id="linkToJoin">joinqptquiz.com</a>
+                <a href="" target="__blank" id="linkToJoin">joinqptquiz.com</a>
                 <div class="line"></div>
                 <div class="how-to-join">
                     <div>
@@ -227,7 +227,7 @@
 
             socket.on("quiz_results", data => {
                 if (data.url) {
-                    window.location.href = data.url;
+                    window.location.href = `${data.url}`;
                 }
             });
             

@@ -198,29 +198,8 @@
 
 
             socket.on("end_quiz", data => {
-                document.body.innerHTML = '';
-            
-                const resultDiv = document.createElement('div');
-                resultDiv.id = 'resultDiv';
-                resultDiv.innerHTML = `<h2>Вікторину завершено!</h2>`;
-                resultDiv.innerHTML += `<p>Правильних відповідей: ${data.correct_answers}</p>`;
-                resultDiv.innerHTML += `<p>Неправильних відповідей: ${data.notcorrect_answers}</p>`;
-                resultDiv.innerHTML += `<p>Відсоток успішності: ${data.percent}%</p>`;
-            
-                const participantAnswers = data.participant_answers; 
-                participantAnswers.forEach(answer => {
-                    const questionDiv = document.createElement('div');
-                    questionDiv.innerHTML = `<strong>Питання:</strong> ${answer.question_text}<br>`;
-                    questionDiv.innerHTML += `<strong>Варіанти:</strong> ${answer.variants.join(' | ')}<br>`;
-                    questionDiv.innerHTML += `<strong>Ваша відповідь:</strong> ${answer.answer} ${answer.is_correct ? "✅" : "❌"}`;
-                    resultDiv.appendChild(questionDiv);
-                });
-                
-            
-                document.body.appendChild(resultDiv);
-            
-                const waitingDiv = document.getElementById('waitingDiv');
-                if (waitingDiv) waitingDiv.remove();
+                url = window.location.origin + "/reportStudent/" + data.hash_code
+                window.location.href = url;
             });
             
         </script>

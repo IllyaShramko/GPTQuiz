@@ -1,7 +1,62 @@
 import flask
 from sqlalchemy import UniqueConstraint
 from project.settings import DATABASE
+import uuid
 # from user_app.models import User
+
+import uuid
+from sqlalchemy.sql import func
+
+class StudentReport(DATABASE.Model):
+    __tablename__ = "student_report"
+
+    id = DATABASE.Column(DATABASE.Integer, primary_key=True)
+
+    participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"), nullable=False)
+    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=False)
+
+    total_questions = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
+    correct_answers = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
+    wrong_answers = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
+
+    score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)       
+    max_score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)   
+    percentage = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)  
+
+    grade = DATABASE.Column(DATABASE.String(10), nullable=True)                
+
+    hash_code = DATABASE.Column(DATABASE.String(64), unique=True, nullable=False, default=lambda: uuid.uuid4().hex)
+    created_at = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
+
+    participant = DATABASE.relationship("SessionParticipant", backref="reports", lazy=True)
+    room = DATABASE.relationship("Room", backref="student_reports", lazy=True)
+
+    def calculate_from_answers(self, answers):
+        self.total_questions = len(answers)
+        self.correct_answers = sum(1 for a in answers if a.is_correct)
+        self.wrong_answers = self.total_questions - self.correct_answers
+
+        self.max_score = self.total_questions
+        self.score = self.correct_answers
+        self.percentage = round((self.correct_answers / self.total_questions) * 100) if self.total_questions else 0
+
+        self.grade = str(round(self.percentage * 12 / 100))
+
+    def to_dict(self):
+        return {
+            "participant": self.participant.nickname if self.participant else None,
+            "room_id": self.room_id,
+            "total_questions": self.total_questions,
+            "correct_answers": self.correct_answers,
+            "wrong_answers": self.wrong_answers,
+            "score": self.score,
+            "max_score": self.max_score,
+            "percentage": self.percentage,
+            "grade": self.grade,
+            "hash_code": self.hash_code,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
+
 
 class Question(DATABASE.Model):
     __tablename__ = 'question'
@@ -31,6 +86,7 @@ class Question(DATABASE.Model):
             "image": self.image,
             "answers": [a.to_dict() for a in self.answers] if self.answers else []
         }
+    
     
 
 
@@ -104,6 +160,7 @@ class SessionParticipant(DATABASE.Model):
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('room.id'))
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
+    is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
 
 class SessionAnswer(DATABASE.Model):
     __tablename__ = "session_answer"
@@ -206,3 +263,4 @@ class SessionAnswer(DATABASE.Model):
                 return answers
         elif question.type == "enter answer":
             return answersswer
+

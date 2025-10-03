@@ -3,6 +3,9 @@ const copyUrlBtn = document.getElementById('copy-url');
 const linkTo = document.getElementById('linkToJoin');
 const codeDisplay = document.getElementById('codeDisplay');
 
+linkTo.href = `${window.location.origin}/execution?code=${codeDisplay.textContent.trim()}`
+
+
 copyBtn.addEventListener('click', async () => {
     try {
         const text = codeDisplay.textContent.trim();

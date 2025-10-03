@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('execution_app.static', filename='css/summary.css') }}">
+        <title>Report</title>
+    </head>
+    <body>
+        <header>
+            <img src="{{ url_for('static', filename= 'images/atom.svg') }}" alt="">
+            <h1>GPTQuiz</h1>
+        </header>
+        
+        <h2 class="endText">Тест завершено!</h2>
+
+        <div class="main-info">
+            <div class="short-info">
+                <div class="names">
+                    <h2>{{ quiz.name }}</h2>
+                    <h3>Автор: {{ quiz.user.surname }} {{ quiz.user.name }}</h3>
+                    <h3>Вчитель: {{ name_teacher }}</h3>
+                </div>
+                <div class="total-questions">
+                    <h1>{{ quiz.questions|length }}</h1>
+                    <p>запитань</p>
+                </div>                
+            </div>
+            <hr>
+            <div class="main-short-info">
+                <div class="grade">
+                    
+                </div>
+                <div class="grade">
+                    <h4>Оцінка</h4>
+                    <div>
+                        <span>{{ gradef }}</span>
+                        <span>/</span>
+                        <span>12</span>
+                    </div>
+                </div>
+                <div class="grade">
+                    <h4>Сума балів</h4>
+                    <div>
+                        <span>{{ report.score }}</span>
+                        <span>/</span>
+                        <span>{{ report.max_score }}</span>
+                    </div>
+                </div>
+                <div class="grade">
+                    <h4>Результат</h4>
+                    <div>
+                        <span>{{ report.percentage }}</span>
+                        <span style="color: white;">%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="corr-wrong">
+                {% for ans in questions %}
+                    {% if ans.is_correct %}
+                        <div class="correcta answer"></div>
+                    {% else %}
+                        <div class="wronga answer"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="answersCorrWron">
+                <div>
+                    <span>{{ report.correct_answers }}</span><p> правильних</p>
+                </div>
+                <div>
+                    <span>{{ report.wrong_answers }}</span><p> неправильних</p>
+                </div>
+            </div>
+        </div>
+        {% for q in questions %}
+        <div class="question {{ 'correct' if q.is_correct else 'wrong' }}">
+            <h3>Вопрос №{{ loop.index }}: {{ q.text }}</h3>
+            
+            <p>Твой ответ: 
+                {% if q.type == "enter answer" %}
+                    {{ q.your_answer }}
+                {% else %}
+                    {% for answer1 in q.your_answer %}
+                        {{ answer1 }}, 
+                    {% endfor %}
+                {% endif %}
+            </p>
+            <!--  -->
+            <p>Правильный ответ: 
+                {% if q.type == "enter answer" %}
+                    {{ q.correct_answer }}
+                {% else %}
+                    {% for answer in q.correct_answer %}
+                        {{ answer }},     
+                    {% endfor %}
+                {% endif %}</p>
+            <p>{% if q.is_correct %} ✅ Правильно {% else %} ❌ Неправильно {% endif %}</p>
+        </div>
+        {% endfor %}
+    </body>
+</html>

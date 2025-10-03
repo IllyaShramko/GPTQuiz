@@ -2,3 +2,7 @@ venv/
 __pycache__/
 instance/
 migrations/
+# 
+library_app/static/images/quizes/*
+!library_app/static/images/quizes
+!library_app/static/images/quizes/default.svg

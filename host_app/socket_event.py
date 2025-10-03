@@ -1,10 +1,39 @@
 from project import DATABASE as db
 from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
-from library_app.models import RedeemCode, Quiz, Room, Question, SessionParticipant, SessionAnswer
+from library_app.models import RedeemCode, Quiz, Room, Question, SessionParticipant, SessionAnswer, StudentReport
 import json, flask, time
 from sqlalchemy import func
 from flask import request, session
+
+def create_student_report(participant_id, room_id):
+    answers = SessionAnswer.query.filter_by(room_id=room_id, participant_id=participant_id).all()
+    total = len(answers)
+    correct = sum(1 for a in answers if a.is_correct)
+    wrong = total - correct
+
+    max_score = total 
+    score = correct
+    percentage = int((correct / total) * 100) if total else 0
+
+    grade = f"{score}/{max_score}"
+
+    report = StudentReport(
+        participant_id=participant_id,
+        room_id=room_id,
+        total_questions=total,
+        correct_answers=correct,
+        wrong_answers=wrong,
+        score=score,
+        max_score=max_score,
+        percentage=percentage,
+        grade=grade,
+    )
+    DATABASE.session.add(report)
+    DATABASE.session.commit()
+
+    return report.hash_code
+
 
 @socketio.on("join_room")
 def handle_join(data):
@@ -28,7 +57,7 @@ def handle_join(data):
         return
     
     session_id = session.sid if hasattr(session, 'sid') else request.sid
-    participant = SessionParticipant(nickname=username, room_id=room.id, session_id=session_id)
+    participant = SessionParticipant(nickname=username, room_id=room.id, session_id=session_id, is_connected = True)
 
     try:
         DATABASE.session.add(participant)
@@ -40,7 +69,6 @@ def handle_join(data):
         emit("join_error", {"message": "Не удалось добавить участника"})
         return
 
-    # 👇 студент в 2 комнаты
     join_room(str(room.id))
     join_room(f"student_{participant.id}")
 
@@ -81,14 +109,14 @@ def handle_disconnect():
     room_id = participant.room_id
 
     try:
-        DATABASE.session.delete(participant)
+        participant.is_connected = False
         DATABASE.session.commit()
     except Exception as e:
         DATABASE.session.rollback()
         print("Ошибка при удалении участника:", e)
         return
 
-    participants = SessionParticipant.query.filter_by(room_id=room_id).all()
+    participants = SessionParticipant.query.filter_by(room_id=room_id).filter_by(is_connected = True).all()
     students = [p.nickname for p in participants]
     room = Room.query.get(room_id)
     if room:
@@ -293,31 +321,12 @@ def handle_quiz_end(data):
     if not redeem:
         return
 
-    quiz = Quiz.query.get(redeem.quiz)
     room = Room.query.get(redeem.room_id)
 
-    participant = SessionParticipant.query.get(session['participant_id'])
-    participant_answers = SessionAnswer.query.filter_by(
-        participant_id=participant.id,
-        room_id=room.id
-    ).all()
-
-    correct_answers = sum(1 for ans in participant_answers if ans.is_correct)
-    notcorrect_answers = len(participant_answers) - correct_answers
-    percent_successful = f"{correct_answers * 100 // len(quiz.questions)}" if quiz.questions else "0"
-
-    jsonlist = [ans.to_dict() for ans in participant_answers]
-
-    emit(
-        "end_quiz",
-        {
-            "correct_answers": correct_answers,
-            "participant_answers": jsonlist,
-            "percent": percent_successful,
-            "notcorrect_answers": notcorrect_answers
-        },
-        room=str(room.id)
-    )
+    report = create_student_report(participant_id= session['participant_id'], room_id=room.id)
+    print(report)
+    print(session)
+    emit("end_quiz", {'hash_code': report}, room= f"student_{session["participant_id"]}")
 
 @socketio.on("show_quiz_results")
 def handle_show_quiz_results(data):
@@ -344,7 +353,7 @@ def handle_end_question(data):
         for ans in SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
     }
 
-    all_participants = SessionParticipant.query.filter_by(room_id=room.id).all()
+    all_participants = SessionParticipant.query.filter_by(room_id=room.id).filter_by(is_connected = True).all()
 
     for participant in all_participants:
         if participant.id not in answered_ids:

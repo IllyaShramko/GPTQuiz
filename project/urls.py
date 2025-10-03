@@ -66,17 +66,10 @@ execution_app.execution_app.add_url_rule(
     methods = ["POST", "GET"]
 )
 
-
 execution_app.execution_app.add_url_rule(
-    rule= "/quiz/<int:quiz_id>/<int:question_index>/<result_id>",
-    view_func= execution_app.passing_quiz,
+    rule = '/reportStudent/<hash_code>',
+    view_func = execution_app.report_view,
     methods = ["POST", "GET"]
-)
-
-execution_app.execution_app.add_url_rule(
-    rule = "/result/<result_id>",
-    view_func = execution_app.render_results,
-    methods= ["POST", "GET"]
 )
 
 project.register_blueprint(blueprint = execution_app.execution_app)

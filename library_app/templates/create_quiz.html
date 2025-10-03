@@ -8,7 +8,7 @@
     <body>
         <header>
             <div>
-                <a href="/library/"><img src="{{url_for('library_app.static',filename= 'images/arrow.svg')}}"></a>
+                <a href="/library/" title="Вийти"><img src="{{url_for('library_app.static',filename= 'images/arrow.svg')}}"></a>
                 <p>Створення нової вікторини</p>
             </div>
             <button type="button" id="SaveAndExit"><p>Опублiкувати</p><img src="{{url_for('library_app.static',filename= 'images/public.svg')}}"></button>
@@ -51,16 +51,16 @@
                     
                     <form method="post" class ="type-questions">
                         <button name="button" value="one_answer" type="submit" class = 'type-request'>
-                            <img src="{{ url_for('library_app.static', filename = 'images/1_answer_question.png' )}}" alt="">
+                            <img src="{{ url_for('library_app.static', filename = 'images/oneAnswer.svg' )}}" alt="">
                             <h3>Одна відповідь</h3>
                         </button>
                         <button name = 'button' value="multiple_answers" type="submit" class ="type-request" >
-                            <img src="{{ url_for('library_app.static', filename = 'images/1_answer_question.png' )}}" alt="">
+                            <img src="{{ url_for('library_app.static', filename = 'images/multuple.svg' )}}" alt="">
                             <h3>Декiлька відповідей</h3>
                         </button>
 
                         <button name='button' value="enter_answer" type="submit" class ="type-request" >
-                            <img src="{{ url_for('library_app.static', filename = 'images/enter_answer_question.png' )}}" alt="">
+                            <img src="{{ url_for('library_app.static', filename = 'images/enter.svg' )}}" alt="">
                             <h3>Ввести відповідь</h3>
                         </button>
 
@@ -69,6 +69,7 @@
             {% else %}
                 {% if question == "One answer" %}
                     <form action ='' method="post" class = 'main-create-block'>
+                        <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
                         <h1>Створення запитання з однією відповіддю</h1>
 
                         <div class="create-block">
@@ -113,6 +114,7 @@
                     </form>
                 {% elif question == "Enter answer" %}
                     <form method="post" class = 'main-create-block'>
+                        <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
                         <h1>Створення запитання з заповненням бланка</h1>
                         <div class="all-block">
                             <div class="create-block">
@@ -130,6 +132,7 @@
                     </form>
                 {% elif question == "multiple answers" %}
                     <form action ='' method="post" class = 'main-create-block'>
+                        <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
                         <h1>Створення запитання з декількома відповідями</h1>
 
                         <div class="create-block">
