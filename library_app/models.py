@@ -161,6 +161,7 @@ class SessionParticipant(DATABASE.Model):
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
+    __table_args_ = (UniqueConstraint("room_id", "nickname", "session_id"))
 
 class SessionAnswer(DATABASE.Model):
     __tablename__ = "session_answer"

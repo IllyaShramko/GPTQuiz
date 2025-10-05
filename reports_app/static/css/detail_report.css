@@ -27,7 +27,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    
+    width: 1050px;
     align-items: center; 
 
     padding: 10px 20px 30px;
@@ -94,41 +94,104 @@
     border: white 1px solid;
     cursor: pointer;
 }
-/* .judah {
+.judah {
+    position: relative;
+    width: 98%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    border: 2px solid #2b2b2b;
+}
+.colors-of-correctness {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+}
+.colors-of-correctness div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+#correct {
+    width: 20px;
+    height: 20px;
+    background-color: #04C184;
+    border-radius: 45px;
+}
+#wrong {
+    width: 20px;
+    height: 20px;
+    background-color: #F03C39;
+    border-radius: 45px;
+}
+#passed {
+    width: 20px;
+    height: 20px;
+    background-color: #626875;
+    border-radius: 45px;
+}
+
+.sort-data {
+    width: 100%;
+    height: 44px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    background-color: #2b2b2b;
+}
+.sort-data p {
+    font-size: 20px;
     
-} */
+}
+
 .student-card {
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    padding: 10px;
+    width: 100%;
+    height: 85px;
+    gap: 25px;
+    padding: 10px 30px;
     align-items: center;
+    border-top: #2B2B2B 2px solid;
+}
+.nickname {
+    width: 180px;
+}
+.percent {
+    width: 100px;
+    padding-left: 40px;
 }
 .student-card h5 {
-    width: 100px;
+    font-size: 18px;
+    font-weight: 400;
 }
 .successful-a {
-    width: 500px;
-    height: 20px;
-    background-color: white;
+    width: 640px;
+    height: 22px;
+    background-color: #2b2b2b;
     border-radius: 15px;
     display: flex;
     flex-direction: row;
-    gap: 2px;
-    padding: 0;
+    gap: 5px;
     overflow: hidden;
-    border: 3px white solid;
 }
 .answer {
     width: 100%;
     height: 100%;
 }
 .correct {
-    background-color: #28f200;
+    background-color: #04C184;
 }
 .wrong {
-    background-color: red;
+    background-color: #F03C39;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -140,10 +203,9 @@
     background-color: rgba(0,0,0,0.4);
 }
 
-/* окошко */
 .modal-content {
     position: absolute;
-    bottom: -100%; /* спрятано */
+    bottom: -100%; 
     left: 0;
     width: 100%;
     background: #fff;
@@ -155,7 +217,6 @@
     overflow-y: auto;
 }
 
-/* анимация выезда */
 .modal.show .modal-content {
     bottom: 0;
 }
@@ -165,7 +226,6 @@
 b {
     color: black;
 }
-/* крестик */
 .close {
     float: right;
     font-size: 28px;

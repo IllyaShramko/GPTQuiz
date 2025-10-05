@@ -15,7 +15,6 @@
     <div class="summary-conteiner">
         <div class="reports">
             {% for room in rooms %}
-3
                 <a href="/report/{{ room.id }}" class="report">    
                     <h3 id="report-{{ room.id }}">Звіт по вікторині: {{ room.roomsQuiz }} ({{ room.id }})</h3>
                     <img class="preview" src="{{ url_for('library_app.static', filename= room.roomsQuiz.image) }}" alt="">
