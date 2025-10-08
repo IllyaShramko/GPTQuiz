@@ -110,6 +110,7 @@ class Room(DATABASE.Model):
     answered_students = DATABASE.Column(DATABASE.Integer, default=0)
     redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
     participants = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"), nullable=True)
+    date = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
     def get_report(self):
         from .models import SessionParticipant, SessionAnswer, Question
 
@@ -161,7 +162,7 @@ class SessionParticipant(DATABASE.Model):
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
-    __table_args_ = (UniqueConstraint("room_id", "nickname", "session_id"))
+    __table_args_ = (UniqueConstraint("room_id", "nickname", "session_id", name="uq_partc_once"))
 
 class SessionAnswer(DATABASE.Model):
     __tablename__ = "session_answer"

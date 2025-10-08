@@ -58,12 +58,16 @@
             </div>
         </div>
     </div>
-    <div id="studentModal" class="modal">
-        <div class="modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <h3 id="modalTitle"></h3>
-            <div id="modalAnswers"></div>
+    <div id="blur" style="display: none;"></div>
+    <div id="studentModal" class="modal" style="display: none;">
+        <div class="what-student">
+            <h3>Результати <b id="nicknameStudent"></b></h3>
         </div>
+        <div class="line-between"></div>
+        <div id="modalAnswers">
+            
+        </div>
+        <button id="closeModal" type="button">ОК</button>
     </div>
     <script src="{{ url_for('reports_app.static', filename='js/sort.js') }}"></script>
     <script src="{{ url_for('reports_app.static', filename='js/loadInfoStudent.js') }}"></script>

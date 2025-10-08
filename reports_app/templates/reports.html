@@ -9,19 +9,48 @@
 {% endblock %}
 
 {% block content %}
-    <header>
-        <h2>Звіти</h2>
-    </header>
-    <div class="summary-conteiner">
-        <div class="reports">
-            {% for room in rooms %}
-                <a href="/report/{{ room.id }}" class="report">    
-                    <h3 id="report-{{ room.id }}">Звіт по вікторині: {{ room.roomsQuiz }} ({{ room.id }})</h3>
-                    <img class="preview" src="{{ url_for('library_app.static', filename= room.roomsQuiz.image) }}" alt="">
-                    <button class="delete-report" id="{{ room.id }}"><img src="{{ url_for('reports_app.static', filename= 'images/delete.png') }}" title="Видалити звіт?"></button>
-                </a>
-            {% endfor %}
-        </div>
+    <div class="main">
+        <header>
+            <h2>Звіти вікторин</h2>
+        </header>
+        <div class="summary-conteiner">
+            <div class="reports-main">
+                <div class="reports-info">
+                    <div class="titles">
+                        <div class="name-div">
+                            <h3>Код</h3>
+                            <h3>І'мя</h3>
+                            <!-- 同性恋就是我们的一切 -->
+                        </div>
+                        <div class="info-div">
+                            <h3 id="successful">Успішність</h3>
+                            <h3 id="passed">Пройшло</h3>
+                            <h3 id="date">Дата</h3>
+                        </div>
+                    </div>
+                    <div class="reports">
+                        {% for room in rooms %}
+                            <a href="/report/{{ room.id }}" class="report">    
+                                <div class="titleRoom">
+                                    <img src="{{ url_for('library_app.static', filename=room.roomsQuiz.image) }}" alt="">
+                                    <h3>({{ room.redeem_codes[0].code_enter }}) {{ room.roomsQuiz.name }}</h3>
+                                </div>
+                                <div class="infoRoom">
+                                    <div id="rate">
+                                        {{ room.success_rate }}%
+                                    </div>
+                                    <div id="students">
+                                        {{ room.student_reports|length }}
+                                    </div>
+                                    <p id="date1">{{ room.date.strftime('%d.%m.%Y') if room.date else '' }}</p>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>  
+
     </div>
     <div class="blur hideform" id="blur"></div>
     <form method="post" id="saveForm" class="form hideform" enctype="multipart/form-data">
