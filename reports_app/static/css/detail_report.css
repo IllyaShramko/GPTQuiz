@@ -1,6 +1,18 @@
 * {
     color: white;
 }
+#deleteReport{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    background-color: #212121;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
 .wrapper{
     position: absolute;
     display: flex;
@@ -288,4 +300,57 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(2.5px);
+}
+#deleteModal{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    flex-direction: column;
+    align-items: center;
+    background-color: #3e3e3e;
+    border-radius: 14px;
+    padding: 10px;
+    gap: 15px;
+}
+#deleteModal h3{
+    font-size: 24px;
+    font-weight: 300;
+}
+#deleteModal h3 span{
+    font-weight: 600;
+    text-decoration: underline;
+}
+#deleteModal hr {
+    width: 95%;
+    border: 1px solid #696969;
+}
+#deleteModal p{
+    font-size: 18px;
+    font-weight: 300;
+    text-align: center;
+    line-height: 1.4;
+    padding: 0 10px;
+}
+.buttons {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+.button {
+    width: 152px;
+    height: 41px;
+    font-size: 16px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#cancel {
+    background-color: #B26FFF;
+    border: none;
+}
+#confirm {
+    background: none;
+    border: 2px solid white;
 }

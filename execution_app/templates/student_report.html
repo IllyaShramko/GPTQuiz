@@ -18,7 +18,9 @@
             <div class="short-info">
                 <div class="names">
                     <h2>{{ quiz.name }}</h2>
-                    <h3>Автор: {{ quiz.user.surname }} {{ quiz.user.name }}</h3>
+                    {% if quiz %}
+                        <h3>Автор: {{ quiz.user.surname }} {{ quiz.user.name }}</h3>
+                    {% endif %}
                     <h3>Вчитель: {{ name_teacher }}</h3>
                 </div>
                 <div class="total-questions">
@@ -73,43 +75,45 @@
                 </div>
             </div>
         </div>
-        <div class="questions">
-            {% for q in questions %}
-                <div class="question {{ 'correct' if q.is_correct else 'wrong' }}">
-                    <h3>Запитання №{{ loop.index }}:</h3>
-                    <h4>{{ q.text }}</h4>
-                    <div class="answers">
-                        <p>
-                            Ваша відповідь: 
-                            {% if q.type == "enter answer" %}
-                                {{ q.your_answer }}
-                            {% elif q.type == "one answer" %}
-                                {% for answer1 in q.your_answer %}
-                                    {{ answer1 }}
-                                {% endfor %}
-                            {% else %}
-                                {% for answer1 in q.your_answer %}
-                                    {{ answer1 }}, 
-                                {% endfor %}
-                            {% endif %}
-                        </p>
-                        <p>
-                            Правильна відповідь: 
-                            {% if q.type == "enter answer" %}
-                                {{ q.correct_answer }}
-                            {% elif q.type == "one answer" %}
-                                {% for answer in q.correct_answer %}
-                                    {{ answer }}   
-                                {% endfor %}
-                            {% else %}
-                                {% for answer in q.correct_answer %}
-                                    {{ answer }},   
-                                {% endfor %}
-                            {% endif %}</p>
+        {% if questions|length > 0 %}
+            <div class="questions">
+                {% for q in questions %}
+                    <div class="question {{ 'correct' if q.is_correct else 'wrong' }}">
+                        <h3>Запитання №{{ loop.index }}:</h3>
+                        <h4>{{ q.text }}</h4>
+                        <div class="answers">
+                            <p>
+                                Ваша відповідь: 
+                                {% if q.type == "enter answer" %}
+                                    {{ q.your_answer }}
+                                {% elif q.type == "one answer" %}
+                                    {% for answer1 in q.your_answer %}
+                                        {{ answer1 }}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for answer1 in q.your_answer %}
+                                        {{ answer1 }}, 
+                                    {% endfor %}
+                                {% endif %}
+                            </p>
+                            <p>
+                                Правильна відповідь: 
+                                {% if q.type == "enter answer" %}
+                                    {{ q.correct_answer }}
+                                {% elif q.type == "one answer" %}
+                                    {% for answer in q.correct_answer %}
+                                        {{ answer }}   
+                                    {% endfor %}
+                                {% else %}
+                                    {% for answer in q.correct_answer %}
+                                        {{ answer }},   
+                                    {% endfor %}
+                                {% endif %}</p>
+                        </div>
+                        <p class="points">{% if q.is_correct %}1/1{% else %}0/1{% endif %}</p>
                     </div>
-                    <p class="points">{% if q.is_correct %}1/1{% else %}0/1{% endif %}</p>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </body>
 </html>

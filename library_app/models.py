@@ -13,7 +13,7 @@ class StudentReport(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key=True)
 
     participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"), nullable=False)
-    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=False)
+    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=True)
 
     total_questions = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
     correct_answers = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
@@ -158,7 +158,7 @@ class Quiz(DATABASE.Model):
 
 class SessionParticipant(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
-    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('room.id'))
+    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('room.id'), nullable=True)
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
@@ -168,7 +168,7 @@ class SessionAnswer(DATABASE.Model):
     __tablename__ = "session_answer"
 
     id = DATABASE.Column(DATABASE.Integer, primary_key=True)
-    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
+    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=True)
     question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("question.id"))
     participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
     answer = DATABASE.Column(DATABASE.JSON(), nullable=True)

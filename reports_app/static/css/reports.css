@@ -81,6 +81,7 @@ header h2{
     padding-right: 50px;
     gap: 10px;
     text-decoration: none;
+    border-top: 2px #2b2b2b solid;
 }
 .titleRoom {
     display: flex;

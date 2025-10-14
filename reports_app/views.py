@@ -1,5 +1,5 @@
 import flask, flask_login
-from library_app.models import Quiz, RedeemCode, Room, SessionParticipant, SessionAnswer
+from library_app.models import Quiz, RedeemCode, StudentReport, Room, SessionParticipant, SessionAnswer
 from project.settings import DATABASE
 
 def render_reports_page():
@@ -20,6 +20,17 @@ def render_reports_page():
 
 def render_detail_report(room_id):
     room = Room.query.get_or_404(room_id)
+    if room.host != flask_login.current_user.id:
+        return {"error": "forbidden"}, 403
+    if flask.request.method == "POST":
+        try:
+            DATABASE.session.delete(room)
+            DATABASE.session.commit()
+        except Exception as e:
+            print(e)
+            DATABASE.session.rollback()
+            return {"error": "internal server error"}, 500
+        return flask.redirect("/reports/")
     report_data = room.get_report()
     return flask.render_template("detail_report.html", report=report_data, room=room)
 

@@ -23,27 +23,34 @@ def report_view(hash_code):
     participant = SessionParticipant.query.get(report.participant_id)
     print(report.participant_id)
     room = report.room
-
-    host = User.query.get(room.host)
-    name_teacher = f'{host.surname} {host.name}'
+    questions = []
+    if room:
+        host = User.query.get(room.host)
+        name_teacher = f'{host.surname} {host.name}'
+        answers = SessionAnswer.query.filter_by(room_id=room.id, participant_id=participant.id).all()
+        for a in answers:
+            q = Question.query.get(a.question)
+            questions.append({
+                "id": q.id,
+                "text": q.name,
+                "type": q.type,
+                "your_answer": a.get_answer(a.answer),
+                "correct_answer": a.right_answers(),
+                "is_correct": a.is_correct,
+            })
+        roomsquiz = room.roomsQuiz
+    else:
+        host = None
+        name_teacher = f'Невідомо'
+        answers = []
+        roomsquiz = None
+    
     print(name_teacher)
-    answers = SessionAnswer.query.filter_by(room_id=room.id, participant_id=participant.id).all()
 
     gradef = int(report.percentage / 100 * 12 // 1)
     num = report.percentage / 100 * 12 - gradef
     if num >= 0.5:
         gradef += 1
     
-    questions = []
-    for a in answers:
-        q = Question.query.get(a.question)
-        questions.append({
-            "id": q.id,
-            "text": q.name,
-            "type": q.type,
-            "your_answer": a.get_answer(a.answer),
-            "correct_answer": a.right_answers(),
-            "is_correct": a.is_correct,
-        })
 
-    return flask.render_template("student_report.html", gradef= gradef, name_teacher=name_teacher, report=report, participant=participant, quiz=room.roomsQuiz, questions=questions)
+    return flask.render_template("student_report.html", gradef= gradef, name_teacher=name_teacher, report=report, participant=participant, quiz=roomsquiz, questions=questions)
