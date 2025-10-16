@@ -29,7 +29,9 @@
             const code = urlParams.get("code");
             const div = document.getElementById('lobby');
             let answered = false;
-            let username;
+            let username, answer1, answerDiv;
+            
+            
             const quizId = '{{ quiz.id }}'
 
             function join() {
@@ -58,14 +60,48 @@
                 `;
                 document.body.appendChild(waitingDiv);
                 waitingDiv.classList.add('waiting-div');
-
+                if (document.getElementById('sendBtn')){
+                    document.getElementById('sendBtn').disabled = true
+                    document.getElementById('sendBtn').style.cursor = "not-allowed"
+                } 
 
             }
             
-            function uploadAnswer(answer, questionID) {
+            function uploadAnswer(answer, questionID, btnValue) {
                 if (answered) {
                     return
                 }
+                answer1 = answer
+                answersDiv = document.getElementById('answers');
+                answers = answersDiv.querySelectorAll('.answer-button');
+                
+                if (!Array.isArray(answer1)) {
+                    try {
+                        answerDiv = document.getElementById(`answerBtn${answer}`);
+                        answers.forEach(btn => {
+                            if (btn.value != btnValue) {
+                                btn.style.opacity = 0
+                            }
+                        });
+                        answerDiv.style.opacity = 1;
+                    }
+                    catch {
+                        console.log("No button found for this answer type");
+                    }
+                    
+                }
+                else if (Array.isArray(answer1)) {
+                    answers.forEach(btn => {
+                        if (btnValue.includes(parseInt(btn.value))) {
+                            btn.style.opacity = 0
+                        }
+                        else {
+                            btn.style.opacity = 1
+                        }
+                    });
+                    
+                }
+
                 answered = !answered
                 socket.emit("answer", {answer: answer, question_id: questionID, username, code});
                 blockPanel();
@@ -111,7 +147,7 @@
                             alert("Выбери хотя бы один вариант!");
                             return;
                         }
-                        uploadAnswer(checked, data.id);
+                        uploadAnswer(checked, data.id, checked);
                     };
                     generalDiv.appendChild(sendBtn);
 
@@ -146,14 +182,22 @@
                     btn4.textContent = `${data.variant_4}`;
 
                     btn1.id = 'answerBtn1';
+                    btn1.value = 1;
+                    btn1.classList.add('answer-button');
                     btn2.id = 'answerBtn2';
+                    btn2.value = 2;
+                    btn2.classList.add('answer-button');
                     btn3.id = 'answerBtn3';
+                    btn3.value = 3;
+                    btn3.classList.add('answer-button');
                     btn4.id = 'answerBtn4';
+                    btn4.value = 4;
+                    btn4.classList.add('answer-button');
 
-                    btn1.onclick = () => uploadAnswer(1, data.id);
-                    btn2.onclick = () => uploadAnswer(2, data.id);
-                    btn3.onclick = () => uploadAnswer(3, data.id);
-                    btn4.onclick = () => uploadAnswer(4, data.id);
+                    btn1.onclick = () => uploadAnswer(1, data.id, btn1.value);
+                    btn2.onclick = () => uploadAnswer(2, data.id, btn2.value);
+                    btn3.onclick = () => uploadAnswer(3, data.id, btn3.value);
+                    btn4.onclick = () => uploadAnswer(4, data.id, btn4.value);
 
                     answersDiv.appendChild(btn1);
                     answersDiv.appendChild(btn2);
@@ -190,6 +234,35 @@
                     <p>${data.is_correct ? "✅ Правильно!" : "❌ Неправильно!"}</p>
                     <p>Правильный ответ: <b>${data.correct_answer}</b></p>
                 `;
+                if (data.type === 'one answer') {
+                    if (data.is_correct) {
+                        const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                        answerBtn.style.opacity = 1;
+                        answerBtn.style.backgroundColor = 'green';
+                    }
+                    else {
+                        const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                        answerBtn.style.opacity = 1;
+                        answerBtn.style.backgroundColor = 'red';
+                        const correctBtn = document.getElementById(`answerBtn${data.correct_answer_id}`);
+                        if (correctBtn) {
+                            correctBtn.style.opacity = 1;
+                            correctBtn.style.backgroundColor = 'green';
+                        }
+                    }
+                }
+                else if (data.type === 'multiple answers') {
+                    const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                    userAnswerBtns.forEach(btn => {
+                        btn.style.opacity = 1;
+                        btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
+                    });
+                    const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                    correctAnswerBtns.forEach(btn => {
+                        btn.style.opacity = 1;
+                        btn.style.backgroundColor = 'green';
+                    });
+                }
             });
 
             socket.on("end_msg", data => {

@@ -384,7 +384,10 @@ def handle_end_question(data):
             "nickname": participant.nickname,
             "answer": user_answer_text,
             "is_correct": ans.is_correct,
-            "correct_answer": correct_text
+            "correct_answer": correct_text,
+            "answer_id": ans.answer,
+            "correct_answer_id": current_question.correct_answer,
+            "type": current_question.type
         })
 
     for res in results:
@@ -393,7 +396,10 @@ def handle_end_question(data):
             {
                 "your_answer": res["answer"],
                 "is_correct": res["is_correct"],
-                "correct_answer": res["correct_answer"]
+                "correct_answer": res["correct_answer"],
+                "answer_id": res["answer_id"],
+                "type": res["type"],
+                "correct_answer_id": res["correct_answer_id"]
             },
             room=f"student_{res['student_id']}"
         )
