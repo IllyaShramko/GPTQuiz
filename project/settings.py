@@ -11,6 +11,11 @@ project = flask.Flask(
 project.config['SECRET_KEY'] = "secret"
 project.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 
+@project.route('/')
+def index():
+    print("Index page accessed")
+    return "Hello World! SocketIO works!"
+print(231231)
 DATABASE = flask_sqlalchemy.SQLAlchemy(app=project)
 migrate = flask_migrate.Migrate(app=project, db=DATABASE)
 
