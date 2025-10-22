@@ -1,1 +1,1 @@
-web: gunicorn -k eventlet -w 1 manage:project
+web: gunicorn -k eventlet -w 1 wsgi:project
