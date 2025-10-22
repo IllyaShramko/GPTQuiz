@@ -121,6 +121,13 @@
                 const title = document.createElement('h2');
                 title.textContent = data.name;
                 console.log(questionDiv, title, generalDiv);
+                if (data.image) {
+                    const img = document.createElement('img');
+                    img.src = `/library/images/${data.image}`;
+                    img.alt = "Question Image";
+                    img.classList.add('question-image');
+                    questionDiv.appendChild(img);
+                }
                 questionDiv.appendChild(title);
                 const answersDiv = document.createElement('div');
                 answersDiv.id = 'answers';
@@ -234,13 +241,8 @@
                     <p>${data.is_correct ? "✅ Правильно!" : "❌ Неправильно!"}</p>
                     <p>Правильный ответ: <b>${data.correct_answer}</b></p>
                 `;
-                const allBtns = document.querySelectorAll('.answer-button, label'); // Вибираємо всі кнопки відповідей
+                const allBtns = document.querySelectorAll('.answer-button, label');
                 if (data.type === 'one answer') {
-                    allBtns.forEach(btn => {
-                    const btnId = parseInt(btn.value);
-                    if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
-                        btn.remove(); 
-                    }});
                     if (data.is_correct) {
                         const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
                         answerBtn.style.opacity = 1;
@@ -258,16 +260,16 @@
                     }
                 }
                 else if (data.type === 'multiple answers') {
+                    allBtns.forEach(btn => {
+                        const btnId = parseInt(btn.value);
+                        if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
+                            btn.style.opacity = 0; 
+                    }});
                     const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
                     userAnswerBtns.forEach(btn => {
                         btn.style.opacity = 1;
                         btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
                     });
-                    allBtns.forEach(btn => {
-                    const btnId = parseInt(btn.value);
-                    if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
-                        btn.remove(); 
-                    }});
                     const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
                     correctAnswerBtns.forEach(btn => {
                         btn.style.opacity = 1;

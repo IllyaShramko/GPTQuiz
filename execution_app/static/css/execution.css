@@ -200,19 +200,26 @@ main {
 
     width: 100%;
     height: 50%;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 15px;
     padding: 20px;
     color: white;
     overflow-y: auto;
+
 }
 #question h2 {
     font-family: "Inter";
     font-weight: bold;     
     font-size: 28px;
     text-align: center;
+    width: 70%;
+}
+#question img.question-image {
+    max-width: 25%;
+    max-height: 100%;
+    border-radius: 10px;
 }
 #answers {
     position: relative;

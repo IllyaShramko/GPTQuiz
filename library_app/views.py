@@ -77,6 +77,22 @@ def render_create_quiz():
 
                     quiz_id = int(flask.request.cookies.get("draft"))
                 )
+                q_image = flask.request.files['image']
+                if q_image:
+                    filename = secure_filename(q_image.filename)
+                    name, ext = os.path.splitext(secure_filename(q_image.filename))
+                    save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "questions", filename)
+                    counter = 1
+                    
+                    while os.path.exists(save_path):
+                        new_filename = f"{name}_{counter}{ext}"
+                        save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "questions", new_filename)
+                        counter += 1
+                    
+                    final_filename = os.path.basename(save_path)
+                    print(os.path.abspath(save_path), final_filename, q_image)
+                    q_image.save(os.path.abspath(save_path))
+                    question.image = f"questions/{final_filename}"
                 try:
                     DATABASE.session.add(question)
                     quiz.count_questions += 1
@@ -110,6 +126,22 @@ def render_create_quiz():
                     correct_answer = flask.request.form.getlist('correct answer'),
                     quiz_id = int(flask.request.cookies.get('draft'))
                 )
+                q_image = flask.request.files['image']
+                if q_image:
+                    filename = secure_filename(q_image.filename)
+                    name, ext = os.path.splitext(secure_filename(q_image.filename))
+                    save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "questions", filename)
+                    counter = 1
+                    
+                    while os.path.exists(save_path):
+                        new_filename = f"{name}_{counter}{ext}"
+                        save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "questions", new_filename)
+                        counter += 1
+                    
+                    final_filename = os.path.basename(save_path)
+                    print(os.path.abspath(save_path), final_filename, q_image)
+                    q_image.save(os.path.abspath(save_path))
+                    question.image = f"questions/{final_filename}"
                 try:
                     DATABASE.session.add(question)
                     quiz.count_questions += 1

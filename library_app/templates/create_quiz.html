@@ -68,13 +68,16 @@
                 </div>
             {% else %}
                 {% if question == "One answer" %}
-                    <form action ='' method="post" class = 'main-create-block'>
+                    <form action ='' method="post" class = 'main-create-block' enctype="multipart/form-data">
                         <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
                         <h1>Створення запитання з однією відповіддю</h1>
-
                         <div class="create-block">
-
+                            
                             <textarea name = 'question' class = 'input-question'  placeholder="Введіть запитання..."></textarea>
+                            <label for="imageQuestion" class="label-for-image">
+                                <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
+                            </label>
+                            <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
                             
                             <div class="answers-block">
 
@@ -131,13 +134,17 @@
                         </div>
                     </form>
                 {% elif question == "multiple answers" %}
-                    <form action ='' method="post" class = 'main-create-block'>
+                    <form action ='' method="post" class = 'main-create-block' enctype="multipart/form-data">
                         <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
                         <h1>Створення запитання з декількома відповідями</h1>
 
                         <div class="create-block">
-
+                            
                             <textarea name = 'question' class = 'input-question'  placeholder="Введіть запитання..."></textarea>
+                            <label for="imageQuestion" class="label-for-image">
+                                <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
+                            </label>
+                            <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
                             
                             <div class="answers-block">
 
@@ -206,5 +213,6 @@
         </form>
         <script src="{{ url_for('library_app.static',filename= 'js/openCloseModel.js') }}"></script>
         <script src="{{ url_for('library_app.static',filename= 'js/checkCorrect.js') }}"></script>
+        <script src="{{ url_for('library_app.static',filename= 'js/uploadImageQ.js') }}"></script>
     </body>
 </html>

@@ -15,7 +15,8 @@ def render_reports_page():
             print(0)
     return flask.render_template(
         template_name_or_list='reports.html',
-        rooms=rooms
+        rooms=rooms,
+        username = flask_login.current_user.login
     )
 
 def render_detail_report(room_id):
@@ -32,7 +33,7 @@ def render_detail_report(room_id):
             return {"error": "internal server error"}, 500
         return flask.redirect("/reports/")
     report_data = room.get_report()
-    return flask.render_template("detail_report.html", report=report_data, room=room)
+    return flask.render_template("detail_report.html", report=report_data, room=room, username = flask_login.current_user.login)
 
 def get_student_report(student_id):
     student = SessionParticipant.query.get(student_id)
