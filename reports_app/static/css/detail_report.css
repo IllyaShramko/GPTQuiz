@@ -233,7 +233,7 @@
     flex-direction: column;
     width: 100%;
     gap: 10px;
-    max-height: 752px;
+    max-height: 95%;
     overflow-y: scroll;
 }
 .question{
