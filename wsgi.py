@@ -1,5 +1,7 @@
+print("Before any imports")
 import eventlet
-eventlet.monkey_patch()  
+eventlet.monkey_patch()
+print("After monkey_patch")
 
 from project import project, socketio  
 

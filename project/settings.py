@@ -1,6 +1,3 @@
-import eventlet
-eventlet.monkey_patch()
-
 import flask
 import flask_migrate, flask_sqlalchemy
 from flask_socketio import SocketIO, emit
