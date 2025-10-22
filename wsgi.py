@@ -1,10 +1,11 @@
-from flask import Flask
-from flask_socketio import SocketIO
+import project 
+import os
 
-project = Flask(__name__)
+def HelloWorld(world):
+    print(world)
 
-@project.route('/')
-def index():
-    return "Hello World! SocketIO works!"
+HelloWorld("Print")
 
-socketio = SocketIO(app=project, async_mode='gevent')
+# if __name__ == '__main__':
+#     port = int(os.environ.get("PORT", 8080))
+#     project.socketio.run(project.project, host="127.0.0.1", port=port, debug=False)
