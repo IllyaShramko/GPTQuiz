@@ -1,1 +1,1 @@
-web: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker wsgi:project --bind 0.0.0.0:8080
+web: python wsgi.py
