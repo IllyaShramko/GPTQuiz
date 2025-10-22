@@ -13,5 +13,5 @@ project.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 DATABASE= flask_sqlalchemy.SQLAlchemy(app= project)
 
 migrate= flask_migrate.Migrate(app= project, db= DATABASE)
-socketio = SocketIO(app=project, async_mode='eventlet')
+socketio = SocketIO(app=project)
 
