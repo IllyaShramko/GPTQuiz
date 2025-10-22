@@ -1,5 +1,4 @@
-import project 
-import os
+from project.settings import project, socketio
 
 def HelloWorld(world):
     print(world)
