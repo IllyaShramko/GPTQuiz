@@ -37,7 +37,7 @@ Library
                 <div class="quiz-info">
                     <h3>{{ quiz.name }}</h3>
                     <div>
-                        <p id="desc">{{ quiz.description }}</p>
+                        <p class="desc">{{ quiz.description }}</p>
                         <hr>
                         <p>{{ quiz.count_questions }} Запитань</p>
                         <hr>
@@ -47,5 +47,5 @@ Library
             </a>
         {% endfor %}        
     </div>
-
+    <script src="{{ url_for('library_app.static', filename='js/description.js') }}"></script>
 {% endblock %}
