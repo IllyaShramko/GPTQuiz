@@ -9,28 +9,28 @@
 {% endblock %}
 
 {% block content %}
-<div class="welcome">
-    <p class="welcome-text">Представляємо вам <span>Освітницький комплекс</span></p>
-    <h1 class="quote">Зручно, Швидко, Актуально</h1>
-    <div class="line"></div>
-    <h2 class="welcome-information"><span id="name">GPTQuiz</span> - твій зручний помічний у навчанні та роботі,<br> це платформа для <span>створення</span>, <span>проходження</span> <br> та <span>аналізу </span>вікторин</h2>
-</div>
-<div class="block-quizes">
-    <h2>Популярні вікторини</h2>
-    <div class="quizes">
-        {% for quiz in quizes %}
-            <a href="/host/{{ quiz.id }}" class="quiz">
-                <img src="{{ url_for('library_app.static', filename= quiz.image) }}" alt="">
-                <h3>{{ quiz.name }}</h3>
-                <h4>Aвтор: {{ quiz.user.surname }} {{ quiz.user.name }}</h4>
-                <p class="description">Опис: {{ quiz.description }}</p>
-                <hr>
-                <p>{{ quiz.count_questions }} запитань</p>
-                <hr>
-                <p>{{ quiz.codes|length }} переглядів</p>
-            </a>
-        {% endfor %}
+    <div class="welcome">
+        <p class="welcome-text">Представляємо вам <span>Освітницький комплекс</span></p>
+        <h1 class="quote">Зручно, Швидко, Актуально</h1>
+        <div class="line"></div>
+        <h2 class="welcome-information"><span id="name">GPTQuiz</span> - твій зручний помічний у навчанні та роботі,<br> це платформа для <span>створення</span>, <span>проходження</span> <br> та <span>аналізу </span>вікторин</h2>
     </div>
-</div>
-
+    <div class="block-quizes">
+        <h2>Популярні вікторини</h2>
+        <div class="quizes">
+            {% for quiz in quizes %}
+                <a href="/host/{{ quiz.id }}" class="quiz">
+                    <img src="{{ url_for('library_app.static', filename= quiz.image) }}" alt="">
+                    <h3>{{ quiz.name }}</h3>
+                    <h4>Aвтор: {{ quiz.user.surname }} {{ quiz.user.name }}</h4>
+                    <p class="description">Опис: {{ quiz.description }}</p>
+                    <hr>
+                    <p>{{ quiz.count_questions }} запитань</p>
+                    <hr>
+                    <p>{{ quiz.codes|length }} переглядів</p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <script src="{{ url_for('home_app.static', filename='js/description.js') }}"></script>
 {% endblock %}

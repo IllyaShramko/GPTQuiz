@@ -163,7 +163,7 @@ textarea:focus, input:focus{
     font-weight: 300;
 }
 
-#desc {
+.desc {
     height: 100px;
 }
 .quiz img {
