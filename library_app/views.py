@@ -16,6 +16,8 @@ def render_library():
 
 def get_draft():
     create_quiz_id = len(Quiz.query.all()) + 1
+    print("Create quiz id:", create_quiz_id)
+    print(Quiz.query.all(), len(Quiz.query.all()))
     return {"create_quiz_id": create_quiz_id}
 
 def render_create_quiz():
