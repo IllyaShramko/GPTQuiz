@@ -23,6 +23,13 @@
             <h2>Під'єднані користувачі:</h2>
             <ul id="users"></ul>
         </div>
+        <div id="modalImage" class="modal hidemodal">
+            <button id="closeModal"><img src="{{ url_for('library_app.static', filename='images/close.svg') }}"></button>
+            <div>
+                <img id="modalImageContent" src="" alt="Modal Image">
+            </div>
+        </div>
+        <div id="Wblur" class="hideblur"></div>
         <script>
             const socket = io();
             const urlParams = new URLSearchParams(window.location.search);
@@ -126,6 +133,7 @@
                     img.src = `/library/images/${data.image}`;
                     img.alt = "Question Image";
                     img.classList.add('question-image');
+                    img.id = 'questionImage';
                     questionDiv.appendChild(img);
                 }
                 questionDiv.appendChild(title);
@@ -212,8 +220,31 @@
                     answersDiv.appendChild(btn4);
                 }
                 generalDiv.appendChild(questionDiv);
+                
                 generalDiv.appendChild(answersDiv);
                 document.body.appendChild(generalDiv);
+                if (data.image) {
+                    const qImage = document.getElementById('questionImage');
+                    const Wblur = document.getElementById('Wblur');
+                    qImage.addEventListener('click', () => {
+                        const img = document.getElementById('modalImageContent');
+                        img.src = qImage.src;
+                        const modal = document.getElementById('modalImage');
+                        modal.classList.remove('hidemodal');
+                        Wblur.classList.remove('hideblur');
+                    });
+                    const closeModalBtn = document.getElementById('closeModal');
+                    closeModalBtn.addEventListener('click', () => {
+                        const modal = document.getElementById('modalImage');
+                        modal.classList.add('hidemodal');
+                        Wblur.classList.add('hideblur');
+                    });
+                    Wblur.addEventListener('click', () => {
+                        const modal = document.getElementById('modalImage');
+                        modal.classList.add('hidemodal');
+                        Wblur.classList.add('hideblur');
+                    });
+                }
                 document.getElementById('waitingDiv').remove();
             });
             
@@ -234,13 +265,6 @@
 
             socket.on("student_result", (data) => {
                 console.log("👉 Результат студента:", data);
-
-                const resultDiv = document.getElementById("student-result");
-                resultDiv.innerHTML = `
-                    <p>Твой ответ: <b>${data.your_answer}</b></p>
-                    <p>${data.is_correct ? "✅ Правильно!" : "❌ Неправильно!"}</p>
-                    <p>Правильный ответ: <b>${data.correct_answer}</b></p>
-                `;
                 const allBtns = document.querySelectorAll('.answer-button, label');
                 if (data.type === 'one answer') {
                     if (data.is_correct) {
