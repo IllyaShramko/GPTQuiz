@@ -88,7 +88,10 @@ def render_create_quiz():
                         new_filename = f"{name}_{counter}{ext}"
                         save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "questions", new_filename)
                         counter += 1
-                    
+                    try:
+                        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                    except Exception as e:
+                        print(f"92 Directory already exists: {e}")
                     final_filename = os.path.basename(save_path)
                     print(os.path.abspath(save_path), final_filename, q_image)
                     q_image.save(os.path.abspath(save_path))
