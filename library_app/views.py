@@ -2,7 +2,7 @@ import flask, flask_login, os
 from .models import Quiz, Question
 from project.settings import DATABASE
 from werkzeug.utils import secure_filename
-
+from sqlalchemy import func
 def render_library():
     
     
@@ -15,10 +15,12 @@ def render_library():
         )
 
 def get_draft():
-    create_quiz_id = len(Quiz.query.all()) + 1
-    print("Create quiz id:", create_quiz_id)
+    next_id = DATABASE.session.query(func.max(Quiz.id)).scalar()
+    next_id = (next_id or 0) + 1
+    print(next_id)
+    print("Create quiz id:", next_id)
     print(Quiz.query.all(), len(Quiz.query.all()))
-    return {"create_quiz_id": create_quiz_id}
+    return {"create_quiz_id": next_id}
 
 def render_create_quiz():
     questions = []
