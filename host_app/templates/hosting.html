@@ -53,7 +53,15 @@
         <div class="mini-menu">
             
         </div>
-        
+
+        <div id="modalImage" class="modal hidemodal">
+            <button id="closeModal"><img src="{{ url_for('library_app.static', filename='images/close.svg') }}"></button>
+            <div>
+                <img id="modalImageContent" src="" alt="Modal Image">
+            </div>
+        </div>
+        <div id="Wblur" class="hideblur"></div>
+
         <script>
             const socket = io();
             const code = "{{ code }}"; 
@@ -185,7 +193,12 @@
                 }
                 questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
-                questionDiv.innerHTML = `<h2>${data.name}</h2>`;
+                if (data.image) {
+                    questionDiv.innerHTML = `<img id="questionImage" src="/library/images/${data.image}" class="q-image"><h2>${data.name}</h2>`;
+                }
+                else {
+                    questionDiv.innerHTML = `<h2>${data.name}</h2>`;
+                }
                 const answersDiv = document.createElement("div")
                 answersDiv.id = 'answerDiv'
                 if (data.type != "enter answer") {
@@ -195,6 +208,28 @@
                     answersDiv.innerHTML += `<p class="answerv">${data.variant_4}</p>`;
                 }
                 div.appendChild(questionDiv);
+                if (data.image) {
+                    const qImage = document.getElementById('questionImage');
+                    const Wblur = document.getElementById('Wblur');
+                    qImage.addEventListener('click', () => {
+                        const img = document.getElementById('modalImageContent');
+                        img.src = qImage.src;
+                        const modal = document.getElementById('modalImage');
+                        modal.classList.remove('hidemodal');
+                        Wblur.classList.remove('hideblur');
+                    });
+                    const closeModalBtn = document.getElementById('closeModal');
+                    closeModalBtn.addEventListener('click', () => {
+                        const modal = document.getElementById('modalImage');
+                        modal.classList.add('hidemodal');
+                        Wblur.classList.add('hideblur');
+                    });
+                    Wblur.addEventListener('click', () => {
+                        const modal = document.getElementById('modalImage');
+                        modal.classList.add('hidemodal');
+                        Wblur.classList.add('hideblur');
+                    });
+                }
                 div.appendChild(answersDiv)
                 nextBtn.onclick = () => socket.emit("end_question", { code: code });
                 document.getElementById("timeControl").appendChild(nextBtn);
