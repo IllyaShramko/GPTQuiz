@@ -30,6 +30,7 @@
             </div>
         </div>
         <div id="Wblur" class="hideblur"></div>
+        <div id="WWblur" class="hideblur"></div>
         <script>
             const socket = io();
             const urlParams = new URLSearchParams(window.location.search);
@@ -66,11 +67,16 @@
                     <h2 id="waitingText">${msg}</h2> 
                 `;
                 document.body.appendChild(waitingDiv);
+                void waitingDiv.offsetWidth
+
                 waitingDiv.classList.add('waiting-div');
                 if (document.getElementById('sendBtn')){
                     document.getElementById('sendBtn').disabled = true
                     document.getElementById('sendBtn').style.cursor = "not-allowed"
                 } 
+                
+                const WWblur = document.getElementById('WWblur');
+                WWblur.classList.remove('hideblur');
 
             }
             
@@ -78,6 +84,7 @@
                 if (answered) {
                     return
                 }
+                
                 answer1 = answer
                 answersDiv = document.getElementById('answers');
                 answers = answersDiv.querySelectorAll('.answer-button');
@@ -119,8 +126,10 @@
                 if (answered) {
                     answered = !answered
                 }
+                document.getElementById("WWblur").classList.add('hideblur');
+                const modal = document.getElementById('modalImage');
+                modal.classList.add('hidemodal');
                 document.getElementById("general")?.remove();
-
                 const generalDiv = document.createElement('div');
                 generalDiv.id = 'general';
                 const questionDiv = document.createElement('div');
@@ -139,7 +148,7 @@
                 questionDiv.appendChild(title);
                 const answersDiv = document.createElement('div');
                 answersDiv.id = 'answers';
-
+                
                 if (data.type === "multiple answers") {
                     const variants = [data.variant_1, data.variant_2, data.variant_3, data.variant_4];
                     variants.forEach((variant, index) => {
@@ -165,7 +174,7 @@
                         uploadAnswer(checked, data.id, checked);
                     };
                     generalDiv.appendChild(sendBtn);
-
+                    
                 } else if (data.type === "enter answer") {
                     generalDiv.classList.add('fill');
                     const input = document.createElement('input');
@@ -190,12 +199,12 @@
                     const btn2 = document.createElement('button');
                     const btn3 = document.createElement('button');
                     const btn4 = document.createElement('button');
-
+                    
                     btn1.textContent = `${data.variant_1}`;
                     btn2.textContent = `${data.variant_2}`;
                     btn3.textContent = `${data.variant_3}`;
                     btn4.textContent = `${data.variant_4}`;
-
+                    
                     btn1.id = 'answerBtn1';
                     btn1.value = 1;
                     btn1.classList.add('answer-button');
@@ -208,12 +217,12 @@
                     btn4.id = 'answerBtn4';
                     btn4.value = 4;
                     btn4.classList.add('answer-button');
-
+                    
                     btn1.onclick = () => uploadAnswer(1, data.id, btn1.value);
                     btn2.onclick = () => uploadAnswer(2, data.id, btn2.value);
                     btn3.onclick = () => uploadAnswer(3, data.id, btn3.value);
                     btn4.onclick = () => uploadAnswer(4, data.id, btn4.value);
-
+                    
                     answersDiv.appendChild(btn1);
                     answersDiv.appendChild(btn2);
                     answersDiv.appendChild(btn3);
@@ -229,23 +238,20 @@
                     qImage.addEventListener('click', () => {
                         const img = document.getElementById('modalImageContent');
                         img.src = qImage.src;
-                        const modal = document.getElementById('modalImage');
                         modal.classList.remove('hidemodal');
                         Wblur.classList.remove('hideblur');
                     });
                     const closeModalBtn = document.getElementById('closeModal');
                     closeModalBtn.addEventListener('click', () => {
-                        const modal = document.getElementById('modalImage');
                         modal.classList.add('hidemodal');
                         Wblur.classList.add('hideblur');
                     });
                     Wblur.addEventListener('click', () => {
-                        const modal = document.getElementById('modalImage');
                         modal.classList.add('hidemodal');
                         Wblur.classList.add('hideblur');
                     });
                 }
-                document.getElementById('waitingDiv').remove();
+                document.getElementById('notifyDiv').remove();
             });
             
             socket.on("join_error", data => {
@@ -265,7 +271,9 @@
 
             socket.on("student_result", (data) => {
                 console.log("👉 Результат студента:", data);
+                document.getElementById('waitingDiv').remove();
                 const allBtns = document.querySelectorAll('.answer-button, label');
+                
                 if (data.type === 'one answer') {
                     if (data.is_correct) {
                         const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
@@ -300,6 +308,29 @@
                         btn.style.backgroundColor = 'green';
                     });
                 }
+                const notifyDiv = document.createElement('div')
+                notifyDiv.classList.add('notify-div')
+                notifyDiv.id = 'notifyDiv'
+                if (data.is_correct) {
+                    notifyDiv.classList.add('notify-correct')
+                    notifyDiv.innerHTML = `
+                            <h2>Правильно</h2>
+                    `
+                }
+                else {
+                    notifyDiv.classList.add('notify-wrong')
+                    notifyDiv.innerHTML = `
+                            <h2>Не правильно</h2>
+                    `
+                }
+                document.body.appendChild(notifyDiv);
+                void notifyDiv.offsetWidth;
+                void notifyDiv.offsetHeight
+                notifyDiv.style.width = '100vw';
+                setTimeout(() => {
+                    notifyDiv.style.top = "80%";
+                    notifyDiv.style.height = '50px';
+                }, 2500);
             });
 
             socket.on("end_msg", data => {
