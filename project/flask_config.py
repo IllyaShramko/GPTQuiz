@@ -3,6 +3,8 @@ from .settings import project
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 project.config["MAIL_SERVER"] = "smtp.gmail.com"
 project.config["MAIL_PORT"] = 587 
 project.config["MAIL_USE_TLS"] = True
