@@ -7,3 +7,5 @@ library_app/static/images/quizes/*
 !library_app/static/images/quizes
 !library_app/static/images/quizes/default.svg
 library_app/static/images/questions/*
+# 
+.env

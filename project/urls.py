@@ -25,6 +25,22 @@ user_app.user_app.add_url_rule(
     rule = '/profile/',
     view_func = user_app.render_profile
 )
+user_app.user_app.add_url_rule(
+    rule= '/validate/',
+    view_func= user_app.validate_data,
+    methods= ["POST"]
+)
+user_app.user_app.add_url_rule(
+    rule= '/sendcode/',
+    view_func= user_app.send_code,
+    methods= ["POST"]
+)
+user_app.user_app.add_url_rule(
+    rule = '/validate-code/',
+    view_func = user_app.validate_code,
+    methods= ["POST", "GET"]
+)
+
 
 project.register_blueprint(blueprint= user_app.user_app)
 admin_app.admin_app.add_url_rule(

@@ -1,3 +1,3 @@
 from .app import user_app
-from .views import render_signup, render_login, logout, render_profile
+from .views import render_signup, render_login, logout, render_profile, validate_data, send_code, validate_code
 from .models import User

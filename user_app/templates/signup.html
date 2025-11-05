@@ -9,18 +9,20 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post">
+    <form method="post" id="form">
         <h2>Реєстрація</h2>
         <div class="inputs">
-            <input type="text" name="login" class="login" autocomplete="off" placeholder="Логін *" required>
-            <input type="text" name="name" class="name" autocomplete="off" placeholder="Ваше ім`я *" required>
-            <input type="text" name="surname" class="surname" autocomplete="off" placeholder="Ваше прізвище *" required>
-            <input type="email" name="email" class="email" autocomplete="off" placeholder="Ваша електронна адреса *" required>
-            <input type="password" name="password" class="password" autocomplete="off" placeholder="Пароль *" required>
+            <input type="text" id="login" name="login" class="login" autocomplete="off" placeholder="Логін *" required>
+            <input type="text" id="name" name="name" class="name" autocomplete="off" placeholder="Ваше ім`я *" required>
+            <input type="text" id="surname" name="surname" class="surname" autocomplete="off" placeholder="Ваше прізвище *" required>
+            <input type="email" id="email" name="email" class="email" autocomplete="off" placeholder="Ваша електронна адреса *" required>
+            <input type="password" id="password" name="password" class="password" autocomplete="off" placeholder="Пароль *" required>
         </div>
         <div class="submit">
-            <button type="submit">Зареєструватися</button>
+            <button type="submit" id="submit">Зареєструватися</button>
             <p>Вже маєте акаунт? <a href="/login/">Увійти</a></p>
         </div>
     </form>
+    <script src="{{ url_for('user_app.static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('user_app.static', filename='js/signup.js') }}"></script>
 {% endblock %}

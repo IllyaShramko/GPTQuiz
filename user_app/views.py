@@ -1,9 +1,75 @@
-import flask
+import flask, flask_mail
 import flask_login
 from .models import User
 from project import login_manager
 from project.settings import DATABASE
+from project.flask_config import mail
+import re, random
 
+def validate_data():
+    data = flask.request.get_json()
+
+    login = data.get("login", "").strip()
+    first_name = data.get("first_name", "").strip()
+    surname = data.get("surname", "").strip()
+    email = data.get("email", "").strip()
+    password = data.get("password", "")
+    # confirm_password = data.get("confirmPassword", "")
+
+
+    if not all([login, first_name, surname, email, password]):
+        return flask.jsonify({"success": False, "message": "Заповніть усі поля!"}), 400
+
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        return flask.jsonify({"success": False, "message": "Некоректна адреса електронної пошти."}), 400
+
+    if len(password) < 6:
+        return flask.jsonify({"success": False, "message": "Пароль має містити щонайменше 6 символів."}), 400
+
+
+    return flask.jsonify({"success": True, "message": "Реєстрація успішна!"}), 200
+
+def send_code():
+    data = flask.request.get_json()
+    email = data.get('email')
+    if not email:
+        return flask.jsonify({'error': 'Email required'}), 400
+
+    code = str(random.randint(100000, 999999))
+    flask.session['email_code'] = code
+    print(email)
+    msg = flask_mail.Message("Ваш код підтвердження", recipients=[email])
+    msg.body = f"Ваш код підтвердження: {code}"
+    mail.send(msg)
+    return flask.jsonify({'message': f'Код відправленно на {email}'})
+
+def validate_code():
+    data = flask.request.get_json()
+
+    login = data.get("login", "").strip()
+    first_name = data.get("first_name", "").strip()
+    surname = data.get("surname", "").strip()
+    email = data.get("email", "").strip()
+    password = data.get("password", "")
+    code = data.get("code", "").strip()
+    
+    if "email_code" not in flask.session:
+        return flask.jsonify(success=False, message="Код підтвердження не знайдено у сессіі"), 400
+    
+    if code != flask.session["email_code"]:
+        print(code, flask.session["code"])
+        return flask.jsonify(success=False, message="Код підтвердження невірний."), 400
+    user = User(
+        login=login,
+        name=first_name,
+        surname=surname,
+        email=email,
+        password=password  
+    )
+    DATABASE.session.add(user)
+    DATABASE.session.commit()
+    flask.session.pop("email_code", None)
+    return flask.jsonify(success=True, url="/login/"), 200
 
 def render_signup():
     if flask.request.method == 'POST':

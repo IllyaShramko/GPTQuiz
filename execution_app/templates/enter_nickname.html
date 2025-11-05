@@ -63,7 +63,7 @@
                 const waitingDiv = document.createElement('div');
                 waitingDiv.id = 'waitingDiv';
                 waitingDiv.innerHTML = `
-                    <img src="{{ url_for('execution_app.static', filename="images/wait.png") }}">
+                    <img class="spinner" src="{{ url_for('execution_app.static', filename="images/wait.svg") }}">
                     <h2 id="waitingText">${msg}</h2> 
                 `;
                 document.body.appendChild(waitingDiv);
@@ -135,7 +135,7 @@
                 const questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
                 const title = document.createElement('h2');
-                title.textContent = data.name;
+                title.innerHTML = data.name;
                 console.log(questionDiv, title, generalDiv);
                 if (data.image) {
                     const img = document.createElement('img');
