@@ -3,8 +3,7 @@ import flask_login
 from .models import User
 from project import login_manager
 from project.settings import DATABASE
-from project.flask_config import mail
-import re, random
+import re, random, resend
 
 def validate_data():
     data = flask.request.get_json()
@@ -38,9 +37,13 @@ def send_code():
     code = str(random.randint(100000, 999999))
     flask.session['email_code'] = code
     print(email)
-    msg = flask_mail.Message("Ваш код підтвердження", recipients=[email])
-    msg.body = f"Ваш код підтвердження: {code}"
-    mail.send(msg)
+    params = {
+        "from": "GPTQuiz@resend.dev",
+        "to": [email],
+        "subject": "Ваш код підтвердження",
+        "html": f"<strong>Ваш код підтвердження: {code}</strong>",
+    }
+    resend.Emails.send(params)
     return flask.jsonify({'message': f'Код відправленно на {email}'})
 
 def validate_code():
