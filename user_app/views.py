@@ -15,17 +15,26 @@ def validate_data():
     password = data.get("password", "")
     # confirm_password = data.get("confirmPassword", "")
 
+    errors = {
+        "success": True,
+        "errors": []
+    }
 
     if not all([login, first_name, surname, email, password]):
-        return flask.jsonify({"success": False, "message": "Заповніть усі поля!"}), 400
+        errors["errors"].append({"success": False, "message": "Заповніть усі поля!", "type": "general"})
+        errors["success"] = False
 
     if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
-        return flask.jsonify({"success": False, "message": "Некоректна адреса електронної пошти."}), 400
+        errors["errors"].append({"success": False, "message": "Некоректна адреса електронної пошти.", "type": "email"})
+        errors["success"] = False
 
     if len(password) < 6:
-        return flask.jsonify({"success": False, "message": "Пароль має містити щонайменше 6 символів."}), 400
+        errors["errors"].append({"success": False, "message": "Пароль має містити щонайменше 6 символів.", "type": "password"})
+        errors["success"] = False
 
-
+    if not errors["success"]:
+        return flask.jsonify(errors), 400
+    
     return flask.jsonify({"success": True, "message": "Реєстрація успішна!"}), 200
 
 def send_code():

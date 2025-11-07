@@ -135,7 +135,7 @@
                 const questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
                 const title = document.createElement('h2');
-                title.innerHTML = data.name;
+                title.textContent = data.name;
                 console.log(questionDiv, title, generalDiv);
                 if (data.image) {
                     const img = document.createElement('img');
