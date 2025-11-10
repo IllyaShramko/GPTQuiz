@@ -61,6 +61,8 @@ function validate(data) {
     })
     .then(res => res.json())
     .then(result => {
+        const errorsDiv = document.getElementById("generalErrors")
+        errorsDiv.innerHTML = ""
         if (result.success) {
             form.style.height = "270px"; 
             submitDiv.remove();
@@ -139,8 +141,22 @@ function validate(data) {
                 }, 1000)
             })
         } else {    
-
-            alert("❌ " + result.message);
+            const listErrors = document.createElement("ul")
+            result.errors.forEach(error => {
+                const li = document.createElement("li")
+                li.textContent = error.message
+                listErrors.appendChild(li)
+                // if(result.type === "general"){
+    
+                // } else if(result.type === "email"){
+                    
+                // } else if(result.type === "password"){
+                    
+                // }
+            })
+            errorsDiv.appendChild(listErrors)
+            
+            // alert("❌ " + result.message);
             preventedOnce = false; 
         }
     })

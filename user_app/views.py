@@ -1,9 +1,10 @@
-import flask, flask_mail
+import flask
 import flask_login
 from .models import User
-from project import login_manager
+from project.flask_config import api_instance
 from project.settings import DATABASE
-import re, random, resend
+from brevo_python.models import SendSmtpEmail, SendSmtpEmailTo, SendSmtpEmailSender
+import random, re
 
 def validate_data():
     data = flask.request.get_json()
@@ -15,17 +16,26 @@ def validate_data():
     password = data.get("password", "")
     # confirm_password = data.get("confirmPassword", "")
 
+    errors = {
+        "success": True,
+        "errors": []
+    }
 
     if not all([login, first_name, surname, email, password]):
-        return flask.jsonify({"success": False, "message": "Заповніть усі поля!"}), 400
+        errors["errors"].append({"success": False, "message": "Заповніть усі поля!", "type": "general"})
+        errors["success"] = False
 
     if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
-        return flask.jsonify({"success": False, "message": "Некоректна адреса електронної пошти."}), 400
+        errors["errors"].append({"success": False, "message": "Некоректна адреса електронної пошти.", "type": "email"})
+        errors["success"] = False
 
     if len(password) < 6:
-        return flask.jsonify({"success": False, "message": "Пароль має містити щонайменше 6 символів."}), 400
+        errors["errors"].append({"success": False, "message": "Пароль має містити щонайменше 6 символів.", "type": "password"})
+        errors["success"] = False
 
-
+    if not errors["success"]:
+        return flask.jsonify(errors), 400
+    
     return flask.jsonify({"success": True, "message": "Реєстрація успішна!"}), 200
 
 def send_code():
@@ -37,13 +47,17 @@ def send_code():
     code = str(random.randint(100000, 999999))
     flask.session['email_code'] = code
     print(email)
-    params = {
-        "from": "GPTQuiz@resend.dev",
-        "to": [email],
-        "subject": "Ваш код підтвердження",
-        "html": f"<strong>Ваш код підтвердження: {code}</strong>",
-    }
-    resend.Emails.send(params)
+    send_smtp_email = SendSmtpEmail(
+        sender=SendSmtpEmailSender(email="test.python.1488@gmail.com", name="Ваше имя"),
+        to=[SendSmtpEmailTo(email=email, name="Шановний Користувач")],
+        subject="Ваш код підтвердження",
+        html_content=f"<strong>Ваш код підтвердження: {code}</strong>"
+    )
+    try:
+        response = api_instance.send_transac_email(send_smtp_email)
+        print("ОК:", response)
+    except:
+        print("Error sending email")
     return flask.jsonify({'message': f'Код відправленно на {email}'})
 
 def validate_code():
