@@ -58,7 +58,11 @@ span{
     display: flex;
     flex-direction: row;
     gap: 10px;
-    max-width: 95%;
+    padding: 15px;
+    background-color: #212121;
+    border-radius: 15px;
+    overflow-x: auto;
+    width: 95%;
 }
 
 .quiz {
@@ -66,7 +70,7 @@ span{
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    width: 300px;
+    min-width: 300px;
     height: 350px;
     background-color: #3d3d3d;
     border-radius: 10px;

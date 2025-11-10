@@ -8,8 +8,19 @@
     </head>
     <body>
         <header>
-            <img src="{{ url_for('static', filename= 'images/atom.svg') }}" alt="">
-            <h1>GPTQuiz</h1>
+            <a href="/" class="logo-title">
+                <img src="{{ url_for('static', filename= 'images/atom.svg') }}">
+                <h1>GPTQuiz</h1>
+            </a>
+            <div class="links">
+                <a href="/execution/" class="enter-code">Введіть код</a>
+                {% if is_auth %}
+                    <a href="/admin/" class="login">Додому</a>
+                {% else %}
+                    <a href="/login/" class="login">Увійти</a>
+                    <a href="/signup/" class="signin">Зареєструватися</a>
+                {% endif %}
+            </div>
         </header>
         
         <h2 class="endText">Тест завершено!</h2>
