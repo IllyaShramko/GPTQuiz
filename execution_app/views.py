@@ -53,4 +53,4 @@ def report_view(hash_code):
         gradef += 1
     
 
-    return flask.render_template("student_report.html", gradef= gradef, name_teacher=name_teacher, report=report, participant=participant, quiz=roomsquiz, questions=questions)
+    return flask.render_template("student_report.html", gradef= gradef, name_teacher=name_teacher, report=report, participant=participant, quiz=roomsquiz, questions=questions, is_auth=flask_login.current_user.is_authenticated)

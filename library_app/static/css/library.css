@@ -1,7 +1,9 @@
-
+::-webkit-scrollbar{
+    display: none;
+}
 .created-by-me-create{
     position: relative;
-    top: 45px;
+    top: 80px;
     left: 220px;
     width: calc(100% - 220px);
     height: 80px;
@@ -10,6 +12,7 @@
     align-items: center;
     padding: 0 130.5px;
     background-color: #262626;
+    border-radius: 0;
 }
 .created-by-me-create h2{
     font-family: 'Inter';
@@ -45,7 +48,7 @@
 .created-by-me{
     width: calc(100% - 220px);
     position: relative;
-    top: 45px;
+    top: 80px;
     left: 220px;
     display: flex;
     flex-direction: column;
@@ -119,7 +122,7 @@ textarea:focus, input:focus{
     width: calc(100% - 220px);
     position: absolute;
     left: 220px;
-    top: 315px;
+    top: 355px;
     gap: 10px;
     padding: 0 180px;
     padding-bottom: 25px;
