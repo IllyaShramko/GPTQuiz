@@ -5,29 +5,40 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import func
 def render_library():
     
-    
-    print(flask_login.current_user.created_quizes)
     return flask.render_template(
         'library.html',
         username = flask_login.current_user.login,
-        create_quiz_id = len(Quiz.query.all()) + 1,
-        created_quizes = flask_login.current_user.created_quizes
+        created_quizes = Quiz.query.filter(Quiz.author_id == flask_login.current_user.id).filter(Quiz.name != "draft").all(),
         )
 
 def get_draft():
     next_id = DATABASE.session.query(func.max(Quiz.id)).scalar()
     next_id = (next_id or 0) + 1
-    print(next_id)
-    print("Create quiz id:", next_id)
-    print(Quiz.query.all(), len(Quiz.query.all()))
-    return {"create_quiz_id": next_id}
+    if flask.session.get('quizId'):
+        return flask.redirect("/create-quiz/")
+    flask.session['quizId'] = next_id
+    print("Next ID:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", next_id)
+    print(flask.session.get('quizId'))
+    return flask.redirect("/create-quiz/")
+
+def get_redaction_quiz():
+    id = flask.request.form["redact"]
+    quiz = Quiz.query.get(id)
+    if not quiz:
+        return flask.redirect("/library/")
+    if quiz.author_id != flask_login.current_user.id:
+        return flask.redirect("/library/")
+    flask.session['quizId'] = id
+    return flask.redirect("/create-quiz/")
+
 
 def render_create_quiz():
     questions = []
     question = None
     create_question = False
+    print(flask.session.get('quizId'))
     if flask.request.method == 'POST':
-        quiz = Quiz.query.get(flask.request.cookies.get('draft'))
+        quiz = Quiz.query.get(flask.session.get('quizId'))
         if flask.request.form['button'] == 'one_answer':
             question = 'One answer'
             create_question = True
@@ -63,7 +74,7 @@ def render_create_quiz():
                 print(flask.request.form['Name-Quiz'])
                 DATABASE.session.commit()
                 response = flask.make_response(flask.redirect("/library/"))
-                response.delete_cookie('draft')
+                flask.session.pop('quizId', None)
                 return response
 
         else:
@@ -79,7 +90,7 @@ def render_create_quiz():
 
                     correct_answer = flask.request.form['correct answer'],
 
-                    quiz_id = int(flask.request.cookies.get("draft"))
+                    quiz_id = flask.session.get('quizId')   
                 )
                 q_image = flask.request.files['image']
                 if q_image:
@@ -114,7 +125,7 @@ def render_create_quiz():
                     type = 'enter answer',
                     variant_1 = flask.request.form['answer1'],
                     correct_answer = flask.request.form['answer1'],
-                    quiz_id = int(flask.request.cookies.get('draft'))
+                    quiz_id = flask.session.get('quizId')
                 )
                 try:
                     DATABASE.session.add(question)
@@ -132,7 +143,7 @@ def render_create_quiz():
                     variant_3 = flask.request.form['answer3'],
                     variant_4 = flask.request.form['answer4'],
                     correct_answer = flask.request.form.getlist('correct answer'),
-                    quiz_id = int(flask.request.cookies.get('draft'))
+                    quiz_id = flask.session.get('quizId')
                 )
                 q_image = flask.request.files['image']
                 if q_image:
@@ -157,9 +168,9 @@ def render_create_quiz():
                     return flask.redirect(flask.url_for('/create-quiz/'))
                 except:
                     print(Exception)
-    if flask.request.cookies.get("draft"):
-        cookies = int(flask.request.cookies.get("draft"))
-        quiz = Quiz.query.get(cookies)
+    if flask.session.get('quizId'):
+        quiz_id = flask.session.get('quizId')
+        quiz = Quiz.query.get(quiz_id)
         if quiz:
             if quiz.questions != 0:
                 print(quiz.questions)
@@ -188,7 +199,7 @@ def render_create_quiz():
         questions = questions,
         question = question,
         create_question = create_question
-        )
+    )
             
 
 def render_enter_answer():

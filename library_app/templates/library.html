@@ -9,14 +9,14 @@ Library
 {% endblock %}
 
 {% block content %}
-    <div class = "created-by-me-create">
+    <form method="post" action="/get-draft/" class = "created-by-me-create">
         <h2>Створено мною</h2>
         <button id = 'createQuiz' class="create-btn-ripple createQuiz">
-            <a href="/create-quiz/">
+            <p href="/create-quiz/">
                 + Створити
-            </a>
+            </p>
         </button>
-    </div>
+    </form>
     
     <div class = "created-by-me">
         <h1>Давайте створемо вашу першу вікторину! </h1>
