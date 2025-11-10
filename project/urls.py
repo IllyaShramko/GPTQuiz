@@ -59,7 +59,13 @@ library_app.library_app.add_url_rule(
 library_app.library_app.add_url_rule(
     rule= '/get-draft/',
     view_func= library_app.get_draft,
-    methods= ["GET"]
+    methods= ["POST"]
+)
+
+library_app.library_app.add_url_rule(
+    rule= '/get-redaction/',
+    view_func= library_app.get_redaction_quiz,
+    methods= ["POST"]
 )
 
 library_app.library_app.add_url_rule(

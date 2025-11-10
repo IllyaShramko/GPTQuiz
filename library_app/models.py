@@ -151,6 +151,7 @@ class Quiz(DATABASE.Model):
     count_questions = DATABASE.Column(DATABASE.Integer, nullable = False)
     author_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'))
     image = DATABASE.Column(DATABASE.String(100), nullable = False)
+    is_draft = DATABASE.Column(DATABASE.Boolean, default=True)
     questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
     codes = DATABASE.relationship(RedeemCode, backref = 'quiz1', lazy = True)
     rooms = DATABASE.relationship(Room, backref="roomsQuiz", lazy=True)
