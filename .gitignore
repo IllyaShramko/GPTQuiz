@@ -9,3 +9,4 @@ library_app/static/images/quizes/*
 library_app/static/images/questions/*
 # 
 .env
+test.py

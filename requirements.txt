@@ -1,6 +1,7 @@
 alembic==1.16.5
 bidict==0.23.1
 blinker==1.9.0
+brevo-python==1.2.0
 certifi==2025.10.5
 cffi==2.0.0
 charset-normalizer==3.4.4
@@ -27,13 +28,16 @@ MarkupSafe==3.0.2
 packaging==25.0
 pillow==11.3.0
 pycparser==2.23
+python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
 python-engineio==4.12.2
 python-socketio==5.13.0
 requests==2.32.5
 resend==2.19.0
 setuptools==80.9.0
+sib-api-v3-sdk==7.6.0
 simple-websocket==1.1.0
+six==1.17.0
 SQLAlchemy==2.0.43
 typing_extensions==4.15.0
 urllib3==2.5.0

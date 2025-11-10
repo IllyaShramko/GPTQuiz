@@ -1,10 +1,9 @@
 from dotenv import load_dotenv
-import os, resend
+import brevo_python, os
+
 load_dotenv()
-resend.api_key = os.environ["RESEND_API_KEY"]
 
-params: resend.Domains.CreateParams = {
-  "name": "verify-codes.gptquiz.com",
-}
+configuration = brevo_python.Configuration()
+configuration.api_key['api-key'] = os.getenv("BREVO-API-KEY")
 
-resend.Domains.get(domain_id="7aabebbe-5941-42a2-bd7f-06fc21d8060e")
+api_instance = brevo_python.TransactionalEmailsApi(brevo_python.ApiClient(configuration))
