@@ -19,9 +19,11 @@
     box-sizing: border-box;
     font-family: Inter, sans-serif;
 }
+::-webkit-scrollbar {
+    display: none;
+}
 body{
     background-color: #303030;
-    /* padding-left: 220px; */
 }
 aside{
     position: fixed;

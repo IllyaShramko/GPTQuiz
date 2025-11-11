@@ -4,7 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Enter Code</title>
         <link rel="stylesheet" href="{{ url_for('execution_app.static', filename='css/execution.css') }}">
-        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+        <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     </head>
     <body>
         <div id="student-result"></div>
@@ -12,7 +12,7 @@
                 <p>GPTQuiz</p>
                 <div class = 'input_code'>
                     <input type="text" id="username" name="input-nickname" placeholder="Введіть нікнейм">
-                    <button class="button_code" type="button" onclick="join()"><span class = 'button_span'>ДАЛІ</span>→</button>
+                    <button class="button_code" type="button"><span class = 'button_span'>ДАЛІ</span>→</button>
                 </div> 
             </div>
         <div class="waiting-divdiv">
@@ -32,316 +32,318 @@
         <div id="Wblur" class="hideblur"></div>
         <div id="WWblur" class="hideblur"></div>
         <script>
-            const socket = io();
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get("code");
-            const div = document.getElementById('lobby');
-            let answered = false;
-            let username, answer1, answerDiv;
-            
-            
-            const quizId = '{{ quiz.id }}'
-
-            function join() {
-                username = document.getElementById("username").value;
-                if (!username) return alert("Введіть нікнейм!");
-                if (!code) return alert("Код кімнати не знайдено!");
-
-                socket.emit("join_room", { username, code, quizId });
-            }
-
-            socket.on("joined_success", data => {
-                document.getElementById("join-form").style.display = "none";
-                document.getElementById("lobby").style.display = "flex";
-                document.getElementById("quiz-title").textContent = data.quiz_name;
-            });
-
-            function blockPanel(msg = "Зачекайте...") {
-                if (document.getElementById('waitingDiv')) {
-                    document.getElementById('waitingDiv').remove();
-                }
-                const waitingDiv = document.createElement('div');
-                waitingDiv.id = 'waitingDiv';
-                waitingDiv.innerHTML = `
-                    <img class="spinner" src="{{ url_for('execution_app.static', filename="images/wait.svg") }}">
-                    <h2 id="waitingText">${msg}</h2> 
-                `;
-                document.body.appendChild(waitingDiv);
-                void waitingDiv.offsetWidth
-
-                waitingDiv.classList.add('waiting-div');
-                if (document.getElementById('sendBtn')){
-                    document.getElementById('sendBtn').disabled = true
-                    document.getElementById('sendBtn').style.cursor = "not-allowed"
-                } 
+            document.addEventListener("DOMContentLoaded", ()=> {
+                const socket = io();
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get("code");
+                const div = document.getElementById('lobby');
+                let answered = false;
+                let username, answer1, answerDiv;
                 
-                const WWblur = document.getElementById('WWblur');
-                WWblur.classList.remove('hideblur');
-
-            }
-            
-            function uploadAnswer(answer, questionID, btnValue) {
-                if (answered) {
-                    return
+                
+                const quizId = '{{ quiz.id }}'
+    
+                document.querySelector(".button_code").addEventListener("click", () => {
+                    username = document.getElementById("username").value;
+                    if (!username) return alert("Введіть нікнейм!");
+                    if (!code) return alert("Код кімнати не знайдено!");
+    
+                    socket.emit("join_room", { username, code, quizId });
+                })
+                
+                socket.on("joined_success", data => {
+                    document.getElementById("join-form").style.display = "none";
+                    document.getElementById("lobby").style.display = "flex";
+                    document.getElementById("quiz-title").textContent = data.quiz_name;
+                });
+    
+                function blockPanel(msg = "Зачекайте...") {
+                    if (document.getElementById('waitingDiv')) {
+                        document.getElementById('waitingDiv').remove();
+                    }
+                    const waitingDiv = document.createElement('div');
+                    waitingDiv.id = 'waitingDiv';
+                    waitingDiv.innerHTML = `
+                        <img class="spinner" src="{{ url_for('execution_app.static', filename="images/wait.svg") }}">
+                        <h2 id="waitingText">${msg}</h2> 
+                    `;
+                    document.body.appendChild(waitingDiv);
+                    void waitingDiv.offsetWidth
+    
+                    waitingDiv.classList.add('waiting-div');
+                    if (document.getElementById('sendBtn')){
+                        document.getElementById('sendBtn').disabled = true
+                        document.getElementById('sendBtn').style.cursor = "not-allowed"
+                    } 
+                    
+                    const WWblur = document.getElementById('WWblur');
+                    WWblur.classList.remove('hideblur');
+    
                 }
                 
-                answer1 = answer
-                answersDiv = document.getElementById('answers');
-                answers = answersDiv.querySelectorAll('.answer-button');
-                
-                if (!Array.isArray(answer1)) {
-                    try {
-                        answerDiv = document.getElementById(`answerBtn${answer}`);
+                function uploadAnswer(answer, questionID, btnValue) {
+                    if (answered) {
+                        return
+                    }
+                    
+                    answer1 = answer
+                    answersDiv = document.getElementById('answers');
+                    answers = answersDiv.querySelectorAll('.answer-button');
+                    
+                    if (!Array.isArray(answer1)) {
+                        try {
+                            answerDiv = document.getElementById(`answerBtn${answer}`);
+                            answers.forEach(btn => {
+                                if (btn.value != btnValue) {
+                                    btn.style.opacity = 0
+                                }
+                            });
+                            answerDiv.style.opacity = 1;
+                        }
+                        catch {
+                            console.log("No button found for this answer type");
+                        }
+                        
+                    }
+                    else if (Array.isArray(answer1)) {
                         answers.forEach(btn => {
-                            if (btn.value != btnValue) {
+                            if (btnValue.includes(parseInt(btn.value))) {
                                 btn.style.opacity = 0
                             }
+                            else {
+                                btn.style.opacity = 1
+                            }
                         });
-                        answerDiv.style.opacity = 1;
+                        
                     }
-                    catch {
-                        console.log("No button found for this answer type");
-                    }
-                    
+    
+                    answered = !answered
+                    socket.emit("answer", {answer: answer, question_id: questionID, username, code});
+                    blockPanel();
                 }
-                else if (Array.isArray(answer1)) {
-                    answers.forEach(btn => {
-                        if (btnValue.includes(parseInt(btn.value))) {
-                            btn.style.opacity = 0
+    
+                socket.on("quiz_start_student", data => {
+                    div.style.display = 'none';
+                    if (answered) {
+                        answered = !answered
+                    }
+                    document.getElementById("WWblur").classList.add('hideblur');
+                    const modal = document.getElementById('modalImage');
+                    modal.classList.add('hidemodal');
+                    document.getElementById("general")?.remove();
+                    const generalDiv = document.createElement('div');
+                    generalDiv.id = 'general';
+                    const questionDiv = document.createElement('div');
+                    questionDiv.id = 'question';
+                    const title = document.createElement('h2');
+                    title.textContent = data.name;
+                    console.log(questionDiv, title, generalDiv);
+                    if (data.image) {
+                        const img = document.createElement('img');
+                        img.src = `/library/images/${data.image}`;
+                        img.alt = "Question Image";
+                        img.classList.add('question-image');
+                        img.id = 'questionImage';
+                        questionDiv.appendChild(img);
+                    }
+                    questionDiv.appendChild(title);
+                    const answersDiv = document.createElement('div');
+                    answersDiv.id = 'answers';
+                    
+                    if (data.type === "multiple answers") {
+                        const variants = [data.variant_1, data.variant_2, data.variant_3, data.variant_4];
+                        variants.forEach((variant, index) => {
+                            const label = document.createElement('label');
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.value = `${index + 1}`;
+                            label.id = `answerBtn${index + 1}`;
+                            label.appendChild(checkbox);
+                            label.append(`${variant}`);
+                            answersDiv.appendChild(label);
+                        });
+    
+                        const sendBtn = document.createElement('button');
+                        sendBtn.id = 'sendBtn';
+                        sendBtn.textContent = "Відправити -->";
+                        sendBtn.onclick = () => {
+                            const checked = Array.from(answersDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
+                            if (checked.length === 0) {
+                                alert("Выбери хотя бы один вариант!");
+                                return;
+                            }
+                            uploadAnswer(checked, data.id, checked);
+                        };
+                        generalDiv.appendChild(sendBtn);
+                        
+                    } else if (data.type === "enter answer") {
+                        generalDiv.classList.add('fill');
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.id = 'textAnswer';
+                        input.placeholder = 'Введіть вашу відповідь тут...';
+                        answersDiv.appendChild(input);
+                        const sendBtn = document.createElement('button');
+                        sendBtn.id = 'sendBtn';
+                        sendBtn.textContent = "Відправити -->";
+                        sendBtn.onclick = () => {
+                            const answer = input.value.trim();
+                            if (!answer) {
+                                alert("Будь ласка, введіть вашу відповідь.");
+                                return;
+                            }
+                            uploadAnswer(answer, data.id);
+                        };
+                        answersDiv.appendChild(sendBtn);
+                    } else {
+                        const btn1 = document.createElement('button');
+                        const btn2 = document.createElement('button');
+                        const btn3 = document.createElement('button');
+                        const btn4 = document.createElement('button');
+                        
+                        btn1.textContent = `${data.variant_1}`;
+                        btn2.textContent = `${data.variant_2}`;
+                        btn3.textContent = `${data.variant_3}`;
+                        btn4.textContent = `${data.variant_4}`;
+                        
+                        btn1.id = 'answerBtn1';
+                        btn1.value = 1;
+                        btn1.classList.add('answer-button');
+                        btn2.id = 'answerBtn2';
+                        btn2.value = 2;
+                        btn2.classList.add('answer-button');
+                        btn3.id = 'answerBtn3';
+                        btn3.value = 3;
+                        btn3.classList.add('answer-button');
+                        btn4.id = 'answerBtn4';
+                        btn4.value = 4;
+                        btn4.classList.add('answer-button');
+                        
+                        btn1.onclick = () => uploadAnswer(1, data.id, btn1.value);
+                        btn2.onclick = () => uploadAnswer(2, data.id, btn2.value);
+                        btn3.onclick = () => uploadAnswer(3, data.id, btn3.value);
+                        btn4.onclick = () => uploadAnswer(4, data.id, btn4.value);
+                        
+                        answersDiv.appendChild(btn1);
+                        answersDiv.appendChild(btn2);
+                        answersDiv.appendChild(btn3);
+                        answersDiv.appendChild(btn4);
+                    }
+                    generalDiv.appendChild(questionDiv);
+                    
+                    generalDiv.appendChild(answersDiv);
+                    document.body.appendChild(generalDiv);
+                    if (data.image) {
+                        const qImage = document.getElementById('questionImage');
+                        const Wblur = document.getElementById('Wblur');
+                        qImage.addEventListener('click', () => {
+                            const img = document.getElementById('modalImageContent');
+                            img.src = qImage.src;
+                            modal.classList.remove('hidemodal');
+                            Wblur.classList.remove('hideblur');
+                        });
+                        const closeModalBtn = document.getElementById('closeModal');
+                        closeModalBtn.addEventListener('click', () => {
+                            modal.classList.add('hidemodal');
+                            Wblur.classList.add('hideblur');
+                        });
+                        Wblur.addEventListener('click', () => {
+                            modal.classList.add('hidemodal');
+                            Wblur.classList.add('hideblur');
+                        });
+                    }
+                    document.getElementById('notifyDiv').remove();
+                });
+                
+                socket.on("join_error", data => {
+                    alert(data.message);
+                });
+    
+                socket.on("user_list_update", data => {
+                    const userList = document.getElementById("users");
+                    userList.innerHTML = ""; 
+                    console.log(data.students);
+                    data.students.forEach(student => {
+                        const li = document.createElement("li");
+                        li.textContent = student;
+                        userList.appendChild(li);
+                    });
+                });
+    
+                socket.on("student_result", (data) => {
+                    console.log("👉 Результат студента:", data);
+                    document.getElementById('waitingDiv').remove();
+                    const allBtns = document.querySelectorAll('.answer-button, label');
+                    
+                    if (data.type === 'one answer') {
+                        if (data.is_correct) {
+                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            answerBtn.style.opacity = 1;
+                            answerBtn.style.backgroundColor = 'green';
                         }
                         else {
-                            btn.style.opacity = 1
+                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            answerBtn.style.opacity = 1;
+                            answerBtn.style.backgroundColor = 'red';
+                            const correctBtn = document.getElementById(`answerBtn${data.correct_answer_id}`);
+                            if (correctBtn) {
+                                correctBtn.style.opacity = 1;
+                                correctBtn.style.backgroundColor = 'green';
+                            }
                         }
-                    });
-                    
-                }
-
-                answered = !answered
-                socket.emit("answer", {answer: answer, question_id: questionID, username, code});
-                blockPanel();
-            }
-
-            socket.on("quiz_start_student", data => {
-                div.style.display = 'none';
-                if (answered) {
-                    answered = !answered
-                }
-                document.getElementById("WWblur").classList.add('hideblur');
-                const modal = document.getElementById('modalImage');
-                modal.classList.add('hidemodal');
-                document.getElementById("general")?.remove();
-                const generalDiv = document.createElement('div');
-                generalDiv.id = 'general';
-                const questionDiv = document.createElement('div');
-                questionDiv.id = 'question';
-                const title = document.createElement('h2');
-                title.textContent = data.name;
-                console.log(questionDiv, title, generalDiv);
-                if (data.image) {
-                    const img = document.createElement('img');
-                    img.src = `/library/images/${data.image}`;
-                    img.alt = "Question Image";
-                    img.classList.add('question-image');
-                    img.id = 'questionImage';
-                    questionDiv.appendChild(img);
-                }
-                questionDiv.appendChild(title);
-                const answersDiv = document.createElement('div');
-                answersDiv.id = 'answers';
-                
-                if (data.type === "multiple answers") {
-                    const variants = [data.variant_1, data.variant_2, data.variant_3, data.variant_4];
-                    variants.forEach((variant, index) => {
-                        const label = document.createElement('label');
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = `${index + 1}`;
-                        label.id = `answerBtn${index + 1}`;
-                        label.appendChild(checkbox);
-                        label.append(`${variant}`);
-                        answersDiv.appendChild(label);
-                    });
-
-                    const sendBtn = document.createElement('button');
-                    sendBtn.id = 'sendBtn';
-                    sendBtn.textContent = "Відправити -->";
-                    sendBtn.onclick = () => {
-                        const checked = Array.from(answersDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
-                        if (checked.length === 0) {
-                            alert("Выбери хотя бы один вариант!");
-                            return;
-                        }
-                        uploadAnswer(checked, data.id, checked);
-                    };
-                    generalDiv.appendChild(sendBtn);
-                    
-                } else if (data.type === "enter answer") {
-                    generalDiv.classList.add('fill');
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.id = 'textAnswer';
-                    input.placeholder = 'Введіть вашу відповідь тут...';
-                    answersDiv.appendChild(input);
-                    const sendBtn = document.createElement('button');
-                    sendBtn.id = 'sendBtn';
-                    sendBtn.textContent = "Відправити -->";
-                    sendBtn.onclick = () => {
-                        const answer = input.value.trim();
-                        if (!answer) {
-                            alert("Будь ласка, введіть вашу відповідь.");
-                            return;
-                        }
-                        uploadAnswer(answer, data.id);
-                    };
-                    answersDiv.appendChild(sendBtn);
-                } else {
-                    const btn1 = document.createElement('button');
-                    const btn2 = document.createElement('button');
-                    const btn3 = document.createElement('button');
-                    const btn4 = document.createElement('button');
-                    
-                    btn1.textContent = `${data.variant_1}`;
-                    btn2.textContent = `${data.variant_2}`;
-                    btn3.textContent = `${data.variant_3}`;
-                    btn4.textContent = `${data.variant_4}`;
-                    
-                    btn1.id = 'answerBtn1';
-                    btn1.value = 1;
-                    btn1.classList.add('answer-button');
-                    btn2.id = 'answerBtn2';
-                    btn2.value = 2;
-                    btn2.classList.add('answer-button');
-                    btn3.id = 'answerBtn3';
-                    btn3.value = 3;
-                    btn3.classList.add('answer-button');
-                    btn4.id = 'answerBtn4';
-                    btn4.value = 4;
-                    btn4.classList.add('answer-button');
-                    
-                    btn1.onclick = () => uploadAnswer(1, data.id, btn1.value);
-                    btn2.onclick = () => uploadAnswer(2, data.id, btn2.value);
-                    btn3.onclick = () => uploadAnswer(3, data.id, btn3.value);
-                    btn4.onclick = () => uploadAnswer(4, data.id, btn4.value);
-                    
-                    answersDiv.appendChild(btn1);
-                    answersDiv.appendChild(btn2);
-                    answersDiv.appendChild(btn3);
-                    answersDiv.appendChild(btn4);
-                }
-                generalDiv.appendChild(questionDiv);
-                
-                generalDiv.appendChild(answersDiv);
-                document.body.appendChild(generalDiv);
-                if (data.image) {
-                    const qImage = document.getElementById('questionImage');
-                    const Wblur = document.getElementById('Wblur');
-                    qImage.addEventListener('click', () => {
-                        const img = document.getElementById('modalImageContent');
-                        img.src = qImage.src;
-                        modal.classList.remove('hidemodal');
-                        Wblur.classList.remove('hideblur');
-                    });
-                    const closeModalBtn = document.getElementById('closeModal');
-                    closeModalBtn.addEventListener('click', () => {
-                        modal.classList.add('hidemodal');
-                        Wblur.classList.add('hideblur');
-                    });
-                    Wblur.addEventListener('click', () => {
-                        modal.classList.add('hidemodal');
-                        Wblur.classList.add('hideblur');
-                    });
-                }
-                document.getElementById('notifyDiv').remove();
-            });
-            
-            socket.on("join_error", data => {
-                alert(data.message);
-            });
-
-            socket.on("user_list_update", data => {
-                const userList = document.getElementById("users");
-                userList.innerHTML = ""; 
-                console.log(data.students);
-                data.students.forEach(student => {
-                    const li = document.createElement("li");
-                    li.textContent = student;
-                    userList.appendChild(li);
-                });
-            });
-
-            socket.on("student_result", (data) => {
-                console.log("👉 Результат студента:", data);
-                document.getElementById('waitingDiv').remove();
-                const allBtns = document.querySelectorAll('.answer-button, label');
-                
-                if (data.type === 'one answer') {
+                    }
+                    else if (data.type === 'multiple answers') {
+                        allBtns.forEach(btn => {
+                            const btnId = parseInt(btn.value);
+                            if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
+                                btn.style.opacity = 0; 
+                        }});
+                        const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                        userAnswerBtns.forEach(btn => {
+                            btn.style.opacity = 1;
+                            btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
+                        });
+                        const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                        correctAnswerBtns.forEach(btn => {
+                            btn.style.opacity = 1;
+                            btn.style.backgroundColor = 'green';
+                        });
+                    }
+                    const notifyDiv = document.createElement('div')
+                    notifyDiv.classList.add('notify-div')
+                    notifyDiv.id = 'notifyDiv'
                     if (data.is_correct) {
-                        const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
-                        answerBtn.style.opacity = 1;
-                        answerBtn.style.backgroundColor = 'green';
+                        notifyDiv.classList.add('notify-correct')
+                        notifyDiv.innerHTML = `
+                                <h2>Правильно</h2>
+                        `
                     }
                     else {
-                        const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
-                        answerBtn.style.opacity = 1;
-                        answerBtn.style.backgroundColor = 'red';
-                        const correctBtn = document.getElementById(`answerBtn${data.correct_answer_id}`);
-                        if (correctBtn) {
-                            correctBtn.style.opacity = 1;
-                            correctBtn.style.backgroundColor = 'green';
-                        }
+                        notifyDiv.classList.add('notify-wrong')
+                        notifyDiv.innerHTML = `
+                                <h2>Не правильно</h2>
+                        `
                     }
-                }
-                else if (data.type === 'multiple answers') {
-                    allBtns.forEach(btn => {
-                        const btnId = parseInt(btn.value);
-                        if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
-                            btn.style.opacity = 0; 
-                    }});
-                    const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
-                    userAnswerBtns.forEach(btn => {
-                        btn.style.opacity = 1;
-                        btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
-                    });
-                    const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
-                    correctAnswerBtns.forEach(btn => {
-                        btn.style.opacity = 1;
-                        btn.style.backgroundColor = 'green';
-                    });
-                }
-                const notifyDiv = document.createElement('div')
-                notifyDiv.classList.add('notify-div')
-                notifyDiv.id = 'notifyDiv'
-                if (data.is_correct) {
-                    notifyDiv.classList.add('notify-correct')
-                    notifyDiv.innerHTML = `
-                            <h2>Правильно</h2>
-                    `
-                }
-                else {
-                    notifyDiv.classList.add('notify-wrong')
-                    notifyDiv.innerHTML = `
-                            <h2>Не правильно</h2>
-                    `
-                }
-                document.body.appendChild(notifyDiv);
-                void notifyDiv.offsetWidth;
-                void notifyDiv.offsetHeight
-                notifyDiv.style.width = '100vw';
-                setTimeout(() => {
-                    notifyDiv.style.top = "80%";
-                    notifyDiv.style.height = '50px';
-                }, 2500);
-            });
-
-            socket.on("end_msg", data => {
-                socket.emit("end_quiz", { code: code });
-            });
-
-
-            socket.on("end_quiz", data => {
-                url = window.location.origin + "/reportStudent/" + data.hash_code
-                window.location.href = url;
-            }); 
+                    document.body.appendChild(notifyDiv);
+                    void notifyDiv.offsetWidth;
+                    void notifyDiv.offsetHeight
+                    notifyDiv.style.width = '100vw';
+                    setTimeout(() => {
+                        notifyDiv.style.top = "80%";
+                        notifyDiv.style.height = '50px';
+                    }, 2500);
+                });
+    
+                socket.on("end_msg", data => {
+                    socket.emit("end_quiz", { code: code });
+                });
+    
+    
+                socket.on("end_quiz", data => {
+                    url = window.location.origin + "/reportStudent/" + data.hash_code
+                    window.location.href = url;
+                }); 
+            })
         </script>
         <!--  -->
     </body>

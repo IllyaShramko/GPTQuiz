@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+        <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
         <link rel="stylesheet" href="{{ url_for('host_app.static', filename='css/hostingroom.css') }}">
         <title>Document</title>
     </head>
@@ -28,7 +28,7 @@
                         <h3>1</h3>
                     </div>
                     <h4>Приєднайтеся за посиланням</h4>
-                    <button id="copy-url"><img src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
+                    <button id="copy-url"><img class="img-copy" src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
                 </div>
                 <a href="" onclick="window.open(this.href); return false;" id="linkToJoin">joinqptquiz.com</a>
                 <div class="line"></div>
@@ -37,7 +37,7 @@
                         <h3>2</h3>
                     </div>
                     <h4>Приєднайтеся за кодом</h4>
-                    <button id="copy-code"><img src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
+                    <button id="copy-code"><img class="img-copy" src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
                 </div>
                 <h2 id="codeDisplay">{{ code }}</h2>
                 <button id="start-quiz">
@@ -93,7 +93,9 @@
                 usersText.textContent = `Участники: (${data.students.length})`;
                 data.students.forEach(student => {
                     const li = document.createElement("li");
-                    li.textContent = student;
+                    const p = document.createElement("p")
+                    p.textContent = student;
+                    li.appendChild(p)
                     li.id = student;
                     usersList.appendChild(li);
                 });
