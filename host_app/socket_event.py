@@ -189,8 +189,6 @@ def handle_answer(data):
 
     question = Question.query.get(question_id)
     if not question:
-        print(code_enter)
-        print(flask.session)
         print(f"No question found with id: {question_id}")
         return
 
@@ -242,7 +240,6 @@ def handle_answer(data):
 
         quiz = Quiz.query.get(room.quiz)
         total_students = len(room.students or [])
-        print(f"{room.students}, {room}")
         print(f"Answered: {room.answered_students}, Total: {total_students}, Question Index: {room.index_question}, Total Questions: {len(quiz.questions)}")
 
         emit('student_answer', {
@@ -324,9 +321,7 @@ def handle_quiz_end(data):
     room = Room.query.get(redeem.room_id)
 
     report = create_student_report(participant_id= session['participant_id'], room_id=room.id)
-    print(report)
-    print(session)
-    emit("end_quiz", {'hash_code': report}, room= f"student_{session["participant_id"]}")
+    emit("end_quiz", {'hash_code': report}, room= f"student_{session['participant_id']}")
 
 @socketio.on("show_quiz_results")
 def handle_show_quiz_results(data):
