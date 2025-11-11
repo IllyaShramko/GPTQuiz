@@ -1,6 +1,6 @@
 import flask
 import flask_login
-from .models import User
+from .models import User, VerificationCode
 from project.flask_config import api_instance
 from project.settings import DATABASE
 from brevo_python.models import SendSmtpEmail, SendSmtpEmailTo, SendSmtpEmailSender
@@ -33,6 +33,17 @@ def validate_data():
         errors["errors"].append({"success": False, "message": "Пароль має містити щонайменше 6 символів.", "type": "password"})
         errors["success"] = False
 
+    existing_user_email = User.query.filter_by(email=email).first()
+    if existing_user_email:
+        errors["errors"].append({"success": False, "message": "Ця поштова скринька вже використовується", "type": "email"})
+        errors["success"] = False
+    existing_user_username = User.query.filter_by(login=login).first()
+    if existing_user_username:
+        errors["errors"].append({"success": False, "message": "Цей логін вже використовується", "type": "email"})
+        errors["success"] = False
+    print(errors)
+    
+
     if not errors["success"]:
         return flask.jsonify(errors), 400
     
@@ -45,7 +56,16 @@ def send_code():
         return flask.jsonify({'error': 'Email required'}), 400
 
     code = str(random.randint(100000, 999999))
-    flask.session['email_code'] = code
+    codeDB = VerificationCode(
+        email = email,
+        code = code
+    )
+    try: 
+        DATABASE.session.add(codeDB)
+        DATABASE.session.commit()
+    except Exception as e:
+        print(e)
+    flask.session['email_code'] = codeDB.id
     print(email)
     send_smtp_email = SendSmtpEmail(
         sender=SendSmtpEmailSender(email="test.python.1488@gmail.com", name="Ваше имя"),
@@ -73,8 +93,12 @@ def validate_code():
     if "email_code" not in flask.session:
         return flask.jsonify(success=False, message="Код підтвердження не знайдено у сессіі"), 400
     
-    if code != flask.session["email_code"]:
-        print(code, flask.session["code"])
+    verify_code = VerificationCode.query.get(flask.session["email_code"])
+    if not verify_code:
+        return flask.jsonify(success = False, message = "Код не знайдено"), 500
+
+    if code != verify_code.code:
+        print(code, flask.session["email_code"])
         return flask.jsonify(success=False, message="Код підтвердження невірний."), 400
     user = User(
         login=login,

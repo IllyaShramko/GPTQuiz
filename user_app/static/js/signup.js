@@ -47,7 +47,7 @@ form.addEventListener('submit', (e) => {
                 alert("❌ Код Невірний!");
             }
         })
-        .catch(err => console.error("Ошибка:", err));
+        .catch(err => {console.error("Ошибка:", err)});
     }
 });
 
@@ -98,6 +98,7 @@ function validate(data) {
                     inputNumber1.classList.add('input-code-number')
                     inputNumber1.maxLength = 1
                     divInputs.appendChild(inputNumber1)
+                    inputNumber1.focus()
     
                     const inputNumber2 = document.createElement('input')
                     inputNumber2.classList.add('input-code-number')
@@ -126,6 +127,37 @@ function validate(data) {
                     // 
                     const submitDivvv = document.createElement("div")
                     submitDivvv.classList.add("submit")
+                    // 
+                    
+                    const inputs = divInputs.querySelectorAll('.input-code-number');
+
+                    inputs.forEach((input, index) => {
+                        input.addEventListener('input', (e) => {
+                            const value = e.target.value;
+                            if (value.length === 1 && index < inputs.length - 1) {
+                                inputs[index + 1].focus();
+                            }
+                    
+                            if ([...inputs].every(inp => inp.value.length === 1)) {
+                                buttonSubmit.click()
+                            }
+                        });
+                    
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Backspace') {
+                                if (input.value === '' && index > 0) {
+                                    const prev = inputs[index - 1];
+                                    prev.focus();
+                                    prev.value = ''; 
+                                    e.preventDefault(); 
+                                }
+                            }
+                        });
+                        input.addEventListener('focus', (e) => {
+                            e.target.select();
+                        });
+                    });
+                    
                     
                     const buttonSubmit = document.createElement('button')
                     buttonSubmit.id = 'submit'
