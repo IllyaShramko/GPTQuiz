@@ -4,7 +4,7 @@ form {
     top: 25%;
     transform: translate(-50%, -25%);
     width: 525px;
-    height: 600px;
+    height: 620px;
     border-radius: 40px;
     background-color: #262626;
     display: flex;
@@ -16,6 +16,27 @@ form {
     padding: 20px 30px;
     transition: all ease 0.5s;
 }
+
+.inputDiv {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.inputs > div > ul {
+    position: relative;
+    width: 100%;
+    padding-left: 20px;
+}
+.inputs > div > ul > li {
+    color: #FF6B6B;
+    font-size: 18px;
+    font-weight: 400;
+}
+
 #waitImg {
     width: 150px;
     animation: spin 1.5s linear infinite;

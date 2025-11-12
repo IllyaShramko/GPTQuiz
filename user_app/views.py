@@ -37,9 +37,10 @@ def validate_data():
     if existing_user_email:
         errors["errors"].append({"success": False, "message": "Ця поштова скринька вже використовується", "type": "email"})
         errors["success"] = False
+        
     existing_user_username = User.query.filter_by(login=login).first()
     if existing_user_username:
-        errors["errors"].append({"success": False, "message": "Цей логін вже використовується", "type": "email"})
+        errors["errors"].append({"success": False, "message": "Цей логін вже використовується", "type": "login"})
         errors["success"] = False
     print(errors)
     

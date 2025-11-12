@@ -62,6 +62,15 @@ function validate(data) {
     .then(res => res.json())
     .then(result => {
         const errorsDiv = document.getElementById("generalErrors")
+        const emailErrorsDiv = document.getElementById("emailErrors")
+        const passwordErrorsDiv = document.getElementById("passwordErrors")
+        const loginErrorsDiv = document.getElementById("loginErrors")
+        document.getElementById("email").style.border = "none";
+        document.getElementById("password").style.border = "none";
+        document.getElementById("login").style.border = "none";
+        loginErrorsDiv.innerHTML = ""
+        emailErrorsDiv.innerHTML = ""
+        passwordErrorsDiv.innerHTML = ""
         errorsDiv.innerHTML = ""
         if (result.success) {
             form.style.height = "270px"; 
@@ -173,22 +182,30 @@ function validate(data) {
                 }, 1000)
             })
         } else {    
-            const listErrors = document.createElement("ul")
+            const baseHeight = 620; 
+            form.style.height = baseHeight + "px";
+
+            let currentHeight = baseHeight;
+
             result.errors.forEach(error => {
-                const li = document.createElement("li")
-                li.textContent = error.message
-                listErrors.appendChild(li)
-                // if(result.type === "general"){
-    
-                // } else if(result.type === "email"){
-                    
-                // } else if(result.type === "password"){
-                    
-                // }
-            })
-            errorsDiv.appendChild(listErrors)
-            
-            // alert("❌ " + result.message);
+                const li = document.createElement("li");
+                li.textContent = error.message;
+                currentHeight += 25;
+                form.style.height = currentHeight + "px";
+                if(error.type === "general"){
+                    errorsDiv.appendChild(li);
+                } else if(error.type === "email"){
+                    document.getElementById("email").style.border = "2px solid red";
+                    emailErrorsDiv.appendChild(li);
+                } else if(error.type === "password"){
+                    document.getElementById("password").style.border = "2px solid red";
+                    passwordErrorsDiv.appendChild(li);
+                } else if (error.type === "login"){
+                    document.getElementById("login").style.border = "2px solid red";
+                    loginErrorsDiv.appendChild(li);
+                }
+                console.log("Додано помилку:", error.type, error);
+            });
             preventedOnce = false; 
         }
     })

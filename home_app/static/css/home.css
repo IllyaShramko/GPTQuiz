@@ -55,14 +55,67 @@ span{
 }
 
 .quizes {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+    position: relative;
     padding: 15px;
+    padding-bottom: 2px;
     background-color: #212121;
     border-radius: 15px;
-    overflow-x: auto;
     width: 95%;
+}
+
+.quizes > div {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+}
+
+.quizes > div::-webkit-scrollbar {
+    background-color: #212121;
+}
+
+.quizes > div::-webkit-scrollbar-thumb {
+    background-color: #3d3d3d;
+    border: 6px solid #212121;
+    border-radius: 10px;
+}
+
+.quizes > div::-webkit-scrollbar-thumb:hover {
+    border-width: 4px;
+}
+
+.scroll-btn {
+    position: absolute;
+    top: 50%;
+    background-size: 35px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #212121;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+    border: none;
+    border-radius: 100px;
+    transform: translateY(-50%);
+    transition: all 0.3s;
+    z-index: 1;
+}
+
+.scroll-btn:hover {
+    width: 54px;
+    height: 54px;
+}
+
+.scroll-left-btn {
+    background-image: url(../images/left.svg);
+    left: 30px;
+    cursor: e-resize;
+}
+
+.scroll-right-btn {
+    background-image: url(../images/right.svg);
+    right: 30px;
+    cursor: w-resize;
 }
 
 .quiz {
