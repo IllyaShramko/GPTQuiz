@@ -17,7 +17,6 @@ def get_draft():
     if flask.session.get('quizId'):
         return flask.redirect("/create-quiz/")
     flask.session['quizId'] = next_id
-    print("Next ID:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", next_id)
     print(flask.session.get('quizId'))
     return flask.redirect("/create-quiz/")
 
