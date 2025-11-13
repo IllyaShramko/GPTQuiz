@@ -12,11 +12,36 @@
     <form method="post" id="form">
         <h2>Реєстрація</h2>
         <div class="inputs">
-            <input type="text" id="login" name="login" class="login" autocomplete="off" placeholder="Логін *" required>
-            <input type="text" id="name" name="name" class="name" autocomplete="off" placeholder="Ваше ім`я *" required>
-            <input type="text" id="surname" name="surname" class="surname" autocomplete="off" placeholder="Ваше прізвище *" required>
-            <input type="email" id="email" name="email" class="email" autocomplete="off" placeholder="Ваша електронна адреса *" required>
-            <input type="password" id="password" name="password" class="password" autocomplete="off" placeholder="Пароль *" required>
+            <div class="inputDiv" id="loginDiv">
+                <input type="text" id="login" name="login" class="login" autocomplete="off" placeholder="Логін *" required>
+                <ul id="loginErrors">
+
+                </ul>
+            </div>
+            <div class="inputDiv" id="nameDiv">
+                <input type="text" id="name" name="name" class="name" autocomplete="off" placeholder="Ваше ім`я *" required>
+                <ul id="nameErrors">
+
+                </ul>
+            </div>
+            <div class="inputDiv" id="surnameDiv">
+                <input type="text" id="surname" name="surname" class="surname" autocomplete="off" placeholder="Ваше прізвище *" required>
+                <ul id="surnameErrors">
+
+                </ul>
+            </div>
+            <div class="inputDiv" id="emailDiv">
+                <input type="email" id="email" name="email" class="email" autocomplete="off" placeholder="Ваша електронна адреса *" required>
+                <ul id="emailErrors">
+
+                </ul>
+            </div>
+            <div class="inputDiv" id="passwordDiv">
+                <input type="password" id="password" name="password" class="password" autocomplete="off" placeholder="Пароль *" required>
+                <ul id="passwordErrors">
+
+                </ul>
+            </div>
             <div id="generalErrors"></div>
         </div>
         <div class="submit">

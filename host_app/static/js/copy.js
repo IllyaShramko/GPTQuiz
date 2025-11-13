@@ -10,6 +10,10 @@ copyBtn.addEventListener('click', async () => {
     try {
         const text = codeDisplay.textContent.trim();
         await navigator.clipboard.writeText(text);
+        copyBtn.querySelector("img").src = "/host/images/check-mark.svg"
+        setTimeout(()=>{
+            copyBtn.querySelector("img").src = "/host/images/copy.svg"
+        }, 2000)
     } catch (err) {
         console.error('Помилка:', err);
 
@@ -17,10 +21,14 @@ copyBtn.addEventListener('click', async () => {
 });
 
 copyUrlBtn.addEventListener('click', async () => {
-  try {
-    const text = linkTo.href.trim();
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    console.error('Помилка:', err);
-  }
+    try {
+        const text = linkTo.href.trim();
+        await navigator.clipboard.writeText(text);
+        copyUrlBtn.querySelector("img").src = "/host/images/check-mark.svg"
+        setTimeout(()=>{
+            copyUrlBtn.querySelector("img").src = "/host/images/copy.svg"
+        }, 2000)
+    } catch (err) {
+        console.error('Помилка:', err);
+    }
 });

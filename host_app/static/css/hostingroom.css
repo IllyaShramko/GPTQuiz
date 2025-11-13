@@ -161,9 +161,12 @@ body {
 }
 li{
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 5px;
-    
+    height: 25px;
+}
+li > p{
+    width: 80%;
 }
 .check_mark{
     width: 20px;
@@ -284,4 +287,7 @@ li{
 #Wblur.hideblur {
     visibility: hidden;
     opacity: 0;
+}
+.img-copy {
+    width: 24px;
 }
