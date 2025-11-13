@@ -1,7 +1,1 @@
-web: sh -c "echo 'Создание директорий...' && \
-mkdir -p ./library_app/static/images/questions && \
-echo 'Применение миграций...' && \
-flask --app project db upgrade && \
-echo 'Запуск Gunicorn...' && \
-gunicorn --worker-class geventwebsocket.gunicorn.workers.GeventWebSocketWorker \
---workers 1 --bind 0.0.0.0:$PORT wsgi:project"
+web: mkdir -p ./library_app/static/images/questions && flask --app project db upgrade && gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 -b 0.0.0.0:$PORT wsgi:project
