@@ -1,4 +1,4 @@
-
+#!/bin/bash
 set -e  
 mkdir -p ./library_app/static/images/questions
 
