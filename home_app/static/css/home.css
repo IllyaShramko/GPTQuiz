@@ -12,22 +12,27 @@
     font-size: 35px;
     font-weight: 300;
 }
-span{
+h2 > a, span{
     color: #B479ED;
+    -webkit-user-drag: none;
+    text-decoration: none;
+}
+h2 > a:hover {
+    text-decoration: underline;
 }
 .quote{
     color: white;
     font-family: "inter";
     font-size: 60px;
-    width: 800px;
-    height: 160px;
+    width: calc(800px);
+    height: calc(160px);
     text-align: center;
     line-height: 90px;
 }
 .line{
     background-color: white;
-    height: 2px;
-    width: 900px;
+    height: calc(2px);
+    width: calc(900px);
     margin: 25px;
 }
 .welcome-information{
@@ -38,7 +43,6 @@ span{
     text-align: center;
 }
 #name{
-    
     font-family: Inter;
     font-weight: 500;
 }
@@ -51,7 +55,7 @@ span{
     gap: 10px;
     padding: 20px;
     color: white;
-    width: 100%;
+    width: calc(100%);
 }
 
 .quizes {
@@ -60,7 +64,7 @@ span{
     padding-bottom: 2px;
     background-color: #212121;
     border-radius: 15px;
-    width: 95%;
+    width: calc(100% - 5%);
 }
 
 .quizes > div {
@@ -87,12 +91,12 @@ span{
 .scroll-btn {
     position: absolute;
     top: 50%;
-    background-size: 35px;
+    background-size: calc(35px);
     background-position: center;
     background-repeat: no-repeat;
     background-color: #212121;
-    width: 50px;
-    height: 50px;
+    width: calc(50px);
+    height: calc(50px);
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
     border: none;
     border-radius: 100px;
@@ -102,8 +106,8 @@ span{
 }
 
 .scroll-btn:hover {
-    width: 54px;
-    height: 54px;
+    width: calc(54px);
+    height: calc(54px);
 }
 
 .scroll-left-btn {
@@ -123,8 +127,8 @@ span{
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    min-width: 300px;
-    height: 350px;
+    min-width: calc(300px);
+    height: calc(350px);
     background-color: #3d3d3d;
     border-radius: 10px;
     font-family: Inter;
@@ -133,7 +137,7 @@ span{
 }
 
 .description {
-    height: 180px;
+    height: calc(180px);
     font-weight: 300;
 }
 
@@ -147,9 +151,10 @@ h4 {
     font-weight: 300;
     opacity: 0.8;
 }
+
 .quiz img {
-    width: 100%;
-    height: 120px;
+    width: calc(100%);
+    height: calc(120px);
     object-fit: cover;
     border-radius: 10px;
 }
