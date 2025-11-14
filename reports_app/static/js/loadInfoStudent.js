@@ -4,21 +4,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeModal = document.getElementById("closeModal");
     const modalTitle = document.getElementById("nicknameStudent");
     const modalAnswers = document.getElementById("modalAnswers");
-    const modalBlur = document.getElementById("blur")
+    const modalBlur = document.getElementById("blurrrr")
 
     function openModal() {
         modal.classList.add("show");
-        modalBlur.style.display = "block"
+        modalBlur.classList.add("show");
         modal.style.display = "flex";
     }
 
     function hideModal() {
         modal.classList.remove("show");
-        modalBlur.style.display = "none"
+        modalBlur.classList.remove("show");
         modal.style.display = "none"
     }
 
     closeModal.addEventListener("click", hideModal);
+    modalBlur.addEventListener("click", hideModal);
 
     window.addEventListener("click", e => {
         if (e.target === modal) hideModal();

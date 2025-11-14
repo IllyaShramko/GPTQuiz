@@ -6,9 +6,6 @@
 
 {% block content %}
     <div class = 'wrapper'>
-        <button id="deleteReport">
-            <img src="{{ url_for('reports_app.static', filename='images/bin.svg') }}" alt="">
-        </button>
         <h2>Результати вікторини</h2>
         <h1>{{room.roomsQuiz.name}}</h1>
         <div class="report">
@@ -19,7 +16,7 @@
                     <button class="tab not">Заг. огляд</button>
                 </div>
                 <div class="sorting">
-                    <p>Сортирувати за: <button id="sortBtn"><</button></p>
+                    <p>Сортирувати за %: <button id="sortBtn"><</button></p>
                 </div>
             </div>
             <div class="judah">
@@ -61,16 +58,7 @@
             </div>
         </div>
     </div>
-    <div id="blurrrr" style="display: none;"></div>
-    <div id="deleteModal" style="display: none;">
-        <h3>Видалити <span>Звіт?</span></h3>
-        <hr>
-        <p>Чи справді ви хочете видалити звіт? <br> Цей звіт не можна буде потім повернути</p>
-        <form method="post" class="buttons">
-            <button id="cancel" class="button" type="button">Відмінити</button>
-            <button id="confirm" class="button" type="submit" value="{{ room.id }}">ОК</button>
-        </form>
-    </div>
+    <div id="blurrrr" ></div>
     <div id="studentModal" class="modal" style="display: none;">
         <div class="what-student">
             <h3>Результати <b id="nicknameStudent"></b></h3>
@@ -81,7 +69,6 @@
         </div>
         <button id="closeModal" type="button">ОК</button>
     </div>
-    <script src="{{ url_for('reports_app.static', filename='js/deleteModal.js' )}}"></script>
     <script src="{{ url_for('reports_app.static', filename='js/sort.js') }}"></script>
     <script src="{{ url_for('reports_app.static', filename='js/loadInfoStudent.js') }}"></script>
 {% endblock %}
