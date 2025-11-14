@@ -26,9 +26,9 @@
                         <h3>{{ quiz.name }}</h3>
                         <h4>Aвтор: {{ quiz.user.surname }} {{ quiz.user.name }}</h4>
                         <p class="description">Опис: {{ quiz.description }}</p>
-                        <hr>
+                        <div></div>
                         <p>{{ quiz.count_questions }} запитань</p>
-                        <hr>
+                        <div></div>
                         <p>{{ quiz.codes|length }} переглядів</p>
                     </a>
                 {% endfor %}
