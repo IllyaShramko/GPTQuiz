@@ -236,6 +236,7 @@
     width: 100%;
     gap: 10px;
     max-height: 95%;
+    overflow: hidden;
     overflow-y: scroll;
 }
 .question{
