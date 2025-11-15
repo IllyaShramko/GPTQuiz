@@ -214,6 +214,7 @@
     flex-direction: column;
     align-items: center;
     width: 760px;
+    max-height: 90vh;
     background-color: #414141;
     border-radius: 15px;
     padding: 20px 10px;
@@ -283,15 +284,6 @@
     border: none;
     cursor: pointer;
 }
-::-webkit-scrollbar {
-    background-color: #353535;
-    padding: 2px;
-}
-::-webkit-scrollbar-thumb{
-    background-color: #2b2b2b;
-    border-radius: 15px;
-    width: 2px;
-}
 #blurrrr {
     visibility: hidden;
     opacity: 0;
@@ -309,6 +301,10 @@
 #blurrrr.show {
     visibility: visible;
     opacity: 1;
+}
+
+::-webkit-scrollbar {
+    display: block;
 }
 
 #deleteModal{
