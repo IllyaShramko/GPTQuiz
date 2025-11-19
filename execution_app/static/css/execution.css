@@ -62,9 +62,7 @@ main {
     top: 50%;
     transform: translate(-50%, -50%);
 
-
 }
-
 .form_enter p{
     font-family: "Inter";
     font-weight: bold;     
@@ -469,4 +467,35 @@ main {
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+@media screen and (max-width: 600px) {
+    .form_enter {
+        width: 90vw;
+        height: auto;
+    }
+    #general {
+        width: 90vw;
+        height: 100vh;
+        padding: 30px 0;
+    }
+    #question {
+        flex-direction: column;
+        height: auto;
+    }
+    #question h2 {
+        font-size: 5vw;
+        width: 100%;
+    }
+    #question img.question-image {
+        max-width: 90%;
+    }
+    #answers {
+        flex-direction: column;
+        height: 50vh;
+    }
+    #answers button, #answers label {
+        height: 100%;
+        width: 100%;
+        font-size: 5vw;
+    }
 }

@@ -39,7 +39,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 1050px;
+    width: 97%;
     align-items: center; 
 
     padding: 10px 20px 30px;
@@ -161,7 +161,23 @@
     font-size: 20px;
     
 }
-
+.table-headers {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+.table-head {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+}
+.data {
+    display: flex;
+    flex-direction: row;
+    gap: 55px;
+    margin-left: 45px;
+}
 .student-card {
     display: flex;
     flex-direction: row;
@@ -185,7 +201,7 @@
     font-weight: 400;
 }
 .successful-a {
-    width: 640px;
+    width: 67%;
     height: 22px;
     background-color: #2b2b2b;
     border-radius: 15px;
@@ -214,6 +230,7 @@
     flex-direction: column;
     align-items: center;
     width: 760px;
+    max-height: 90vh;
     background-color: #414141;
     border-radius: 15px;
     padding: 20px 10px;
@@ -283,15 +300,6 @@
     border: none;
     cursor: pointer;
 }
-::-webkit-scrollbar {
-    background-color: #353535;
-    padding: 2px;
-}
-::-webkit-scrollbar-thumb{
-    background-color: #2b2b2b;
-    border-radius: 15px;
-    width: 2px;
-}
 #blurrrr {
     visibility: hidden;
     opacity: 0;
@@ -309,6 +317,10 @@
 #blurrrr.show {
     visibility: visible;
     opacity: 1;
+}
+
+::-webkit-scrollbar {
+    display: block;
 }
 
 #deleteModal{
