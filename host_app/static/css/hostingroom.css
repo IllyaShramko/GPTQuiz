@@ -156,7 +156,7 @@ body {
 #users {
     list-style-type: none;
     width: 100%;
-    max-height: 200px;
+    max-height: 80vh;
     overflow-y: auto;
 }
 li{

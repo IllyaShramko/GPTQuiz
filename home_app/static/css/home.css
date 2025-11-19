@@ -177,3 +177,9 @@ h4 {
 .block-quizes h2 {
     font-size: calc(0.8vw + 0.8vh);
 }
+@media screen and (max-width: 600px) {
+    .line {
+        width: 100vw;
+    }
+    
+}
