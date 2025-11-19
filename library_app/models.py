@@ -122,7 +122,13 @@ class Room(DATABASE.Model):
             total_questions = len(answers)
             correct = sum(1 for a in answers if a.is_correct)
             percent = (correct * 100 // total_questions) if total_questions else 0
-
+            grade = (percent / 100) * 12 
+            decimal_part = grade - int(grade)  
+            if decimal_part > 0.5:
+                grade = int(grade) + 1 
+            else:
+                grade = round(grade)  
+            grade = int(grade)
             answers_data = []
             for a in answers:
                 q = Question.query.get(a.question)
@@ -137,7 +143,8 @@ class Room(DATABASE.Model):
                 "participant_id": p.id,
                 "nickname": p.nickname,
                 "percent": percent,
-                "answers": answers_data
+                "answers": answers_data,
+                "grade": grade,
             })
 
         return sorted(report, key=lambda x: x["percent"], reverse=True)
