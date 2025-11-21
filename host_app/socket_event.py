@@ -1,3 +1,4 @@
+import flask_login
 from project import DATABASE as db
 from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
@@ -57,7 +58,15 @@ def handle_join(data):
         return
     
     session_id = session.sid if hasattr(session, 'sid') else request.sid
-    participant = SessionParticipant(nickname=username, room_id=room.id, session_id=session_id, is_connected = True)
+    
+    participants = SessionParticipant.query.filter_by(room_id=room.id).filter_by(is_connected = True).all()
+    students = [p.nickname for p in participants]
+
+    if username in students:
+        emit("join_error", {"message": "Нікнейм вже використовується"})
+        return
+    
+    participant = SessionParticipant(nickname=username, room_id=room.id, session_id=session_id, is_connected = True, user_id= flask_login.current_user.id if flask_login.current_user.is_authenticated else None)
 
     try:
         DATABASE.session.add(participant)
@@ -72,8 +81,7 @@ def handle_join(data):
     join_room(str(room.id))
     join_room(f"student_{participant.id}")
 
-    participants = SessionParticipant.query.filter_by(room_id=room.id).all()
-    students = [p.nickname for p in participants]
+    students.append(participant.username)    
     room.students = students
     DATABASE.session.commit()
 

@@ -41,7 +41,6 @@ class StudentReport(DATABASE.Model):
         self.percentage = round((self.correct_answers / self.total_questions) * 100) if self.total_questions else 0
 
         self.grade = str(round(self.percentage * 12 / 100))
-
     def to_dict(self):
         return {
             "participant": self.participant.nickname if self.participant else None,
@@ -184,6 +183,7 @@ class SessionParticipant(DATABASE.Model):
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
+    user_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'), nullable=True)
     __table_args_ = (UniqueConstraint("room_id", "nickname", "session_id", name="uq_partc_once"))
 
 class SessionAnswer(DATABASE.Model):

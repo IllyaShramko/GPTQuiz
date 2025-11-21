@@ -16,24 +16,10 @@
 
         {% for result in results %}
             <div class="quiz">
-                {% if result.redeemcode.quiz1 %}
-                    <img src="{{ url_for('library_app.static', filename=result.redeemcode.quiz1.image) }}" alt="">
-                {% else %}
-                    <img src="{{ url_for('library_app.static', filename='images/quizes/default.svg') }}" alt="">
-                {% endif %}
-                <h3>Назва: {{ result.name }}</h3>
-                <h4>Автор: {{ result.name_teacher }}</h4>
-                <p id="desc">опис: {{ result.description }}</p>
-                <hr>
-                <p>Всього запитань: {{ result.all_answers }}</p>
-                <p>Бали: {{ result.right_answers }}/{{ result.all_answers }}</p>
-                <p>Оцінка: {{ 12 // result.all_answers * result.right_answers }}/12</p>
-                <hr>
-                {% if result.redeemcode %}
-                    <h4>Ім’я вчителя: {{ result.redeemcode.hosted.surname }} {{ result.redeemcode.hosted.name }}</h4>
-                {% else %}
-                    <h4>Ім’я вчителя: Невідомо</h4>
-                {% endif %}
+                <h3>Назва вікторини: {{ result.room.quiz.name }}</h3>
+                <p>Нікнейм: {{ result.nickname }}</p>
+                <p>Правильних відповідей: {{ result.correct_answers }} з {{ result.total_questions }}</p>
+                <p>Дата проходження: {{ result.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
             </div>
         {% endfor %}
     </div>

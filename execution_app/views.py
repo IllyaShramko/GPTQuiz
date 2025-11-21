@@ -10,9 +10,12 @@ def render_enter_code():
     print(flask.session)
     if code:
         quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
+        username = None
+        if flask_login.current_user.is_authenticated:
+            username = flask_login.current_user.name + " " + flask_login.current_user.surname
         return flask.render_template(
             template_name_or_list= 'enter_nickname.html',
-            quiz=quiz
+            quiz=quiz, username=username
         )
     return flask.render_template(
         template_name_or_list="enter_code.html"

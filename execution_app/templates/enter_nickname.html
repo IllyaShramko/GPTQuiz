@@ -11,7 +11,7 @@
             <div id="join-form" method="post" class = 'form_enter'>
                 <p>GPTQuiz</p>
                 <div class = 'input_code'>
-                    <input type="text" id="username" name="input-nickname" placeholder="Введіть нікнейм">
+                    <input type="text" id="username" value="{{ username }}" name="input-nickname" placeholder="Введіть нікнейм">
                     <button class="button_code" type="button"><span class = 'button_span'>ДАЛІ</span>→</button>
                 </div> 
             </div>
@@ -19,7 +19,7 @@
 
         </div>
         <div id="lobby" style="display:none;">
-            <h1 id="quiz-title">{{ quiz_name }}</h1>
+            <h1 id="quiz-title">{{ quiz.name }}</h1>
             <h2>Під'єднані користувачі:</h2>
             <ul id="users"></ul>
         </div>
