@@ -1,5 +1,5 @@
 from .settings import project
-import home_app, user_app, admin_app, library_app, execution_app, history_app, reports_app, search_app, host_app
+import home_app, user_app, admin_app, library_app, execution_app, history_app, reports_app, host_app
 
 home_app.home_app.add_url_rule(
     rule= '/',
@@ -48,6 +48,11 @@ admin_app.admin_app.add_url_rule(
     view_func= admin_app.render_admin_page,
     methods= ["POST", "GET"]
 )
+admin_app.admin_app.add_url_rule(
+    rule= '/search-quizes/',
+    view_func= admin_app.search,
+    methods= ["POST"]
+)
 project.register_blueprint(blueprint= admin_app.admin_app)
 
 library_app.library_app.add_url_rule(
@@ -78,6 +83,12 @@ library_app.library_app.add_url_rule(
     rule= '/create-quiz/',
     view_func= library_app.render_create_quiz,
     methods= ["POST", "GET"]
+)
+
+library_app.library_app.add_url_rule(
+    rule= '/search-library/',
+    view_func= library_app.search_in_library,
+    methods= ["POST"]
 )
 
 project.register_blueprint(blueprint= library_app.library_app)
@@ -120,13 +131,6 @@ reports_app.reports_app.add_url_rule(
     methods = ["GET"]
 )
 project.register_blueprint(blueprint= reports_app.reports_app)
-
-search_app.search_app.add_url_rule(
-    rule = "/search/",
-    view_func = search_app.render_search,
-    methods= ["POST", "GET"]
-)
-project.register_blueprint(blueprint=search_app.search_app)
 
 host_app.host_app.add_url_rule(
     rule = '/host/<int:quizid>',

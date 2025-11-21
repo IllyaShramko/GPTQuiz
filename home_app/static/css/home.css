@@ -73,7 +73,6 @@ h2 > a:hover {
 .quizes {
     position: relative;
     padding: calc(0.3906250005vw + 0.7211538465vh);
-    padding-bottom: calc(0.0961538462vh + 0.0520833334vw);
     background-color: #212121;
     border-radius: calc(0.3906250005vw + 0.7211538465vh);
     width: calc(100% - 5%);

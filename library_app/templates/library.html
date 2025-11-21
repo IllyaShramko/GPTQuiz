@@ -20,9 +20,9 @@ Library
     
     <div class = "created-by-me">
         <h1>Давайте створемо вашу першу вікторину! </h1>
-        <form class="search-line">
+        <form class="search-line" id="searchForm">
             <img src="{{ url_for('admin_app.static', filename= 'images/search.svg') }}">
-            <input type="text" placeholder="Знайдіть будь-яку тему...">
+            <input type="text" id="searchInput" placeholder="Знайдіть будь-яку тему...">
             <button>
                 <img src="{{ url_for('admin_app.static', filename= 'images/search_button.svg') }}">
             </button>
@@ -47,5 +47,7 @@ Library
             </a>
         {% endfor %}        
     </div>
+    
     <script src="{{ url_for('library_app.static', filename='js/description.js') }}"></script>
+    <script src="{{ url_for('library_app.static', filename='js/search.js') }}"></script>
 {% endblock %}

@@ -13,10 +13,10 @@
         <h2>
             Яка тема вам потрібна?
         </h2>
-        <form class="search-line">
+        <form class="search-line" id="searchForm" method="POST">
             <img src="{{ url_for('admin_app.static', filename= 'images/search.svg') }}">
-            <input type="text" placeholder="Знайдіть будь-яку тему...">
-            <button>
+            <input type="text" id="searchInput" name="search" placeholder="Знайдіть будь-яку тему...">
+            <button type="submit">
                 <img src="{{ url_for('admin_app.static', filename= 'images/search_button.svg') }}">
             </button>
         </form>  
@@ -37,4 +37,5 @@
         </div>
     </div>
     <script src="{{ url_for('admin_app.static', filename= 'js/description.js') }}"></script>
+    <script src="{{ url_for('admin_app.static', filename= 'js/search.js') }}"></script>
 {% endblock %}

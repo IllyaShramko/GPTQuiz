@@ -41,7 +41,6 @@ class StudentReport(DATABASE.Model):
         self.percentage = round((self.correct_answers / self.total_questions) * 100) if self.total_questions else 0
 
         self.grade = str(round(self.percentage * 12 / 100))
-
     def to_dict(self):
         return {
             "participant": self.participant.nickname if self.participant else None,
@@ -162,6 +161,20 @@ class Quiz(DATABASE.Model):
     questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
     codes = DATABASE.relationship(RedeemCode, backref = 'quiz1', lazy = True)
     rooms = DATABASE.relationship(Room, backref="roomsQuiz", lazy=True)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "count_questions": self.count_questions,
+            "author": {
+                "name": self.user.name,
+                "surname": self.user.surname
+            } if self.user else None,
+            "image": self.image,
+            "codes": self.codes
+        }   
+
 
 
 class SessionParticipant(DATABASE.Model):
@@ -170,6 +183,7 @@ class SessionParticipant(DATABASE.Model):
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
+    user_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'), nullable=True)
     __table_args_ = (UniqueConstraint("room_id", "nickname", "session_id", name="uq_partc_once"))
 
 class SessionAnswer(DATABASE.Model):
