@@ -52,6 +52,7 @@ def render_create_quiz():
                 quiz.name = flask.request.form['Name-Quiz']
                 quiz.description = flask.request.form['Description-Quiz']
                 quiz_image = flask.request.files['image']
+                quiz.is_draft = False
                 if quiz_image:
                     filename = secure_filename(quiz_image.filename)
                     name, ext = os.path.splitext(secure_filename(quiz_image.filename))
@@ -203,3 +204,18 @@ def render_create_quiz():
 
 def render_enter_answer():
     return flask.render_template(template_name_or_list='enter_answer.html')
+
+def search_in_library():
+    data = flask.request.get_json()
+    search_text = data.get('search', '')
+
+    quizes = Quiz.query
+
+    quizes = quizes.filter(Quiz.author_id == flask_login.current_user.id)
+
+    if search_text:
+        quizes = quizes.filter(Quiz.name.ilike(f'%{search_text}%'))
+
+    quizes = quizes.all()
+    print(f"Search text: {search_text}, Found quizes: {[q.image for q in quizes]}")
+    return flask.jsonify([q.to_dict() for q in quizes])

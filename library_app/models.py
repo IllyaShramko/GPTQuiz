@@ -162,6 +162,20 @@ class Quiz(DATABASE.Model):
     questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
     codes = DATABASE.relationship(RedeemCode, backref = 'quiz1', lazy = True)
     rooms = DATABASE.relationship(Room, backref="roomsQuiz", lazy=True)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "count_questions": self.count_questions,
+            "author": {
+                "name": self.user.name,
+                "surname": self.user.surname
+            } if self.user else None,
+            "image": self.image,
+            "codes": self.codes
+        }   
+
 
 
 class SessionParticipant(DATABASE.Model):

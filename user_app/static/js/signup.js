@@ -3,7 +3,6 @@ const submitBtn = document.getElementById('submit');
 const submitDiv = document.querySelector(".submit")
 const inputsDiv = document.querySelector(".inputs")
 
-
 let preventedOnce = false;
 
 let login, first_name, surname, email, password
@@ -102,7 +101,7 @@ function validate(data) {
                     
                     const divInputs = document.createElement("div")
                     divInputs.classList.add("code-div")
-                    // 
+                    
                     const inputNumber1 = document.createElement('input')
                     inputNumber1.classList.add('input-code-number')
                     inputNumber1.maxLength = 1
@@ -133,20 +132,34 @@ function validate(data) {
                     inputNumber6.classList.add('input-code-number')
                     inputNumber6.maxLength = 1
                     divInputs.appendChild(inputNumber6)
-                    // 
+                    
                     const submitDivvv = document.createElement("div")
                     submitDivvv.classList.add("submit")
-                    // 
                     
                     const inputs = divInputs.querySelectorAll('.input-code-number');
 
                     inputs.forEach((input, index) => {
+                        input.addEventListener("paste", e => {
+                            e.preventDefault();
+                            let text = (e.clipboardData || window.clipboardData).getData("text");
+                            text = text.replace(/\D/g, "");
+                            if (!text) return;
+                            for (let i = 0; i < inputs.length; i++) {
+                                inputs[i].value = text[i] ?? "";
+                            }
+                            if ([...inputs].every(inp => inp.value.length === 1)) {
+                                buttonSubmit.click();
+                            } else {
+                                const firstEmpty = [...inputs].find(inp => inp.value === "");
+                                if (firstEmpty) firstEmpty.focus();
+                            }
+                        });
+
                         input.addEventListener('input', (e) => {
                             const value = e.target.value;
                             if (value.length === 1 && index < inputs.length - 1) {
                                 inputs[index + 1].focus();
                             }
-                    
                             if ([...inputs].every(inp => inp.value.length === 1)) {
                                 buttonSubmit.click()
                             }
@@ -166,7 +179,6 @@ function validate(data) {
                             e.target.select();
                         });
                     });
-                    
                     
                     const buttonSubmit = document.createElement('button')
                     buttonSubmit.id = 'submit'
@@ -204,7 +216,6 @@ function validate(data) {
                     document.getElementById("login").style.border = "2px solid red";
                     loginErrorsDiv.appendChild(li);
                 }
-                console.log("Додано помилку:", error.type, error);
             });
             preventedOnce = false; 
         }
