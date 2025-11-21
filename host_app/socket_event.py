@@ -81,7 +81,7 @@ def handle_join(data):
     join_room(str(room.id))
     join_room(f"student_{participant.id}")
 
-    students.append(participant.username)    
+    students.append(participant.nickname)    
     room.students = students
     DATABASE.session.commit()
 
