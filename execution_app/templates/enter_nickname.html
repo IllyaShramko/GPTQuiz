@@ -20,6 +20,9 @@
         </div>
         <div id="lobby" style="display:none;">
             <h1 id="quiz-title">{{ quiz.name }}</h1>
+            <h2>Ім'я вчителя: {{ teacher.name }} {{ teacher.surname }}</h2>
+            <h2>Кількість запитань: {{ quiz.questions|length }}</h2>
+            <hr>
             <h2>Під'єднані користувачі:</h2>
             <ul id="users"></ul>
         </div>

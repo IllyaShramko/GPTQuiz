@@ -13,9 +13,11 @@ def render_enter_code():
         username = None
         if flask_login.current_user.is_authenticated:
             username = flask_login.current_user.name + " " + flask_login.current_user.surname
+        room = RedeemCode.query.filter_by(code_enter=code).first().room
+        teacher = User.query.get(room.host)
         return flask.render_template(
             template_name_or_list= 'enter_nickname.html',
-            quiz=quiz, username=username
+            quiz=quiz, username=username, teacher=teacher
         )
     return flask.render_template(
         template_name_or_list="enter_code.html"

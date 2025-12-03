@@ -10,7 +10,7 @@ host
 
 {% block content %}
     <div class="main-info">
-        <img src="{{ url_for('library_app.static', filename=quiz.image) }}" alt="">
+        <img src="{{ url_for('library_app.static', filename=quiz.image) }}" class="ImgQuiz" alt="">
         <h1>Назва: {{ quiz.name }}</h1>
         <p>Опис: {{ quiz.description }}</p>
         <h2>Кількість запитань: {{ quiz.count_questions }}</h2>
@@ -31,6 +31,10 @@ host
             {% for question in quiz.questions %}
                 <hr>
                 <div class="question">
+                    {% if question.image %}
+                        <img src="{{ url_for('library_app.static', filename= 'images/' + question.image) }}">
+                        
+                    {% endif %}
                     <h2>Запитання {{ loop.index }}: {{ question.name }}</h2>
                     <h2>Варіанти відповіді:</h2>
                     <div class="answers">

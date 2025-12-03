@@ -3,7 +3,8 @@ from library_app.models import Quiz, RedeemCode, StudentReport, Room, SessionPar
 from project.settings import DATABASE
 
 def render_reports_page():
-    rooms = Room.query.filter_by(host=flask_login.current_user.id).all() 
+    rooms = Room.query.filter_by(host=flask_login.current_user.id).all()
+    rooms.reverse()
     for room in rooms:
         reports = room.student_reports
         if reports and len(reports) > 0:

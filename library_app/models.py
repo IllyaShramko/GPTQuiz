@@ -45,11 +45,11 @@ class StudentReport(DATABASE.Model):
         return {
             "participant": self.participant.nickname if self.participant else None,
             "room_id": self.room_id,
+            "quiz_name": self.room.roomsQuiz.name if self.room and self.room.roomsQuiz else None,
+            "host_name": f"{self.room.host_user.name} {self.room.host_user.surname}" if self.room and self.room.host_user else None,
             "total_questions": self.total_questions,
             "correct_answers": self.correct_answers,
-            "wrong_answers": self.wrong_answers,
             "score": self.score,
-            "max_score": self.max_score,
             "percentage": self.percentage,
             "grade": self.grade,
             "hash_code": self.hash_code,
@@ -110,6 +110,7 @@ class Room(DATABASE.Model):
     redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
     participants = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"), nullable=True)
     date = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
+    archived = DATABASE.Column(DATABASE.Boolean, default=False)
     def get_report(self):
         from .models import SessionParticipant, SessionAnswer, Question
 

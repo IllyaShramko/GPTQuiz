@@ -5,7 +5,7 @@ def render_home_page():
 
     if flask_login.current_user.is_authenticated:
         return flask.redirect("/admin/")
-    quizes= Quiz.query.filter(Quiz.name != "draft").filter(Quiz.description != "draft")
+    quizes= Quiz.query.filter_by(is_draft = False).all()
     print(quizes)
     return flask.render_template(
         template_name_or_list= 'home.html',
