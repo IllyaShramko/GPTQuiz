@@ -6,5 +6,5 @@ def render_history():
     return flask.render_template(
         template_name_or_list = "history.html",
         username = flask_login.current_user.login,
-        # results = flask_login.current_user.passed_participations
+        participiants = flask_login.current_user.passed_participations
     )

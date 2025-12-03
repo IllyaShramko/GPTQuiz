@@ -9,7 +9,8 @@ def render_enter_code():
     print(code)
     print(flask.session)
     if code:
-        quiz = Quiz.query.get(RedeemCode.query.filter_by(code_enter=code)[0].quiz)
+        quiz = RedeemCode.query.filter_by(code_enter= code).first_or_404().quiz
+        print(quiz)
         username = None
         if flask_login.current_user.is_authenticated:
             username = flask_login.current_user.name + " " + flask_login.current_user.surname

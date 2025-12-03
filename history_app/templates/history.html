@@ -14,12 +14,11 @@
     </header>
     <div class="passed-quizes">
 
-        {% for result in results %}
+        {% for participiant in participiants %}
             <div class="quiz">
-                <h3>Назва вікторини: {{ result.room.quiz.name }}</h3>
-                <p>Нікнейм: {{ result.nickname }}</p>
-                <p>Правильних відповідей: {{ result.correct_answers }} з {{ result.total_questions }}</p>
-                <p>Дата проходження: {{ result.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <h3>Назва вікторини: {{ participiant.room.roomsQuiz.name }}</h3>
+                <p>Нікнейм: {{ participiant.nickname }}</p>
+                <p>Правильних відповідей: {{ participiant.report.correct_answers }}/{{ participiant.report.total_questions }}</p>
             </div>
         {% endfor %}
     </div>

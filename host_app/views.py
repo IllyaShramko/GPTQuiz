@@ -28,7 +28,7 @@ def render_host_app(quizid):
             DATABASE.session.flush()
             
             code_db= RedeemCode(
-                quiz= quiz.id,
+                quiz= quiz,
                 name = quiz.name,
                 code_enter= redeem_code,
                 hosted_by= flask_login.current_user.id,

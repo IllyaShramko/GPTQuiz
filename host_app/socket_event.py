@@ -9,15 +9,16 @@ from flask import request, session
 
 def create_student_report(participant_id, room_id):
     answers = SessionAnswer.query.filter_by(room_id=room_id, participant_id=participant_id).all()
+
     total = len(answers)
     correct = sum(1 for a in answers if a.is_correct)
     wrong = total - correct
 
-    max_score = total 
+    max_score = total
     score = correct
-    percentage = int((correct / total) * 100) if total else 0
+    percentage = round((correct / total) * 100) if total else 0
 
-    grade = f"{score}/{max_score}"
+    grade = str(round(percentage * 12 / 100))
 
     report = StudentReport(
         participant_id=participant_id,
@@ -30,6 +31,7 @@ def create_student_report(participant_id, room_id):
         percentage=percentage,
         grade=grade,
     )
+
     DATABASE.session.add(report)
     DATABASE.session.commit()
 

@@ -12,49 +12,46 @@ class StudentReport(DATABASE.Model):
 
     id = DATABASE.Column(DATABASE.Integer, primary_key=True)
 
-    participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"), nullable=False)
-    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=True)
+    participant_id = DATABASE.Column(
+        DATABASE.Integer,
+        DATABASE.ForeignKey("session_participant.id"),
+        nullable=False,
+        unique=True 
+    )
+
+    room_id = DATABASE.Column(
+        DATABASE.Integer,
+        DATABASE.ForeignKey("room.id"),
+        nullable=True
+    )
 
     total_questions = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
     correct_answers = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
     wrong_answers = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
 
-    score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)       
-    max_score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)   
-    percentage = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)  
+    score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
+    max_score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
+    percentage = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
 
-    grade = DATABASE.Column(DATABASE.String(10), nullable=True)                
+    grade = DATABASE.Column(DATABASE.String(10), nullable=True)
 
-    hash_code = DATABASE.Column(DATABASE.String(64), unique=True, nullable=False, default=lambda: uuid.uuid4().hex)
+    hash_code = DATABASE.Column(DATABASE.String(64), unique=True,
+        nullable=False,
+        default=lambda: uuid.uuid4().hex
+    )
+
     created_at = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
 
-    participant = DATABASE.relationship("SessionParticipant", backref="reports", lazy=True)
-    room = DATABASE.relationship("Room", backref="student_reports", lazy=True)
+    participant = DATABASE.relationship(
+        "SessionParticipant",
+        backref=DATABASE.backref("report", uselist=False),
+        lazy=True
+    )
 
-    def calculate_from_answers(self, answers):
-        self.total_questions = len(answers)
-        self.correct_answers = sum(1 for a in answers if a.is_correct)
-        self.wrong_answers = self.total_questions - self.correct_answers
-
-        self.max_score = self.total_questions
-        self.score = self.correct_answers
-        self.percentage = round((self.correct_answers / self.total_questions) * 100) if self.total_questions else 0
-
-        self.grade = str(round(self.percentage * 12 / 100))
-    def to_dict(self):
-        return {
-            "participant": self.participant.nickname if self.participant else None,
-            "room_id": self.room_id,
-            "quiz_name": self.room.roomsQuiz.name if self.room and self.room.roomsQuiz else None,
-            "host_name": f"{self.room.host_user.name} {self.room.host_user.surname}" if self.room and self.room.host_user else None,
-            "total_questions": self.total_questions,
-            "correct_answers": self.correct_answers,
-            "score": self.score,
-            "percentage": self.percentage,
-            "grade": self.grade,
-            "hash_code": self.hash_code,
-            "created_at": self.created_at.isoformat() if self.created_at else None
-        }
+    room = DATABASE.relationship(
+        "Room",
+        backref="student_reports"
+    )
 
 
 class Question(DATABASE.Model):
@@ -93,7 +90,7 @@ class Question(DATABASE.Model):
 class RedeemCode(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
     name = DATABASE.Column(DATABASE.String(100), nullable = False)
-    quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
+    quiz_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
     code_enter = DATABASE.Column(DATABASE.Integer)
     hosted_by = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
@@ -108,7 +105,8 @@ class Room(DATABASE.Model):
     status = DATABASE.Column(DATABASE.String, default= "waiting")
     answered_students = DATABASE.Column(DATABASE.Integer, default=0)
     redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
-    participants = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"), nullable=True)
+    session_participants = DATABASE.relationship("SessionParticipant", backref="room", lazy=True)
+
     date = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
     archived = DATABASE.Column(DATABASE.Boolean, default=False)
     def get_report(self):
@@ -160,7 +158,7 @@ class Quiz(DATABASE.Model):
     image = DATABASE.Column(DATABASE.String(100), nullable = False)
     is_draft = DATABASE.Column(DATABASE.Boolean, default=True)
     questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
-    codes = DATABASE.relationship(RedeemCode, backref = 'quiz1', lazy = True)
+    codes = DATABASE.relationship("RedeemCode", backref="quiz")
     rooms = DATABASE.relationship(Room, backref="roomsQuiz", lazy=True)
     def to_dict(self):
         return {
@@ -180,12 +178,12 @@ class Quiz(DATABASE.Model):
 
 class SessionParticipant(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
-    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('room.id'), nullable=True)
+    room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
     nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
-    user_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'), nullable=True)
-    __table_args_ = (UniqueConstraint("room_id", "nickname", "session_id", name="uq_partc_once"))
+    user_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"), nullable=True)
+    __table_args__ = (UniqueConstraint("room_id", "nickname", "session_id", name="uq_partc_once"),)
 
 class SessionAnswer(DATABASE.Model):
     __tablename__ = "session_answer"
