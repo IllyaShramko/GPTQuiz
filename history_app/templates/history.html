@@ -15,11 +15,15 @@
     <div class="passed-quizes">
 
         {% for participiant in participiants %}
-            <div class="quiz">
-                <h3>Назва вікторини: {{ participiant.room.roomsQuiz.name }}</h3>
-                <p>Нікнейм: {{ participiant.nickname }}</p>
-                <p>Правильних відповідей: {{ participiant.report.correct_answers }}/{{ participiant.report.total_questions }}</p>
-            </div>
+            <a href="/reportStudent/{{ participiant.report.hash_code }}" class="quiz">
+                <img src="{{ url_for('library_app.static', filename= participiant.room.roomsQuiz.image) }}" alt="">
+                <div>
+                    <h3>Вікторина: {{ participiant.room.roomsQuiz.name }}</h3>
+                    <p id="desc">{{ participiant.room.roomsQuiz.description }}</p>
+                    <p>Нікнейм: {{ participiant.nickname }}</p>
+                    <p>Правильних відповідей: {{ participiant.report.correct_answers }}/{{ participiant.report.total_questions }}</p>
+                </div>
+            </a>
         {% endfor %}
     </div>
 {% endblock %}
