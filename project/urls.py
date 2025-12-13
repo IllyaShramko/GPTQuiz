@@ -130,6 +130,12 @@ reports_app.reports_app.add_url_rule(
     view_func=reports_app.get_student_report,
     methods = ["GET"]
 )
+reports_app.reports_app.add_url_rule(
+    rule= '/reports/archive/',
+    view_func= reports_app.render_archived_reports,
+    methods= ["POST", "GET"]
+)
+
 project.register_blueprint(blueprint= reports_app.reports_app)
 
 host_app.host_app.add_url_rule(

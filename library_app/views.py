@@ -6,9 +6,9 @@ from sqlalchemy import func
 def render_library():
     
     return flask.render_template(
-        'library.html',
-        username = flask_login.current_user.login,
-        created_quizes = Quiz.query.filter(Quiz.author_id == flask_login.current_user.id).filter(Quiz.name != "draft").all(),
+            'library.html',
+            username = flask_login.current_user.login,
+            created_quizes = Quiz.query.filter_by(author_id = flask_login.current_user.id, is_draft = False ).all(),
         )
 
 def get_draft():

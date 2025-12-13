@@ -243,6 +243,7 @@ li > p{
 }
 .modal img {
     max-width: 100%;
+    min-width: 95%;
     max-height: 100%;
     border-radius: 5px;
 }

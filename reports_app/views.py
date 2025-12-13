@@ -3,21 +3,37 @@ from library_app.models import Quiz, RedeemCode, StudentReport, Room, SessionPar
 from project.settings import DATABASE
 
 def render_reports_page():
-    rooms = Room.query.filter_by(host=flask_login.current_user.id).all()
+    rooms = Room.query.filter_by(host=flask_login.current_user.id, archived = False).all()
     rooms.reverse()
     for room in rooms:
         reports = room.student_reports
         if reports and len(reports) > 0:
             
             room.success_rate = int(sum(r.percentage for r in reports) / len(reports))
-            print(len(reports))
         else:
             room.success_rate = 0
-            print(0)
     return flask.render_template(
         template_name_or_list='reports.html',
         rooms=rooms,
-        username = flask_login.current_user.login
+        username = flask_login.current_user.login,
+        archive = False
+    )
+
+def render_archived_reports():
+    rooms = Room.query.filter_by(host=flask_login.current_user.id, archived = True).all()
+    rooms.reverse()
+    for room in rooms:
+        reports = room.student_reports
+        if reports and len(reports) > 0:
+            
+            room.success_rate = int(sum(r.percentage for r in reports) / len(reports))
+        else:
+            room.success_rate = 0
+    return flask.render_template(
+        template_name_or_list='reports.html',
+        rooms=rooms,
+        username = flask_login.current_user.login,
+        archive = True
     )
 
 def render_detail_report(room_id):

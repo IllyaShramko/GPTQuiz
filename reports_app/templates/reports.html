@@ -50,9 +50,17 @@
                 </div>
             </div>
         </div>  
-
     </div>
-    <div class="blur hideform" id="blur"></div>
+    {% if archive %}
+        <a href="/reports/" class="archive-btn">
+            <img src="{{ url_for('reports_app.static', filename='images/back.svg') }}">
+        </a>
+        {% else %}
+        <a href="/reports/archive/" class="archive-btn">
+            <img src="{{ url_for('reports_app.static', filename='images/archive.svg') }}">
+        </a>
+    {% endif %}
+        <div class="blur hideform" id="blur"></div>
     <form method="post" id="saveForm" class="form hideform" enctype="multipart/form-data">
         <h2>Ви дійсно хочете видалити цей звіт?</h2>
         <h3 id="reportName"></h3>
