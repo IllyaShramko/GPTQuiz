@@ -64,7 +64,7 @@ library_app.library_app.add_url_rule(
 library_app.library_app.add_url_rule(
     rule= '/get-draft/',
     view_func= library_app.get_draft,
-    methods= ["POST"]
+    methods= ["POST", "GET"]
 )
 
 library_app.library_app.add_url_rule(
