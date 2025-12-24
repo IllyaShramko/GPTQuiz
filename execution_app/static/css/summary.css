@@ -262,7 +262,7 @@ header img {
     flex-direction: column;
     padding: 15px;
     gap: 20px;
-    width: 97%;
+    width: 100%;
     background-color: #323232;
     border-radius: 5px;
 }
