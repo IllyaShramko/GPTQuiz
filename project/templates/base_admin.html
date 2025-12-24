@@ -14,9 +14,11 @@
                 <h1>GPTQuiz</h1>
             </a>
             
-            <button class="create-btn-ripple createQuiz">
-                + Створити
-            </button>
+            <form action="/get-draft/">
+                <button type="submit" class="create-btn-ripple createQuiz">
+                    + Створити
+                </button>
+            </form>
             <input type="hidden" id="quizCreate" value="">
             <div class="links">
                 <a class="tab-link" href="/library/">

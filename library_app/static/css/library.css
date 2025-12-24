@@ -58,7 +58,7 @@
     padding-top: 20px;
 }
 
-form{
+.search-line{
     height: 47px;
     width: auto;
     display: flex;
@@ -72,12 +72,12 @@ form{
     gap: 5px;
 }
 
-form img{
+.search-line img{
     width: 25px;
     height: 25px;
 }
 
-form input{
+.search-line input{
     height: 100%;
     width: 475px;
     border: none;
@@ -87,7 +87,7 @@ form input{
 
 }
 
-form button{
+.search-line button{
     height: 100%;
     width: 40px;
     border: none;
