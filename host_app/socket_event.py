@@ -263,7 +263,7 @@ def handle_answer(data):
             question=question.id
         ).all()
 
-        if len(answers) == SessionParticipant.query.filter_by(room_id=room.id).count():
+        if len(answers) == SessionParticipant.query.filter_by(room_id=room.id).filter_by(is_connected = True).count():
             handle_end_question({"code": code_enter})
 
 @socketio.on("next_question")

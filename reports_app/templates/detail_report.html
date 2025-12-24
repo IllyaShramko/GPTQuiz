@@ -54,18 +54,20 @@
                 </div>
                 <div id="studentsContainer">
                     {% for student in report %}
-                        <div class="student-card" data-student-id="{{ student.participant_id }}">
-                            <h5 class="nickname">{{ student.nickname }}</h5>
-                            <div class="successful-a">
-                                {% for ans in student.answers %}
+                        {% if student.report %}
+                            <div class="student-card" data-student-id="{{ student.participant_id }}">
+                                <h5 class="nickname">{{ student.nickname }}</h5>
+                                <div class="successful-a">
+                                    {% for ans in student.answers %}
                                     <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
-                                {% endfor %}
+                                    {% endfor %}
+                                </div>
+                                <div class="data">
+                                    <h5 class="grade">{{ student.grade }}</h5>
+                                    <h5 class="percent">{{ student.percent }}%</h5>
+                                </div>
                             </div>
-                            <div class="data">
-                                <h5 class="grade">{{ student.grade }}</h5>
-                                <h5 class="percent">{{ student.percent }}%</h5>
-                            </div>
-                        </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

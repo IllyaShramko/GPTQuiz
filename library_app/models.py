@@ -1,11 +1,8 @@
 import flask
 from sqlalchemy import UniqueConstraint
 from project.settings import DATABASE
-import uuid
-# from user_app.models import User
-
-import uuid
 from sqlalchemy.sql import func
+import uuid
 
 class StudentReport(DATABASE.Model):
     __tablename__ = "student_report"
@@ -143,6 +140,7 @@ class Room(DATABASE.Model):
                 "percent": percent,
                 "answers": answers_data,
                 "grade": grade,
+                "report": p.report
             })
 
         return sorted(report, key=lambda x: x["percent"], reverse=True)
