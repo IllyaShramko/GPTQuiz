@@ -62,6 +62,7 @@
         </div>
         <div id="Wblur" class="hideblur"></div>
 
+        
         <script>
             const socket = io();
             const code = "{{ code }}"; 
@@ -110,11 +111,26 @@
                 container.innerHTML = "";
                 console.log("Received teacher_results:", data.results);
                 div.innerHTML = ""
+                const avatarUrl = "{{ url_for('host_app.static', filename='images/avatar.svg') }}";
                 data.results.forEach(res => {
                     const div = document.createElement("div");
                     div.innerHTML = `
-                        <b>${res.nickname}</b> — ${res.answer} 
-                        ${res.is_correct ? "✅" : "❌"}
+                        <div class="student-answer">
+                            <div class="student-avatar-nickname">
+                                <img src="${avatarUrl}">
+                                <h4>${res.nickname}</h4>
+                            </div>
+                            <h5>Відповідь:</h5>
+                            <div class="answers-student">
+                                ${
+                                    Array.isArray(res.answer)
+                                        ? res.answer
+                                            .map(ans => `<div><p>${ans}</p></div>`)
+                                            .join("")
+                                        : `<div><p>${res.answer}</p></div>`
+                                }
+                            </div>
+                        </div>
                     `;
                     container.appendChild(div);
                 });
