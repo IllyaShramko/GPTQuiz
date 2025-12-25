@@ -292,3 +292,67 @@ li > p{
 .img-copy {
     width: 24px;
 }
+#resultsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 25px;
+}
+.student-answer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 400px;
+    height: 350px;
+    background-color: #383838;
+}
+
+.student-right {
+    border-top: #22CE00 3px solid;
+}
+
+.student-wrong {
+    border-top: #F03C39 3px solid;
+}
+
+.student-avatar-nickname {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+.student-avatar-nickname img {
+    width: 40px;
+    height: 40px;
+}
+.student-avatar-nickname h4 {
+    font-size: 24px;
+    font-weight: 500;
+}
+.student-answer h5 {
+    font-size: 20px;
+}
+.answers-student {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    gap: 5px;
+
+}
+.answers-student div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 5px 3px;
+    border-radius: 5px;
+    background-color: #4D4D4D;
+}
+.answers-student div p {
+    font-size: 16px;
+    font-weight: 500;
+}
