@@ -77,8 +77,8 @@ def send_code():
     try:
         response = api_instance.send_transac_email(send_smtp_email)
         print("ОК:", response)
-    except:
-        print("Error sending email")
+    except Exception as e:
+        print("Error sending email", e)
     return flask.jsonify({'message': f'Код відправленно на {email}'})
 
 def validate_code():
