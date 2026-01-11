@@ -92,14 +92,32 @@
                 console.log(data.students);
                 usersList.innerHTML = '';
                 usersText.textContent = `Участники: (${data.students.length})`;
+                
                 data.students.forEach(student => {
                     const li = document.createElement("li");
                     const p = document.createElement("p")
                     p.textContent = student;
                     li.appendChild(p)
                     li.id = student;
+                    const deleteBtn = document.createElement("button");
+                    const deleteImg = document.createElement("img");
+                    deleteImg.src = "{{ url_for('host_app.static', filename='images/delete.svg') }}";
+                    deleteBtn.appendChild(deleteImg);
+                    deleteBtn.onclick = () => {
+                        socket.emit("remove_student", { code: code, username: student });
+                    };
+                    deleteBtn.classList.add("delete-user-btn");
+                    li.appendChild(deleteBtn);
                     usersList.appendChild(li);
                 });
+            });
+
+            socket.on("remove_student_client", (data) => {
+                const userLi = document.getElementById(data.username);
+                if (userLi) {
+                    userLi.remove();
+                }
+                usersText.textContent = `Участники: (${document.getElementById("users").childElementCount})`;
             });
 
             socket.on("teacher_results", (data) => {

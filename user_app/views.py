@@ -4,7 +4,9 @@ from .models import User, VerificationCode
 from project.flask_config import api_instance
 from project.settings import DATABASE
 from brevo_python.models import SendSmtpEmail, SendSmtpEmailTo, SendSmtpEmailSender
-import random, re
+import random, re, os, dotenv
+
+dotenv.load_dotenv()
 
 def validate_data():
     data = flask.request.get_json()
@@ -14,7 +16,6 @@ def validate_data():
     surname = data.get("surname", "").strip()
     email = data.get("email", "").strip()
     password = data.get("password", "")
-    # confirm_password = data.get("confirmPassword", "")
 
     errors = {
         "success": True,
@@ -69,7 +70,7 @@ def send_code():
     flask.session['email_code'] = codeDB.id
     print(email)
     send_smtp_email = SendSmtpEmail(
-        sender=SendSmtpEmailSender(email="test.python.1488@gmail.com", name="Ваше имя"),
+        sender=SendSmtpEmailSender(email= os.getenv("MAIL_USERNAME"), name="GPTQuiz"),
         to=[SendSmtpEmailTo(email=email, name="Шановний Користувач")],
         subject="Ваш код підтвердження",
         html_content=f"<strong>Ваш код підтвердження: {code}</strong>"

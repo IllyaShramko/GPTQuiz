@@ -59,7 +59,7 @@ function validate(data) {
         body: JSON.stringify(data)
     })
     .then(res => res.json())
-    .then(result => {
+    .then(async result => {
         const errorsDiv = document.getElementById("generalErrors")
         const emailErrorsDiv = document.getElementById("emailErrors")
         const passwordErrorsDiv = document.getElementById("passwordErrors")
@@ -79,6 +79,7 @@ function validate(data) {
             img.src = "/user/images/wait.svg"
             img.id = "waitImg"
             form.appendChild(img)
+            setTimeout(()=>{   
             fetch("/sendcode/", {
                 method: "POST",
                 headers: {
@@ -193,6 +194,7 @@ function validate(data) {
                     form.appendChild(submitDivvv)
                 }, 1000)
             })
+            }, 500)
         } else {    
             const baseHeight = 620; 
             form.style.height = baseHeight + "px";

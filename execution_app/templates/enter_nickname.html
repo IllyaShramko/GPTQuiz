@@ -46,6 +46,24 @@
                 
                 const quizId = '{{ quiz.id }}'
     
+                socket.on("connect", () => {
+                    const reconnectHash = localStorage.getItem(`reconnect_${code}`);
+                    if (reconnectHash) {
+                        socket.emit("auto_join_room", { code, quizId, reconnectHash });
+                    } else {
+                        document.getElementById("join-form").style.display = "flex";
+                    }
+                });
+                
+                socket.on("auto_join_error", data => {
+                    document.getElementById("join-form").style.display = "flex";
+                });
+
+                socket.on("join_error", data => {
+                    alert(data.message);
+                    document.getElementById("join-form").style.display = "flex";
+                });
+
                 document.querySelector(".button_code").addEventListener("click", () => {
                     username = document.getElementById("username").value;
                     if (!username) return alert("Введіть нікнейм!");
@@ -55,9 +73,17 @@
                 })
                 
                 socket.on("joined_success", data => {
+                    if (data.reconnect_hash) {
+                        localStorage.setItem(`reconnect_${code}`, data.reconnect_hash);
+                    }
                     document.getElementById("join-form").style.display = "none";
                     document.getElementById("lobby").style.display = "flex";
                     document.getElementById("quiz-title").textContent = data.quiz_name;
+                });
+
+                socket.on("remove_student_client", data => {
+                    alert("Вас видалено з кімнати.");
+                    window.location.href = "/";
                 });
     
                 function blockPanel(msg = "Зачекайте...") {
@@ -272,7 +298,72 @@
                         userList.appendChild(li);
                     });
                 });
-    
+            
+                socket.on("current_question_info", data => {
+                    blockPanel()
+
+                    document.getElementById('waitingDiv').remove();
+                    const allBtns = document.querySelectorAll('.answer-button, label');
+                    
+                    if (data.type === 'one answer') {
+                        if (data.is_correct) {
+                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            answerBtn.style.opacity = 1;
+                            answerBtn.style.backgroundColor = 'green';
+                        }
+                        else {
+                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            answerBtn.style.opacity = 1;
+                            answerBtn.style.backgroundColor = 'red';
+                            const correctBtn = document.getElementById(`answerBtn${data.correct_answer_id}`);
+                            if (correctBtn) {
+                                correctBtn.style.opacity = 1;
+                                correctBtn.style.backgroundColor = 'green';
+                            }
+                        }
+                    }
+                    else if (data.type === 'multiple answers') {
+                        allBtns.forEach(btn => {
+                            const btnId = parseInt(btn.value);
+                            if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
+                                btn.style.opacity = 0; 
+                        }});
+                        const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                        userAnswerBtns.forEach(btn => {
+                            btn.style.opacity = 1;
+                            btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
+                        });
+                        const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                        correctAnswerBtns.forEach(btn => {
+                            btn.style.opacity = 1;
+                            btn.style.backgroundColor = 'green';
+                        });
+                    }
+                    const notifyDiv = document.createElement('div')
+                    notifyDiv.classList.add('notify-div')
+                    notifyDiv.id = 'notifyDiv'
+                    if (data.is_correct) {
+                        notifyDiv.classList.add('notify-correct')
+                        notifyDiv.innerHTML = `
+                                <h2>Правильно</h2>
+                        `
+                    }
+                    else {
+                        notifyDiv.classList.add('notify-wrong')
+                        notifyDiv.innerHTML = `
+                                <h2>Не правильно</h2>
+                        `
+                    }
+                    document.body.appendChild(notifyDiv);
+                    void notifyDiv.offsetWidth;
+                    void notifyDiv.offsetHeight
+                    notifyDiv.style.width = '100vw';
+                    setTimeout(() => {
+                        notifyDiv.style.top = "80%";
+                        notifyDiv.style.height = '50px';
+                    }, 2500);
+                })
+
                 socket.on("student_result", (data) => {
                     console.log("👉 Результат студента:", data);
                     document.getElementById('waitingDiv').remove();

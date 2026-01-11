@@ -181,6 +181,7 @@ class SessionParticipant(DATABASE.Model):
     session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
     user_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"), nullable=True)
+    reconnect_hash = DATABASE.Column(DATABASE.String(64), unique=True, nullable=False, default=lambda: uuid.uuid4().hex)
     __table_args__ = (UniqueConstraint("room_id", "nickname", "session_id", name="uq_partc_once"),)
 
 class SessionAnswer(DATABASE.Model):
