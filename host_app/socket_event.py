@@ -229,6 +229,9 @@ def handle_remove_student(data):
     participant.is_connected = False
     DATABASE.session.commit()
     emit("remove_student_client", {"username": username}, room=str(room.id))
+
+
+
 @socketio.on("host_join")
 def handle_host_join(data):
     code_enter = data.get("room")
@@ -242,6 +245,84 @@ def handle_host_join(data):
 
     join_room(str(room.id))
     join_room(f"teacher_{room.host}")
+
+    participants = SessionParticipant.query.filter_by(room_id=room.id, is_connected=True).all()
+    students = [p.nickname for p in participants]
+    room.students = students
+    DATABASE.session.commit()
+    emit("user_list_update", {"students": students}, room=str(room.id))
+
+    if not flask_login.current_user.is_authenticated or flask_login.current_user.id != room.host:
+        return
+
+    quiz = Quiz.query.get(room.quiz) if room and room.quiz else None
+
+    if room.index_question is not None and quiz and 0 <= room.index_question < len(quiz.questions):
+        current_question = quiz.questions[room.index_question]
+
+        question_data = {
+            "id": current_question.id,
+            "name": current_question.name,
+            "type": current_question.type,
+            "variant_1": current_question.variant_1,
+            "variant_2": current_question.variant_2,
+            "variant_3": current_question.variant_3,
+            "variant_4": current_question.variant_4,
+            "correct_answer": current_question.correct_answer,
+            "image": current_question.image
+        }
+
+        socketio.emit("quiz_start_teacher", question_data, room=f"teacher_{room.host}")
+
+        try:
+            duration = 30
+            end_time = int(time.time() + duration)
+            socketio.emit("question_timer", {"end_time": end_time, "duration": duration}, room=f"teacher_{room.host}")
+        except Exception as e:
+            print("Error emitting reconnect timer to teacher:", e)
+
+        answers = SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
+        if answers:
+            if len(answers) == len(participants):
+                results = []
+                for ans in answers:
+                    participant = SessionParticipant.query.get(ans.participant_id)
+                    correct_text = ans.right_answers()
+                    if isinstance(correct_text, list):
+                        correct_text = correct_text if len(correct_text) > 1 else correct_text[0]
+
+                    user_answer_text = ans.get_answer(ans.answer)
+                    user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+
+                    results.append({
+                        "student_id": ans.participant_id,
+                        "nickname": participant.nickname,
+                        "answer": user_answer_text,
+                        "is_correct": ans.is_correct,
+                        "correct_answer": correct_text,
+                        "answer_id": ans.answer,
+                        "correct_answer_id": current_question.correct_answer,
+                        "type": current_question.type
+                    })
+
+                socketio.emit(
+                    "teacher_results",
+                    {
+                        "results": results,
+                        "index_question": room.index_question,
+                        "total_questions": len(quiz.questions)
+                    },
+                    room=f"teacher_{room.host}"
+                )
+            else:
+                for ans in answers:
+                    participant = SessionParticipant.query.get(ans.participant_id)
+                    socketio.emit('student_answer', {
+                        'username': participant.nickname,
+                        'answer': ans.get_answer(ans.answer) if ans.answer else ans.answer,
+                        'question_id': current_question.id
+                    }, room=f"teacher_{room.host}")
+    return
 
 @socketio.on("quiz_start")
 def handle_start(data):
