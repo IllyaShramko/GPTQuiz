@@ -45,15 +45,14 @@
                 
                 
                 const quizId = '{{ quiz.id }}'
-    
-                socket.on("connect", () => {
-                    const reconnectHash = localStorage.getItem(`reconnect_${code}`);
-                    if (reconnectHash) {
-                        socket.emit("auto_join_room", { code, quizId, reconnectHash });
-                    } else {
-                        document.getElementById("join-form").style.display = "flex";
-                    }
-                });
+
+                const reconnectHash = localStorage.getItem(`reconnect_${code}`);
+                console.log("Reconnect Hash:", reconnectHash);
+                if (reconnectHash) {
+                    socket.emit("auto_join_room", { code, quizId, reconnectHash });
+                } else {
+                    document.getElementById("join-form").style.display = "flex";
+                }
                 
                 socket.on("auto_join_error", data => {
                     document.getElementById("join-form").style.display = "flex";
@@ -342,7 +341,14 @@
                     const notifyDiv = document.createElement('div')
                     notifyDiv.classList.add('notify-div')
                     notifyDiv.id = 'notifyDiv'
-                    if (data.is_correct) {
+                    console.log(data)
+                    if (data.answer_id[0] === "Пропущений") {
+                        notifyDiv.classList.add('notify-skipped')
+                        notifyDiv.innerHTML = `
+                                <h2>Пропущено</h2>
+                        `
+                    }
+                    else if (data.is_correct) {
                         notifyDiv.classList.add('notify-correct')
                         notifyDiv.innerHTML = `
                                 <h2>Правильно</h2>
@@ -365,9 +371,44 @@
                 })
 
                 socket.on("student_result", (data) => {
-                    console.log("👉 Результат студента:", data);
-                    document.getElementById('waitingDiv').remove();
+                    if (document.getElementById('waitingDiv')) {
+                        document.getElementById('waitingDiv').remove();
+                    }
+                    if (!document.getElementsByClassName("WWblur")) {
+                        blockPanel()
+                    }
                     const allBtns = document.querySelectorAll('.answer-button, label');
+                    
+                    const notifyDiv = document.createElement('div')
+                    notifyDiv.classList.add('notify-div')
+                    notifyDiv.id = 'notifyDiv'
+
+                    if (data.answer_id === "Пропущений...") {
+                        notifyDiv.classList.add('notify-skipped')
+                        notifyDiv.innerHTML = `
+                                <h2>Пропущено</h2>
+                        `
+                    }
+                    else if (data.is_correct) {
+                        notifyDiv.classList.add('notify-correct')
+                        notifyDiv.innerHTML = `
+                                <h2>Правильно</h2>
+                        `
+                    }
+                    else {
+                        notifyDiv.classList.add('notify-wrong')
+                        notifyDiv.innerHTML = `
+                                <h2>Не правильно</h2>
+                        `
+                    }
+                    document.body.appendChild(notifyDiv);
+                    void notifyDiv.offsetWidth;
+                    void notifyDiv.offsetHeight
+                    notifyDiv.style.width = '100vw';
+                    setTimeout(() => {
+                        notifyDiv.style.top = "80%";
+                        notifyDiv.style.height = '50px';
+                    }, 2500);
                     
                     if (data.type === 'one answer') {
                         if (data.is_correct) {
@@ -403,29 +444,6 @@
                             btn.style.backgroundColor = 'green';
                         });
                     }
-                    const notifyDiv = document.createElement('div')
-                    notifyDiv.classList.add('notify-div')
-                    notifyDiv.id = 'notifyDiv'
-                    if (data.is_correct) {
-                        notifyDiv.classList.add('notify-correct')
-                        notifyDiv.innerHTML = `
-                                <h2>Правильно</h2>
-                        `
-                    }
-                    else {
-                        notifyDiv.classList.add('notify-wrong')
-                        notifyDiv.innerHTML = `
-                                <h2>Не правильно</h2>
-                        `
-                    }
-                    document.body.appendChild(notifyDiv);
-                    void notifyDiv.offsetWidth;
-                    void notifyDiv.offsetHeight
-                    notifyDiv.style.width = '100vw';
-                    setTimeout(() => {
-                        notifyDiv.style.top = "80%";
-                        notifyDiv.style.height = '50px';
-                    }, 2500);
                 });
     
                 socket.on("end_msg", data => {

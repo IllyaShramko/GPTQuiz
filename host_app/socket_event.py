@@ -91,32 +91,45 @@ def handle_join(data):
     emit("user_list_update", {"students": students}, room=str(room.id))
 
     if room.index_question is not None and 0 <= room.index_question < len(quiz.questions):
-        now_question = quiz.questions[room.index_question]
+        current_question = quiz.questions[room.index_question]
         emit("quiz_start_student", {
             "quiz_name": quiz.name,
-            "name": now_question.name,
-            "type": now_question.type,
-            "variant_1": now_question.variant_1,
-            "variant_2": now_question.variant_2,
-            "variant_3": now_question.variant_3,
-            "variant_4": now_question.variant_4,
-            "correct_answer": now_question.correct_answer,
-            "image": now_question.image,
-            "id": now_question.id
+            "name": current_question.name,
+            "type": current_question.type,
+            "variant_1": current_question.variant_1,
+            "variant_2": current_question.variant_2,
+            "variant_3": current_question.variant_3,
+            "variant_4": current_question.variant_4,
+            "correct_answer": current_question.correct_answer,
+            "image": current_question.image,
+            "id": current_question.id
         })
 
-        existing_participant = SessionParticipant.query.filter_by(nickname=username, room_id=room.id, is_connected=False).first()
+        existing_participant = SessionParticipant.query.filter_by(nickname=username, room_id=room.id, is_connected=True).first()
         if existing_participant:
             existing_participant.is_connected = True
             DATABASE.session.commit()
 
-            current_question = Question.query.filter_by(quiz_id=quiz_id).order_by(func.random()).first()
-            answer_status = SessionAnswer.query.filter_by(participant_id=existing_participant.id, question_id=current_question.id).first()
+            answer_status = SessionAnswer.query.filter_by(participant_id=existing_participant.id, question=current_question.id).first()
 
             if answer_status:
-                emit("current_question_info", {"question": current_question.type, "is_correct": answer_status.is_correct})
+                emit(
+                    "current_question_info",
+                    {
+                        "question": current_question.type,
+                        "is_correct": answer_status.is_correct,
+                        "answer_id": answer_status.get_answer(answer_status.answer),
+                    }
+                )
             else:
-                emit("current_question_info", {"question": current_question.type, "is_correct": None})
+                emit(
+                    "current_question_info",
+                    {
+                        "question": current_question.type,
+                        "is_correct": "skipped",
+                        "answer_id": None,
+                    }
+                )
             return
 
 
@@ -126,7 +139,7 @@ def handle_auto_join(data):
     code_enter = data.get("code")
     quiz_id = data.get("quizId")
     reconnect_hash = data.get("reconnectHash")
-    
+    print(code_enter, quiz_id, reconnect_hash)
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     if not redeem:
         emit("auto_join_error", {"message": "Код не найден"})
@@ -141,9 +154,9 @@ def handle_auto_join(data):
     if not room:
         emit("auto_join_error", {"message": "Комната не найдена"})
         return
-    
-    existing_participant = SessionParticipant.query.filter_by(reconnect_hash=reconnect_hash, room_id=room.id, is_connected=False).first()
-    
+    print(redeem, quiz, room)
+    existing_participant = SessionParticipant.query.filter_by(reconnect_hash=reconnect_hash, room_id=room.id, is_connected=True).first()
+    print(existing_participant)
     if existing_participant:
         existing_participant.is_connected = True
         DATABASE.session.commit()
@@ -159,7 +172,7 @@ def handle_auto_join(data):
     students = [p.nickname for p in participants]
     room.students = students
     DATABASE.session.commit()
-
+    session['participant_id'] = participant.id
     emit("joined_success", {"quiz_name": redeem.name})
     emit("user_list_update", {"students": students}, room=str(room.id))
 
@@ -178,11 +191,26 @@ def handle_auto_join(data):
             "id": current_question.id
         })
 
-        answer_status = SessionAnswer.query.filter_by(participant_id=existing_participant.id, question_id=current_question.id).first()
+        answer_status = SessionAnswer.query.filter_by(participant_id=participant.id, question=current_question.id).first()
         if answer_status:
-            emit("current_question_info", {"question": current_question.type, "is_correct": answer_status.is_correct})
+            print(answer_status.get_answer(answer_status.answer))
+            emit(
+                "current_question_info",
+                {
+                    "question": current_question.type,
+                    "is_correct": answer_status.is_correct,
+                    "answer_id": answer_status.get_answer(answer_status.answer),
+                }
+            )
         else:
-            emit("current_question_info", {"question": current_question.type, "is_correct": None})
+            emit(
+                "current_question_info",
+                {
+                    "question": current_question.type,
+                    "is_correct": "skipped",
+                    "answer_id": None,
+                }
+            )
         return
 
 @socketio.on("remove_student")
@@ -461,6 +489,7 @@ def handle_end_question(data):
         })
 
     for res in results:
+        print(res)
         socketio.emit(
             "student_result",
             {
