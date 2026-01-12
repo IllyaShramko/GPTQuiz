@@ -458,6 +458,9 @@ main {
 .notify-wrong {
     background-color: #F03C39;
 }
+.notify-skipped {
+    background-color: #585858;
+}
 
 .spinner {
     height: 100%;
