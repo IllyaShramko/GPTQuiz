@@ -113,6 +113,7 @@
                     if (answered) {
                         return
                     }
+                    blockPanel();
                     
                     answer1 = answer
                     answersDiv = document.getElementById('answers');
@@ -146,8 +147,8 @@
                     }
     
                     answered = !answered
+                    console.log({answer: answer, question_id: questionID, username, code});
                     socket.emit("answer", {answer: answer, question_id: questionID, username, code});
-                    blockPanel();
                 }
     
                 socket.on("quiz_start_student", data => {
@@ -302,6 +303,7 @@
                     blockPanel()
 
                     document.getElementById('waitingDiv').remove();
+                    document.getElementById("WWblur").classList.add('hideblur');
                     const allBtns = document.querySelectorAll('.answer-button, label');
                     
                     if (data.type === 'one answer') {
@@ -343,18 +345,27 @@
                     notifyDiv.id = 'notifyDiv'
                     console.log(data)
                     if (data.answer_id[0] === "Пропущений") {
+                        if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                            document.getElementById("WWblur").classList.remove('hideblur');
+                        }
                         notifyDiv.classList.add('notify-skipped')
                         notifyDiv.innerHTML = `
                                 <h2>Пропущено</h2>
                         `
                     }
                     else if (data.is_correct) {
+                        if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                            document.getElementById("WWblur").classList.remove('hideblur');
+                        }
                         notifyDiv.classList.add('notify-correct')
                         notifyDiv.innerHTML = `
                                 <h2>Правильно</h2>
                         `
                     }
                     else {
+                        if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                            document.getElementById("WWblur").classList.remove('hideblur');
+                        }
                         notifyDiv.classList.add('notify-wrong')
                         notifyDiv.innerHTML = `
                                 <h2>Не правильно</h2>
@@ -374,8 +385,8 @@
                     if (document.getElementById('waitingDiv')) {
                         document.getElementById('waitingDiv').remove();
                     }
-                    if (!document.getElementsByClassName("WWblur")) {
-                        blockPanel()
+                    if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                        document.getElementById("WWblur").classList.add('hideblur');
                     }
                     const allBtns = document.querySelectorAll('.answer-button, label');
                     
