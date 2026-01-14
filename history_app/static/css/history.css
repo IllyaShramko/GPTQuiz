@@ -1,3 +1,7 @@
+.historyLink {
+    opacity: 1;
+    width: 100%;
+}
 header{
     position: relative;
     top: 80px;

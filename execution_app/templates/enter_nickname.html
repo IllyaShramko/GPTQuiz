@@ -81,6 +81,8 @@
                 });
 
                 socket.on("remove_student_client", data => {
+                    if (data.username !== username) return;
+                    localStorage.removeItem(`reconnect_${code}`);
                     alert("Вас видалено з кімнати.");
                     window.location.href = "/";
                 });

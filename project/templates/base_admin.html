@@ -14,11 +14,6 @@
                 <h1>GPTQuiz</h1>
             </a>
             
-            <form action="/get-draft/">
-                <button type="submit" class="create-btn-ripple createQuiz">
-                    + Створити
-                </button>
-            </form>
             <input type="hidden" id="quizCreate" value="">
             <div class="links">
                 <a class="tab-link" href="/library/">
@@ -26,21 +21,21 @@
                         <img src="{{ url_for('static', filename= 'images/library.svg') }}">
                         <p>Бібліотека</p>
                     </div>
-                    <div class="divider"></div>
+                    <div class="divider libraryLink"></div>
                 </a>
                 <a class="tab-link" href="/history/">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/history.svg') }}">
                         <p>Історія</p>
                     </div>
-                    <div class="divider"></div>
+                    <div class="divider historyLink"></div>
                 </a>
                 <a class="tab-link" href="/reports/">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/reports.svg') }}">
                         <p>Звіти</p>
                     </div>
-                    <div class="divider"></div>
+                    <div class="divider reportsLink"></div>
                 </a>
                 <!-- <a class="tab-link" href="" class="gpt-quiz-ai">
                     <div>
@@ -51,11 +46,21 @@
             </div>
         </aside>
         <div class="nav">
-            <a href="/execution/" class="enter-code">Введіть код</a>
-            <a href="/profile/" id="username">{{username}}</a>
-            <a href="/logout/" class="logout">
-                <img src="{{ url_for('admin_app.static', filename= 'images/logout.svg') }}">
-            </a>
+            <div class="firstNav">
+                <h2>{% block name_page %}{% endblock %}</h2>
+            </div>
+            <div class="secondNav">
+                <form class="createForm" action="/get-draft/">
+                    <button type="submit" class="create-btn-ripple createQuiz">
+                        + Створити
+                    </button>
+                </form>
+                <a href="/execution/" class="enter-code">Введіть код</a>
+                <a href="/profile/" id="username">{{username}}</a>
+                <a href="/logout/" class="logout">
+                    <img src="{{ url_for('admin_app.static', filename= 'images/logout.svg') }}">
+                </a>
+            </div>
         </div>
         {% block content %}
         

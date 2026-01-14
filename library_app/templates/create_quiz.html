@@ -17,23 +17,19 @@
             <div class="sidebar">
                 {% if not questions %}
                     <p>Почати з ...</p>
+                    <div class="slide">
+                        <img src="{{url_for('library_app.static', filename= 'images/plus.svg')}}" alt="">
+                        <h3>Виберіть тип запитання</h3>
+                    </div>
                 {% else %}
                     <p>Створені запитання:</p>
                 {% endif %}
                 <div class="slides">
                     {% for question in questions %}
                         <div class="slide">
-                            <h3>{{question.name}}</h3>
+                            <h3>{{question.name[:30]}}</h3>
                         </div>
                     {% endfor %}
-                    <div class="slide">
-                        <img src="{{url_for('library_app.static', filename= 'images/ai.svg')}}" alt="">
-                        <h3 class="AI-button">Згенерувати за допомогою AI</h3>
-                    </div>
-                    <div class="slide">
-                        <img src="{{url_for('library_app.static', filename= 'images/plus.svg')}}" alt="">
-                        <h3>Створити з нуля</h3>
-                    </div>
                 </div>
             </div>
             {% if not create_question %}

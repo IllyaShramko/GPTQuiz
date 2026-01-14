@@ -1,6 +1,10 @@
 * {
     color: white;
 }
+.reportsLink {
+    opacity: 1;
+    width: 100%;
+}
 #deleteReport{
     position: absolute;
     top: 20px;

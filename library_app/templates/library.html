@@ -8,43 +8,40 @@ Library
 <link rel="stylesheet" href="{{url_for('library_app.static', filename = 'css/library.css')}}">
 {% endblock %}
 
-{% block content %}
-    <form method="post" action="/get-draft/" class = "created-by-me-create">
-        <h2>Створено мною</h2>
-        <button id = 'createQuiz' class="create-btn-ripple createQuiz">
-            <p>
-                + Створити
-            </p>
-        </button>
-    </form>
-    
-    <div class = "created-by-me">
-        <h1>Давайте створемо вашу першу вікторину! </h1>
-        <form class="search-line" id="searchForm">
-            <img src="{{ url_for('admin_app.static', filename= 'images/search.svg') }}">
-            <input type="text" id="searchInput" placeholder="Знайдіть будь-яку тему...">
-            <button>
-                <img src="{{ url_for('admin_app.static', filename= 'images/search_button.svg') }}">
-            </button>
-        </form>
-    </div>
+{% block name_page %}
+Створено мною
+{% endblock %}
 
-    <div class="quizes">
-        {% for quiz in created_quizes %}    
-            <a href="/host/{{ quiz.id }}" class="quiz">
-                <img src="{{ url_for('library_app.static', filename= quiz.image) }}" alt="">
-                <div class="quiz-info">
-                    <h3>{{ quiz.name }}</h3>
-                    <div>
-                        <p class="desc">{{ quiz.description }}</p>
-                        <hr>
-                        <p>{{ quiz.count_questions }} Запитань</p>
-                        <hr>
-                        <p>Було використано для <br> проходженння: {{ quiz.codes|length }}</p>
+{% block content %}
+    <div class="library-container">
+        <div class = "created-by-me">
+            <h1>Давайте створемо вікторину!</h1>
+            <form class="search-line" id="searchForm">
+                <img src="{{ url_for('admin_app.static', filename= 'images/search.svg') }}">
+                <input type="text" id="searchInput" placeholder="Знайдіть будь-яку тему...">
+                <button>
+                    <img src="{{ url_for('admin_app.static', filename= 'images/search_button.svg') }}">
+                </button>
+            </form>
+        </div>
+    
+        <div class="quizes">
+            {% for quiz in created_quizes %}    
+                <a href="/host/{{ quiz.id }}" class="quiz">
+                    <img src="{{ url_for('library_app.static', filename= quiz.image) }}" alt="">
+                    <div class="quiz-info">
+                        <h3>{{ quiz.name }}</h3>
+                        <div>
+                            <p class="desc">{{ quiz.description }}</p>
+                            <hr>
+                            <p>{{ quiz.count_questions }} Запитань</p>
+                            <hr>
+                            <p>Було використано для <br> проходженння: {{ quiz.codes|length }}</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        {% endfor %}        
+                </a>
+            {% endfor %}        
+        </div>
     </div>
     
     <script src="{{ url_for('library_app.static', filename='js/description.js') }}"></script>
