@@ -48,15 +48,8 @@ header h2{
     background-color: #3a3a3a;
 }
 
-.report img  {
-    width: 140px;
-    height: 64px;
-    object-fit: cover;
-    border-radius: 10px;
-}
 .reports-info {
     width: 100%;
-    
     border-radius: 20px;
     border: 2px solid #2b2b2b;
     overflow: hidden;
@@ -64,14 +57,17 @@ header h2{
 .titles {
     width: 100%;
     height: 44px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 170px 40px 1fr 380px;
+    gap: 30px;
     align-items: center;
-    justify-content: space-between;
-    padding-left: 190px;
-    padding-right: 60px;
     background-color: #2b2b2b;
 }
-
+.titlessub {
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    gap: 40px;
+}
 .reports {
     display: flex;
     flex-direction: column;
@@ -81,13 +77,27 @@ header h2{
     position: relative;
     width: 100%;
     height: 80px;
-    display: flex;
-    padding: 9px;
+    display: grid;
+    grid-template-columns: 155px 75px 1fr 330px;
+    align-items: center;
     padding-left: 20px;
     padding-right: 50px;
     gap: 10px;
     text-decoration: none;
     border-top: 2px #2b2b2b solid;
+}
+.infoRoom {
+    display: grid;
+    grid-template-columns: 95px 85px 100px;
+    gap: 40px;
+    font-size: 20px;
+    font-weight: 500;
+}
+.report img  {
+    width: 140px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 10px;
 }
 .titleRoom {
     display: flex;
@@ -96,7 +106,6 @@ header h2{
 }
 #name{
     position: relative;
-    width: 47.2vw;
     font-size: 20px;
     font-weight: 400;
 }
@@ -104,26 +113,15 @@ header h2{
     font-size: 16px;
     font-weight: 300;
     text-align: center;
-    width: 100px;
     color: #B26FFF;
 }
-.infoRoom {
-    display: flex;
-    align-items: center;
-    gap: 50px;
-    font-size: 20px;
-    font-weight: 500;
-}
 #rate {
-    width: 56px;
     text-align: center;
 }
 #students {
-    width: 60px;
-    text-align: end;
+    text-align: center;
 }
 #date1 {
-    width: 110px;
     text-align: center;
 }
 
