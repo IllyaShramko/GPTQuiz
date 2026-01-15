@@ -224,6 +224,9 @@
 .wrong {
     background-color: #F03C39;
 }
+.skipped {
+    background-color: #626875;
+}
 
 .modal.show {
     position: absolute;
@@ -282,7 +285,9 @@
 .wrongQ{
     border-top: #F03C39 4px solid;
 }
-
+.skippedQ {
+    border-top: #626875 4px solid;
+}
 .answers{
     display: flex;
     flex-direction: column;

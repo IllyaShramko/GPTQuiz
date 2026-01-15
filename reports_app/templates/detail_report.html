@@ -4,6 +4,10 @@
 <link rel="stylesheet" href="{{ url_for('reports_app.static', filename='css/detail_report.css') }}">
 {% endblock %}
 
+{% block name %}
+    
+{% endblock %}
+
 {% block content %}
     <div class = 'wrapper'>
         <h2>Результати вікторини</h2>
@@ -59,7 +63,7 @@
                                 <h5 class="nickname">{{ student.nickname }}</h5>
                                 <div class="successful-a">
                                     {% for ans in student.answers %}
-                                    <span class="answer {% if ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
+                                        <span class="answer {% if ans.your_answer == 'Пропущений...' %}skipped{% elif ans.is_correct %}correct{% else %}wrong{% endif %}"></span>
                                     {% endfor %}
                                 </div>
                                 <div class="data">

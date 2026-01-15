@@ -38,7 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.answers.forEach((ans, index) => {
                         const el = document.createElement("div");
                         el.classList.add("question");
-                        if (!ans.is_correct) {
+                        console.log(ans)
+                        if (ans.answer === "Пропущений..." || ans.answer[0] === "Пропущений") {
+                            el.classList.add("skippedQ")
+                        }
+                        else if (!ans.is_correct) {
                             el.classList.add('wrongQ')
                         }
                         else{
