@@ -188,7 +188,8 @@ def handle_auto_join(data):
             "variant_4": current_question.variant_4,
             "correct_answer": current_question.correct_answer,
             "image": current_question.image,
-            "id": current_question.id
+            "id": current_question.id,
+            "current_question": room.index_question
         })
 
         answer_status = SessionAnswer.query.filter_by(participant_id=participant.id, question=current_question.id).first()
@@ -275,7 +276,7 @@ def handle_host_join(data):
         socketio.emit("quiz_start_teacher", question_data, room=f"teacher_{room.host}")
 
         try:
-            duration = 30
+            duration = 45
             end_time = int(time.time() + duration)
             socketio.emit("question_timer", {"end_time": end_time, "duration": duration}, room=f"teacher_{room.host}")
         except Exception as e:
@@ -317,11 +318,15 @@ def handle_host_join(data):
             else:
                 for ans in answers:
                     participant = SessionParticipant.query.get(ans.participant_id)
-                    socketio.emit('student_answer', {
-                        'username': participant.nickname,
-                        'answer': ans.get_answer(ans.answer) if ans.answer else ans.answer,
-                        'question_id': current_question.id
-                    }, room=f"teacher_{room.host}")
+                    socketio.emit(
+                        'student_answer',
+                        {
+                            'username': participant.nickname,
+                            'answer': ans.get_answer(ans.answer) if ans.answer else ans.answer,
+                            'question_id': current_question.id
+                        },
+                        room=f"teacher_{room.host}"
+                    )
     return
 
 @socketio.on("quiz_start")
@@ -349,7 +354,8 @@ def handle_start(data):
         "variant_3": now_question.variant_3,
         "variant_4": now_question.variant_4,
         "correct_answer": now_question.correct_answer,
-        "image": now_question.image
+        "image": now_question.image,
+        "current_question": room.index_question
     }
 
     emit("quiz_start_student", question_data, room=room_id)
@@ -471,7 +477,8 @@ def handle_next(data):
             "variant_3": now_question.variant_3,
             "variant_4": now_question.variant_4,
             "correct_answer": now_question.correct_answer,
-            "image": now_question.image
+            "image": now_question.image,
+            "current_question": room.index_question
         }
 
         emit("quiz_start_student", question_data, room=room_id)

@@ -466,7 +466,23 @@ main {
     height: 100%;
     animation: spin 1.5s linear infinite;
 }
-
+#header {
+    position: absolute;
+    height: 5vh;
+    width: 100vw;
+    background-color: #383838;
+    grid-template-columns: 1fr 1fr;
+    padding: 5px 15px;
+    color: white;
+}
+#header div {
+    display: flex;
+    justify-content: end;
+    gap: 5px;
+}
+#header div p {
+    font-size: 20px;
+}
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -476,9 +492,12 @@ main {
         width: 90vw;
         height: auto;
     }
+    #header {
+        height: 4vh;
+    }
     #general {
         width: 90vw;
-        height: 100vh;
+        height: 95vh;
         padding: 30px 0;
     }
     #question {
@@ -500,5 +519,8 @@ main {
         height: 100%;
         width: 100%;
         font-size: 5vw;
+    }
+    #sendBtn {
+        bottom: -30px;
     }
 }

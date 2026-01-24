@@ -7,14 +7,22 @@
         <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     </head>
     <body>
-        <div id="student-result"></div>
-            <div id="join-form" method="post" class = 'form_enter'>
-                <p>GPTQuiz</p>
-                <div class = 'input_code'>
-                    <input type="text" id="username" value="{{ username }}" name="input-nickname" placeholder="Введіть нікнейм">
-                    <button class="button_code" type="button"><span class = 'button_span'>ДАЛІ</span>→</button>
-                </div> 
+        <header style="display:none;" id="header">
+            <h2 class="title-logo">GPTQuiz</h2>
+            <div>
+                <p id="currentQ"></p>
+                <p>/</p>
+                <p>{{ quiz.questions|length }}</p>
             </div>
+        </header>
+        <div id="student-result"></div>
+        <div id="join-form" method="post" class = 'form_enter'>
+            <p>GPTQuiz</p>
+            <div class = 'input_code'>
+                <input type="text" id="username" value="{{ username }}" name="input-nickname" placeholder="Введіть нікнейм">
+                <button class="button_code" type="button"><span class = 'button_span'>ДАЛІ</span>→</button>
+            </div> 
+        </div>
         <div class="waiting-divdiv">
 
         </div>
@@ -77,6 +85,8 @@
                     }
                     document.getElementById("join-form").style.display = "none";
                     document.getElementById("lobby").style.display = "flex";
+                    document.getElementById("header").style.display = "grid";
+                    document.getElementById("currentQ").textContent = "0"
                     document.getElementById("quiz-title").textContent = data.quiz_name;
                 });
 
@@ -283,6 +293,7 @@
                             Wblur.classList.add('hideblur');
                         });
                     }
+                    document.getElementById("currentQ").textContent = data.current_question
                     document.getElementById('notifyDiv').remove();
                 });
                 
