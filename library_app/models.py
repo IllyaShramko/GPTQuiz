@@ -9,12 +9,7 @@ class StudentReport(DATABASE.Model):
 
     id = DATABASE.Column(DATABASE.Integer, primary_key=True)
 
-    participant_id = DATABASE.Column(
-        DATABASE.Integer,
-        DATABASE.ForeignKey("session_participant.id"),
-        nullable=False,
-        unique=True 
-    )
+    student_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("student.id"))
 
     room_id = DATABASE.Column(
         DATABASE.Integer,
@@ -38,12 +33,6 @@ class StudentReport(DATABASE.Model):
     )
 
     created_at = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
-
-    participant = DATABASE.relationship(
-        "SessionParticipant",
-        backref=DATABASE.backref("report", uselist=False),
-        lazy=True
-    )
 
     room = DATABASE.relationship(
         "Room",
@@ -171,8 +160,6 @@ class Quiz(DATABASE.Model):
             "image": self.image,
             "codes": self.codes
         }   
-
-
 
 class SessionParticipant(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)

@@ -4,6 +4,8 @@ from library_app.models import Quiz
 def render_home_page():
 
     if flask_login.current_user.is_authenticated:
+        if flask_login.current_user.is_student:
+            return flask.redirect("/student/")
         return flask.redirect("/admin/")
     quizes= Quiz.query.filter_by(is_draft = False).all()
     print(quizes)
