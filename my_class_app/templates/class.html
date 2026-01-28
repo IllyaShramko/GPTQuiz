@@ -1,0 +1,20 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}
+    Reports page
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('reports_app.static', filename= 'css/reports.css') }}">
+{% endblock %}
+
+{% block name_page %}
+Звіти вікторин
+{% endblock %}
+
+{% block content %}
+    <main> 
+        
+    </main>
+    <script src="{{ url_for('reports_app.static', filename= 'js/openCloseModel.js') }}"></script>
+{% endblock %}

@@ -18,7 +18,7 @@ def create_student_report(participant_id, room_id):
     score = correct
     percentage = round((correct / total) * 100) if total else 0
 
-    grade = str(round(percentage * 12 / 100))
+    grade = str(percentage / 100 * 12 // 1)
 
     report = StudentReport(
         participant_id=participant_id,

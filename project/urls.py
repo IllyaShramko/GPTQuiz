@@ -40,7 +40,11 @@ user_app.user_app.add_url_rule(
     view_func = user_app.validate_code,
     methods= ["POST", "GET"]
 )
-
+user_app.user_app.add_url_rule(
+    rule= '/create_admin/',
+    view_func= user_app.create_admin    ,
+    methods= ["POST"]
+)
 
 project.register_blueprint(blueprint= user_app.user_app)
 admin_app.admin_app.add_url_rule(
@@ -92,6 +96,12 @@ library_app.library_app.add_url_rule(
 )
 
 project.register_blueprint(blueprint= library_app.library_app)
+
+execution_app.execution_app.add_url_rule(
+    rule = '/login_student/',
+    view_func = execution_app.render_login_student,
+    methods = ["POST", "GET"]
+)
 
 execution_app.execution_app.add_url_rule(
     rule = '/execution/',

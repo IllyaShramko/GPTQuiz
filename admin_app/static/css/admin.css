@@ -9,7 +9,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 90%;
+    width: calc(100% - 220px);
     height: 150px;
     background-color: #252525;
     position: absolute;
@@ -19,7 +19,7 @@
 }
 .search h2 {
     font-family: "Inter";
-    font-size: 30px;
+    font-size: 26px;
     font-weight: 300;
     color: white;
 }
@@ -54,7 +54,7 @@
     position: absolute;
     right: 0;
     top: 230px;
-    width: 87%;
+    width: calc(100% - 220px);
     display: flex;
     flex-direction: column;
     justify-content: start;

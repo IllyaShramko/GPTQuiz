@@ -4,12 +4,13 @@
 <link rel="stylesheet" href="{{ url_for('reports_app.static', filename='css/detail_report.css') }}">
 {% endblock %}
 
-{% block name_page %}
-Результати вікторини
+{% block name %}
+    
 {% endblock %}
 
 {% block content %}
     <div class = 'wrapper'>
+        <h2>Результати вікторини</h2>
         <h1>{{room.roomsQuiz.name}}</h1>
         <div class="report">
             <div class="header-report">

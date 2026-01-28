@@ -16,6 +16,13 @@
             
             <input type="hidden" id="quizCreate" value="">
             <div class="links">
+                <a class="tab-link" href="#">
+                    <div>
+                        <img src="{{ url_for('static', filename= 'images/.svg') }}">
+                        <p>Мої класи</p>
+                    </div>
+                    <div class="divider myClassLink"></div>
+                </a>
                 <a class="tab-link" href="/library/">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/library.svg') }}">
@@ -37,15 +44,9 @@
                     </div>
                     <div class="divider reportsLink"></div>
                 </a>
-                <!-- <a class="tab-link" href="" class="gpt-quiz-ai">
-                    <div>
-                        <img src="{{ url_for('static', filename= 'images/ai.svg') }}">
-                        <p class="ai-text">GPTQuiz AI</p>
-                    </div>
-                </a> -->
             </div>
         </aside>
-        <div class="nav">
+        <header class="nav">
             <div class="firstNav">
                 <h2>{% block name_page %}{% endblock %}</h2>
             </div>
@@ -61,7 +62,7 @@
                     <img src="{{ url_for('admin_app.static', filename= 'images/logout.svg') }}">
                 </a>
             </div>
-        </div>
+        </header>
         {% block content %}
         
         {% endblock %}

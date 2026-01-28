@@ -128,10 +128,7 @@ def render_signup():
             DATABASE.session.commit()
             return flask.redirect('/login/')
         except:
-            return "Не вдалося створити користувача"  
-            
-            
-        
+            return "Не вдалося створити користувача"
     return flask.render_template(template_name_or_list='signup.html')
 
 
@@ -151,6 +148,21 @@ def render_profile():
         username = flask_login.current_user.login
     )
 
+def create_admin():
+    if flask.request.method == "POST":
+        user= User(
+            login = "admin",
+            name = "name",
+            surname = "surname",
+            email = "",
+            password = "admin"
+        )
+        try:
+            DATABASE.session.add(user)
+            DATABASE.session.commit()
+            return flask.redirect('/login/')
+        except:
+            return "Не вдалося створити користувача"
 
 def logout():
     flask_login.logout_user()

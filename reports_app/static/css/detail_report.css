@@ -29,15 +29,9 @@
     width: calc(100% - 220px);
 
 }
-.wrapper h2{
-    font-size: 26px;    
-    font-weight: 300;
-    color: #D5D5D5;
-}
 .wrapper h1{
-    font-size: 36px;    
-    font-weight: 500;
-    
+    font-size: 26px;    
+    font-weight: 500;   
 }
 .report{
     position: relative;

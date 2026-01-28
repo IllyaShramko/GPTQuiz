@@ -1,17 +1,27 @@
 import flask, flask_login 
 from library_app.models import RedeemCode, Quiz, Question, SessionAnswer, SessionParticipant, StudentReport, Room
 from project.settings import DATABASE
-from user_app.models import User
-from flask import session, request, make_response
+from user_app.models import User, Student
+# from my_class_app.models import Student
 
+def render_login_student():
+    if flask.request.method == "POST":
+        for student in Student.query.filter_by(login = flask.request.form['login']):
+            if student.password == flask.request.form['password']:
+                flask_login.login_user(student)
+                return flask.redirect('/execution/')
+    return flask.render_template(template_name_or_list= 'login_student.html')
 def render_enter_code():
+    if not flask_login.current_user.is_authenticated:
+        return flask.redirect("/login_student/")
+    if not flask_login.current_user.is_student:
+        return flask.redirect("/login_student/")
+    
     code = flask.request.args.get("code")
-    print(code)
-    print(flask.session)
     if code:
         quiz = RedeemCode.query.filter_by(code_enter= code).first_or_404().quiz
         print(quiz)
-        username = None
+        username = ""
         if flask_login.current_user.is_authenticated:
             username = flask_login.current_user.name + " " + flask_login.current_user.surname
         room = RedeemCode.query.filter_by(code_enter=code).first().room
@@ -27,7 +37,6 @@ def render_enter_code():
 def report_view(hash_code):
     report = StudentReport.query.filter_by(hash_code=hash_code).first_or_404()
     participant = SessionParticipant.query.get(report.participant_id)
-    print(report.participant_id)
     room = report.room
     questions = []
     if room:

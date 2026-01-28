@@ -14,6 +14,7 @@ class User(DATABASE.Model, flask_login.UserMixin):
     created_quizes = DATABASE.relationship(Quiz, backref = 'user', lazy = True)
     hosted = DATABASE.relationship(RedeemCode, backref = 'hosted', lazy = True)
     passed_participations = DATABASE.relationship("SessionParticipant", backref="user")
+    classes = DATABASE.relationship("GroupClass", backref="teacher", lazy=True)
 
 class Student(DATABASE.Model, flask_login.UserMixin):
     id= DATABASE.Column(DATABASE.Integer, primary_key= True)
@@ -26,6 +27,16 @@ class Student(DATABASE.Model, flask_login.UserMixin):
     is_student = DATABASE.Column(DATABASE.Boolean, default=True)
 
     my_reports = DATABASE.relationship("StudentReport", backref='student', lazy=True)
+
+    my_class_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("group_class.id"))
+
+class GroupClass(DATABASE.Model):
+    id= DATABASE.Column(DATABASE.Integer, primary_key= True)
+
+    teacher_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))
+    students = DATABASE.relationship("Student", backref="class", lazy=True)
+    
+
 
 class VerificationCode(DATABASE.Model):
     id= DATABASE.Column(DATABASE.Integer, primary_key= True)
