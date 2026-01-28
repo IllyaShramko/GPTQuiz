@@ -1,18 +1,35 @@
 {% extends 'base_admin.html' %}
 
 {% block title %}
-    {{ classroom.name }}
+    {{ classroom.number }}-{{classroom.char}}
 {% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('reports_app.static', filename= 'css/class.css') }}">
+    <link rel="stylesheet" href="{{ url_for('classroom_app.static', filename= 'css/class.css') }}">
 {% endblock %}
 
 {% block name_page %}
-    {{ classroom.name }}
+    {{ classroom.number }}-{{classroom.char}}
 {% endblock %}
 
 {% block content %}
     <main> 
+        <div>
+            <form method="post">
+                <p>Додайте нового учня</p>
+                <input type="text" name="student_login" placeholder="Придумайте логін учня">
+                <input type="text" name="student_surname" placeholder="Вкажіть прізвище учня">
+                <input type="text" name="student_name" placeholder="Вкажіть ім'я учня">
+                <button>Додати учня</button>
+            </form>
+            {% if new_student %}
+                <p>Передайте учню його дані:<br>Логін: {{ new_student.login }}<br>Пароль: {{ new_student.password }}</p>
+            {% endif %}
+        </div>
+        <div>
+            {% for student in classroom.students %}
+                <p>{{student.login}}: {{student.surname}} {{student.name}}</p>
+            {% endfor %}
+        </div>
     </main>
 {% endblock %}

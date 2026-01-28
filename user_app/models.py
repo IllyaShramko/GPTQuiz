@@ -14,8 +14,8 @@ class User(DATABASE.Model, flask_login.UserMixin):
     is_student = DATABASE.Column(DATABASE.Boolean, default= False)
     created_quizes = DATABASE.relationship(Quiz, backref = 'user', lazy = True)
     hosted = DATABASE.relationship(RedeemCode, backref = 'hosted', lazy = True)
-    passed_participations = DATABASE.relationship("SessionParticipant", backref="user")
     classes = DATABASE.relationship("GroupClass", backref="teacher", lazy=True)
+
 class VerificationCode(DATABASE.Model):
     id= DATABASE.Column(DATABASE.Integer, primary_key= True)
 

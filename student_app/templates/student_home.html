@@ -1,0 +1,30 @@
+{% extends 'base_student.html' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('student_app.static', filename= 'css/student.css') }}">
+{% endblock %}
+
+{% block content %}
+    <main>
+        <h1>Привіт, {{ current_user.surname }} {{ current_user.name }}!</h1>
+        <hr>
+        <div>
+            <h2>Твої попередні результати тестів:</h2>
+            {% if not reports %}
+                <p>Тут поки що нічого немає...</p>
+            {% else %}
+                {% for report in results %}
+                    <a href="/studentReport/{{ report.hash_code }}">
+                        <p>Id: {{ report.id }}</p>
+                        <p>Grade: {{ report.grade }}</p>
+                        <p>DateTime: {{ report }}</p>
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

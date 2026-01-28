@@ -1,5 +1,7 @@
 import flask
 import flask_login
+
+from classroom_app import Student
 from .models import User, VerificationCode
 from project.flask_config import api_instance
 from project.settings import DATABASE
@@ -133,12 +135,29 @@ def render_signup():
 
 
 def render_login():
+    error_msg = None
+    selected = True
     if flask.request.method == "POST":
-        for user in User.query.filter_by(login = flask.request.form['login']):
-            if user.password == flask.request.form['password']:
-                flask_login.login_user(user)
-                return flask.redirect('/admin/')
-    return flask.render_template(template_name_or_list= 'login.html')
+        if flask.request.form["button"] == "teacher":
+            for user in User.query.filter_by(login = flask.request.form['login']):
+                if user.password == flask.request.form['password']:
+                    flask_login.login_user(user)
+                    flask.session['user_role'] = 'teacher'
+                    return flask.redirect('/admin/')
+            error_msg = "Неправильний логін або пароль"
+        elif flask.request.form["button"] == "student":
+            for student in Student.query.filter_by(login = flask.request.form['login']):
+                if student.password == flask.request.form['password']:
+                    flask_login.login_user(student)
+                    flask.session['user_role'] = 'student'
+                    return flask.redirect('/student/')
+            error_msg = "Неправильний логін або пароль"
+            selected = False
+    return flask.render_template(
+        template_name_or_list= 'login.html',
+        error_msg= error_msg,
+        selected= selected
+    )
 
 def render_profile():
     user = flask_login.current_user

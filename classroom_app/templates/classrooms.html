@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('reports_app.static', filename='css/classrooms.css') }}">
+<link rel="stylesheet" href="{{ url_for('classroom_app.static', filename='css/classrooms.css') }}">
 {% endblock %}
 
 {% block name_page %}
@@ -21,7 +21,15 @@
                 <div><p>К-сть учнів</p></div>
             </div>
             <div class="content">
-
+                <form method="post">
+                    <p>Додайте ще один клас!</p>
+                    <input type="number" name="number" maxlength="2">
+                    <input type="text" name="char" maxlength="1">
+                    <button>Додати</button>
+                </form>
+                {% for classroom in class_groups %}
+                    <a href="/classrooms/{{ classroom.id }}">{{ classroom.number }}-{{classroom.char}}</a>
+                {% endfor %}
             </div>
         </div>
     </main>

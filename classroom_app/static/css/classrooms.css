@@ -1,0 +1,8 @@
+
+main {
+    position: relative;
+    left: 220px;
+    top: 70px;
+    display: flex;
+    flex-direction: column;
+}

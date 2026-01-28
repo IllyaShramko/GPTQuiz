@@ -1,0 +1,17 @@
+main {
+    position: relative;
+    left: 220px;
+    top: 70px;
+    display: flex;
+    flex-direction: column;
+}
+main form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+}
+main p {
+    color: white;
+    opacity: 0.8;
+}

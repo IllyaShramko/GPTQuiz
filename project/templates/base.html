@@ -14,16 +14,16 @@
                     <img src="{{ url_for('static', filename= 'images/atom.svg') }}">
                     <h1>GPTQuiz</h1>
                 </a>
-                <div class="links">
-                    <a href="/execution/" class="enter-code">Введіть код</a>
-                    <a href="/login/" class="login">Увійти</a>
-                    <a href="/signup/" class="signin">Зареєструватися</a>
-                </div>
+                {% if not ignore_links %}
+                    <div class="links">
+                        <a href="/execution/" class="enter-code">Введіть код</a>
+                        <a href="/login/" class="login">Увійти</a>
+                        <a href="/signup/" class="signin">Зареєструватися</a>
+                    </div>  
+                {% endif %}
             </nav>
         {% endif %}
         
-
-
         {% block content %}
         
         {% endblock %}
