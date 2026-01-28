@@ -11,6 +11,13 @@ class StudentReport(DATABASE.Model):
 
     student_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("student.id"))
 
+    participant_id = DATABASE.Column(
+        DATABASE.Integer,
+        DATABASE.ForeignKey("session_participant.id"),
+        nullable=False,
+        unique=True 
+    )
+
     room_id = DATABASE.Column(
         DATABASE.Integer,
         DATABASE.ForeignKey("room.id"),
@@ -33,6 +40,12 @@ class StudentReport(DATABASE.Model):
     )
 
     created_at = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
+
+    participant = DATABASE.relationship(
+        "SessionParticipant",
+        backref=DATABASE.backref("report", uselist=False),
+        lazy=True
+    )
 
     room = DATABASE.relationship(
         "Room",
@@ -146,7 +159,7 @@ class Room(DATABASE.Model):
 
             report.append({
                 "participant_id": p.id,
-                "nickname": p.nickname,
+                "nickname": f"{p.student_profile.surname} {p.student_profile.name}",
                 "percent": percent,
                 "answers": answers_data,
                 "grade": grade,
@@ -159,7 +172,7 @@ class SessionParticipant(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
-    reconnect_hash = DATABASE.Column(DATABASE.String(64), unique=True, nullable=False, default=lambda: uuid.uuid4().hex)
+    reconnect_hash = DATABASE.Column(DATABASE.String(32), unique=True, nullable=False, default=lambda: uuid.uuid4().hex[:32])
     student_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("student.id"), nullable=True)
     
 
@@ -169,18 +182,18 @@ class SessionAnswer(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key=True)
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=True)
     question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("question.id"))
-    participiant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
+    participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
     answer = DATABASE.Column(DATABASE.JSON(), nullable=True)
     is_correct = DATABASE.Column(DATABASE.Boolean, default=False)
 
     question_obj = DATABASE.relationship("Question", back_populates="answers")
-    __table_args__ = (UniqueConstraint('room_id', 'participiant_id', 'question', name='uq_answer_once'),)
+    __table_args__ = (UniqueConstraint('room_id', 'participant_id', 'question', name='uq_answer_once'),)
 
     def to_dict(self):
         question = self.question_obj
         return {
             "id": self.id,
-            "participiant_id": self.participiant_id,
+            "participant_id": self.participant_id,
             "question": self.question,
             "question_text": question.name if question else "",
             "variants": [v for v in [

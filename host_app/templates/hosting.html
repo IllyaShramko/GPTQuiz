@@ -96,15 +96,15 @@
                 data.students.forEach(student => {
                     const li = document.createElement("li");
                     const p = document.createElement("p")
-                    p.textContent = student;
+                    p.textContent = student[0];
                     li.appendChild(p)
-                    li.id = student;
+                    li.id = student[1];
                     const deleteBtn = document.createElement("button");
                     const deleteImg = document.createElement("img");
                     deleteImg.src = "{{ url_for('host_app.static', filename='images/delete.svg') }}";
                     deleteBtn.appendChild(deleteImg);
                     deleteBtn.onclick = () => {
-                        socket.emit("remove_student", { code: code, username: student });
+                        socket.emit("remove_student", { code: code, student: student });
                     };
                     deleteBtn.classList.add("delete-user-btn");
                     li.appendChild(deleteBtn);
@@ -113,7 +113,7 @@
             });
 
             socket.on("remove_student_client", (data) => {
-                const userLi = document.getElementById(data.username);
+                const userLi = document.getElementById(data.hash);
                 if (userLi) {
                     userLi.remove();
                 }
@@ -272,7 +272,7 @@
             })
 
             socket.on("student_answer", (data) => {
-                const user = document.getElementById(data.username)
+                const user = document.getElementById(data.hash)
                 const checkMark = document.createElement('img') 
                 checkMark.src = '{{ url_for("host_app.static", filename = "images/check-mark.svg") }}'
                 checkMark.classList.add('check_mark')
