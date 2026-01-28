@@ -1,0 +1,18 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}
+    {{ classroom.name }}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('reports_app.static', filename= 'css/class.css') }}">
+{% endblock %}
+
+{% block name_page %}
+    {{ classroom.name }}
+{% endblock %}
+
+{% block content %}
+    <main> 
+    </main>
+{% endblock %}

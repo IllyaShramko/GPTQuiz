@@ -1,0 +1,28 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}
+    Classrooms
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('reports_app.static', filename='css/classrooms.css') }}">
+{% endblock %}
+
+{% block name_page %}
+    Мої класи
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="table">
+            <div class="header-table">
+                <div><p>Клас</p></div>
+                <div></div>
+                <div><p>К-сть учнів</p></div>
+            </div>
+            <div class="content">
+
+            </div>
+        </div>
+    </main>
+{% endblock %}

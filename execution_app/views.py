@@ -1,8 +1,8 @@
 import flask, flask_login 
 from library_app.models import RedeemCode, Quiz, Question, SessionAnswer, SessionParticipant, StudentReport, Room
 from project.settings import DATABASE
-from user_app.models import User, Student
-# from my_class_app.models import Student
+from user_app.models import User
+from classroom_app.models import Student
 
 def render_login_student():
     if flask.request.method == "POST":

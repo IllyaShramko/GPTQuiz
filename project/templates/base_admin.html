@@ -16,28 +16,28 @@
             
             <input type="hidden" id="quizCreate" value="">
             <div class="links">
-                <a class="tab-link" href="#">
+                <a class="tab-link" href="{{ url_for('classroom_app.render_classrooms') }}">
                     <div>
-                        <img src="{{ url_for('static', filename= 'images/.svg') }}">
+                        <img src="{{ url_for('static', filename= 'images/classroom.svg') }}">
                         <p>Мої класи</p>
                     </div>
                     <div class="divider myClassLink"></div>
                 </a>
-                <a class="tab-link" href="/library/">
+                <a class="tab-link" href="{{ url_for('library_app.render_library') }}">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/library.svg') }}">
                         <p>Бібліотека</p>
                     </div>
                     <div class="divider libraryLink"></div>
                 </a>
-                <a class="tab-link" href="/history/">
+                <a class="tab-link" href="{{ url_for('history_app.render_history') }}">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/history.svg') }}">
                         <p>Історія</p>
                     </div>
                     <div class="divider historyLink"></div>
                 </a>
-                <a class="tab-link" href="/reports/">
+                <a class="tab-link" href="{{ url_for('reports_app.render_reports_page') }}">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/reports.svg') }}">
                         <p>Звіти</p>

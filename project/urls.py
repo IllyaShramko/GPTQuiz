@@ -1,5 +1,5 @@
 from .settings import project
-import home_app, user_app, admin_app, library_app, execution_app, history_app, reports_app, host_app
+import home_app, user_app, admin_app, library_app, execution_app, history_app, reports_app, host_app, classroom_app
 
 home_app.home_app.add_url_rule(
     rule= '/',
@@ -159,3 +159,21 @@ host_app.host_app.add_url_rule(
     methods= ["POST", "GET"]
 )
 project.register_blueprint(blueprint = host_app.host_app) 
+
+classroom_app.classroom_app.add_url_rule(
+    rule= '/',
+    view_func= classroom_app.render_classrooms,
+    methods= ["POST", "GET"]
+)
+
+# reports_app.reports_app.add_url_rule(
+#     rule= '/<int:id>',
+#     view_func= classroom_app.render_classroom,
+#     methods= ["POST", "GET"]
+# )
+
+project.register_blueprint(
+    blueprint= classroom_app.classroom_app,
+    url_prefix= "/classrooms/"
+)
+
