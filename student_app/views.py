@@ -39,7 +39,7 @@ def get_student_stats(student_id):
     }
 
     for r in reports:
-        g_label = f"Оценка {r.grade}" if r.grade is not None else "Без оценки"
+        g_label = f"Оцінка {r.grade}" if r.grade is not None else "Без оценки"
         data["pie_data"][g_label] = data["pie_data"].get(g_label, 0) + 1
 
     return flask.jsonify(data)
