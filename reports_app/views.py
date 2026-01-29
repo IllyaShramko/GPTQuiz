@@ -52,7 +52,7 @@ def get_student_report(student_id):
 
     return {
         "id": student.id,
-        "nickname": student.nickname,
+        "nickname": f"{student.student_profile.surname} {student.student_profile.name}",
         "answers": [
             {
                 "question_text": ans.question_obj.name if ans.question_obj else "",

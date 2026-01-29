@@ -77,7 +77,6 @@ def handle_join(data):
             students.append([username, existing_participiant.reconnect_hash])    
             room.students = students
             DATABASE.session.commit()
-            session['participant_id'] = existing_participiant.id
             print(f"Участник (id: {existing_participiant.id}, student_id: {student_id}) успешно добавлен")
         except Exception as e:
             DATABASE.session.rollback()
@@ -92,6 +91,7 @@ def handle_join(data):
         DATABASE.session.commit()
     else:
         print("Участник есть в комнате")
+    session['participant_id'] = existing_participiant.id
     join_room(str(room.id))
     join_room(f"student_{existing_participiant.id}")
 
@@ -115,8 +115,11 @@ def handle_join(data):
             "id": current_question.id,
             "current_question": room.index_question
         })
+        answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).count()
+        if answers != len(students):
+            return
         answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
-
+        
         if answer_status:
             emit(
                 "current_question_info",
