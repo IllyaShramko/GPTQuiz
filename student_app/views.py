@@ -1,4 +1,4 @@
-import flask, flask_login
+import flask, flask_login, datetime
 from classroom_app import Student
 from library_app.models import Question, SessionAnswer, SessionParticipant, StudentReport
 from user_app.models import User
@@ -15,11 +15,34 @@ def render_student_page():
         results = results
     )
 
-def get_data_from_student():
-    student= Student.query.get(flask_login.current_user.id)
-    results = student.my_reports
+def get_student_stats(student_id):
+    start_date_str = flask.request.args.get('start_date')
+    end_date_str = flask.request.args.get('end_date')
 
-    
+    query = StudentReport.query.filter_by(student_id=student_id)
+
+    if start_date_str:
+        start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+        query = query.filter(StudentReport.created_at >= start_date)
+
+    if end_date_str:
+        end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+        query = query.filter(StudentReport.created_at <= end_date)
+
+    reports = query.order_by(StudentReport.created_at.asc()).all()
+
+    data = {
+        "dates": [r.created_at.strftime('%Y-%m-%d') for r in reports],
+        "grades": [r.grade for r in reports],
+        "hashes": [r.hash_code for r in reports],
+        "pie_data": {}
+    }
+
+    for r in reports:
+        g_label = f"Оценка {r.grade}" if r.grade is not None else "Без оценки"
+        data["pie_data"][g_label] = data["pie_data"].get(g_label, 0) + 1
+
+    return flask.jsonify(data)
 
 def report_view(hash_code):
     report = StudentReport.query.filter_by(hash_code=hash_code).first_or_404()

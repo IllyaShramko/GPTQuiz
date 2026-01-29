@@ -183,6 +183,11 @@ student_app.student_app.add_url_rule(
     view_func = student_app.report_view,
     methods = ["GET", "POST"]
 )
+student_app.student_app.add_url_rule(
+    rule="/api/student_stats/<int:student_id>",
+    view_func= student_app.get_student_stats,
+    methods = ["GET", "POST"]
+)
 
 project.register_blueprint(
     blueprint= student_app.student_app,
