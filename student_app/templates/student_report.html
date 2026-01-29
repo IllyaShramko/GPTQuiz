@@ -13,13 +13,8 @@
                 <h1>GPTQuiz</h1>
             </a>
             <div class="links">
-                <a href="/execution/" class="enter-code">Введіть код</a>
-                {% if is_auth %}
-                    <a href="/admin/" class="login">Додому</a>
-                {% else %}
-                    <a href="/login/" class="login">Увійти</a>
-                    <a href="/signup/" class="signin">Зареєструватися</a>
-                {% endif %}
+                <a href="/execution/" class="enter-code">Код</a>
+                <a href="/student/" class="login">Додому</a>
             </div>
         </header>
         
@@ -69,20 +64,29 @@
                 </div>
             </div>
             <div class="corr-wrong">
-                {% for ans in questions %}
+                {% for ans in answers %}
                     {% if ans.is_correct %}
                         <div class="correcta answer"></div>
+                    {% elif ans.answer == "Пропущений..." or ans.answer == 'Пропущений' %}
+                        <div class="skippeda answer"></div>
                     {% else %}
                         <div class="wronga answer"></div>
                     {% endif %}
                 {% endfor %}
             </div>
             <div class="answersCorrWron">
-                <div>
-                    <span>{{ report.correct_answers }}</span><p> правильних</p>
+                <div class="section1">
+                    <div>
+                        <span>{{ report.correct_answers }}</span><p> правильних</p>
+                    </div>
+                    <div>
+                        <span>{{ report.wrong_answers - skipped_answers }}</span><p> неправильних</p>
+                    </div>
                 </div>
-                <div>
-                    <span>{{ report.wrong_answers }}</span><p> неправильних</p>
+                <div class="section1">
+                    <div>
+                        <span>{{ skipped_answers }}</span><p> пропущено</p>
+                    </div>
                 </div>
             </div>
         </div>

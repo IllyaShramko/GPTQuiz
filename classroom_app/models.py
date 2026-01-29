@@ -11,8 +11,6 @@ class Student(DATABASE.Model, flask_login.UserMixin):
     name= DATABASE.Column(DATABASE.String(30), nullable= False)
     surname= DATABASE.Column(DATABASE.String(30), nullable= False)
     password= DATABASE.Column(DATABASE.String(5), nullable= False, default=lambda: uuid.uuid4().hex[:5])
-    
-    is_student = DATABASE.Column(DATABASE.Boolean, default=True)
 
     my_reports = DATABASE.relationship("StudentReport", backref='student', lazy=True)
     sessions = DATABASE.relationship("SessionParticipant", backref="student_profile", lazy=True)

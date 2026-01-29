@@ -109,11 +109,6 @@ execution_app.execution_app.add_url_rule(
     methods = ["POST", "GET"]
 )
 
-execution_app.execution_app.add_url_rule(
-    rule = '/reportStudent/<hash_code>',
-    view_func = execution_app.report_view,
-    methods = ["POST", "GET"]
-)
 
 project.register_blueprint(blueprint = execution_app.execution_app)
 
@@ -181,6 +176,12 @@ student_app.student_app.add_url_rule(
     rule="/",
     view_func= student_app.render_student_page,
     methods= ["GET"]
+)
+
+student_app.student_app.add_url_rule(
+    rule = '/report/<hash_code>',
+    view_func = student_app.report_view,
+    methods = ["GET", "POST"]
 )
 
 project.register_blueprint(

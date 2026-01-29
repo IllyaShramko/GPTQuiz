@@ -14,14 +14,15 @@
         <hr>
         <div>
             <h2>Твої попередні результати тестів:</h2>
-            {% if not reports %}
+            {% if not results %}
                 <p>Тут поки що нічого немає...</p>
             {% else %}
                 {% for report in results %}
-                    <a href="/studentReport/{{ report.hash_code }}">
+                    <hr>
+                    <a href="/student/report/{{ report.hash_code }}">
                         <p>Id: {{ report.id }}</p>
                         <p>Grade: {{ report.grade }}</p>
-                        <p>DateTime: {{ report }}</p>
+                        <p>DateTime: {{ report.created_at }}</p>
                     </a>
                 {% endfor %}
             {% endif %}

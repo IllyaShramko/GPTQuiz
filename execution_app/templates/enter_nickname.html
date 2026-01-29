@@ -66,6 +66,7 @@
                     document.getElementById("currentQ").textContent = "0"
                     document.getElementById("quiz-title").textContent = data.quiz_name;
                     my_hash = data.hash
+                    console.log("MY_HASH:", my_hash)
                 });
                 
                 socket.on("join_error", data => {
@@ -455,7 +456,7 @@
     
     
                 socket.on("end_quiz", data => {
-                    url = window.location.origin + "/reportStudent/" + data.hash_code
+                    url = window.location.origin + "/student/report/" + data.hash_code
                     window.location.href = url;
                 }); 
             })

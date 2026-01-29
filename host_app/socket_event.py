@@ -18,7 +18,7 @@ def create_student_report(participant_id, room_id):
     score = correct
     percentage = round((correct / total) * 100) if total else 0
 
-    grade = str(percentage / 100 * 12 // 1)
+    grade = percentage / 100 * 12 // 1
 
     report = StudentReport(
         participant_id=participant_id,
@@ -210,6 +210,7 @@ def handle_host_join(data):
 
         answers = SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
         if answers:
+            print("AAAAAAAAAAAAAAAAAAA", answers)
             if len(answers) == len(participants):
                 results = []
                 for ans in answers:
@@ -223,7 +224,7 @@ def handle_host_join(data):
 
                     results.append({
                         "student_id": ans.participant_id,
-                        "nickname": participant.nickname,
+                        "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
                         "answer": user_answer_text,
                         "is_correct": ans.is_correct,
                         "correct_answer": correct_text,
@@ -298,8 +299,8 @@ def handle_answer(data):
     answer = data.get("answer")   
     username = data.get("username")
     code_enter = data.get("code")
-    my_hash = data.get("my_hash")
-
+    my_hash = data.get("my_hash")   
+    print(my_hash)
     if not question_id:
         print("question_id is None or missing in data")
         return

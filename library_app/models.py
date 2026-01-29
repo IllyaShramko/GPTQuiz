@@ -32,7 +32,7 @@ class StudentReport(DATABASE.Model):
     max_score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
     percentage = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
 
-    grade = DATABASE.Column(DATABASE.String(10), nullable=True)
+    grade = DATABASE.Column(DATABASE.Integer, nullable=True)
 
     hash_code = DATABASE.Column(DATABASE.String(64), unique=True,
         nullable=False,
