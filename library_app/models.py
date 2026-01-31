@@ -183,6 +183,7 @@ class SessionAnswer(DATABASE.Model):
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=True)
     question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("question.id"))
     participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
+    question_index = DATABASE.Column(DATABASE.Integer)
     answer = DATABASE.Column(DATABASE.JSON(), nullable=True)
     is_correct = DATABASE.Column(DATABASE.Boolean, default=False)
 

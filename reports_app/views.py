@@ -65,3 +65,34 @@ def get_student_report(student_id):
         ]
     }
 
+def get_report_answers(room_id):
+    answers = SessionAnswer.query.filter_by(room_id=room_id).all()
+
+    stats_map = {}
+
+    for ans in answers:
+        idx = ans.question_index
+        if idx is None:
+            continue
+            
+        if idx not in stats_map:
+            stats_map[idx] = {'total': 0, 'correct': 0}
+        
+        stats_map[idx]['total'] += 1
+        if ans.is_correct:
+            stats_map[idx]['correct'] += 1
+
+    result = []
+    
+    for idx in sorted(stats_map.keys()):
+        total = stats_map[idx]['total']
+        correct = stats_map[idx]['correct']
+        
+        percent = int((correct / total) * 100) if total > 0 else 0
+        
+        result.append({
+            "question": f"Q{idx}",
+            "succesfull": percent 
+        })
+
+    return flask.jsonify(result)

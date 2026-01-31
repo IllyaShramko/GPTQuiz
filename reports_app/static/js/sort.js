@@ -1,4 +1,3 @@
-// static/js/sort.js
 document.addEventListener("DOMContentLoaded", function () {
     let ascending = true; 
 

@@ -8,7 +8,7 @@
 .library-container {
     width: calc(100% - 220px);
     position: relative;
-    top: 70px;
+    top: 60px;
     left: 220px;
     display: flex;
     flex-direction: column;

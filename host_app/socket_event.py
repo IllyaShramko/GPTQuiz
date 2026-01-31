@@ -38,7 +38,6 @@ def create_student_report(participant_id, room_id):
 
     return report.hash_code
 
-
 @socketio.on("join_room")
 def handle_join(data):
     code_enter = data.get("code")
@@ -139,7 +138,6 @@ def handle_join(data):
                 }
             )
         return
-
 
 @socketio.on("remove_student")
 def handle_remove_student(data):
@@ -292,7 +290,6 @@ def handle_start(data):
     end_time = int(time.time() + duration)
     emit("question_timer", {"end_time": end_time, "duration": duration}, room=room_id)
 
-
 @socketio.on("answer")
 def handle_answer(data):
     question_id = data.get("question_id")
@@ -341,7 +338,8 @@ def handle_answer(data):
         question = question.id,
         participant_id = participiant.id,
         answer = answer,
-        is_correct = is_correct
+        is_correct = is_correct,
+        question_index = room.index_question
     )
 
     try:
@@ -429,8 +427,6 @@ def handle_quiz_end_msg(data):
     room = Room.query.get(redeem.room_id)
     emit("end_msg", {}, room=str(room.id))
 
-
-
 @socketio.on("end_quiz")
 def handle_quiz_end(data):
     code_enter = data.get("code")
@@ -454,6 +450,7 @@ def handle_show_quiz_results(data):
     if not room:
         return
     emit("quiz_results", {"url": f"/report/{room.id}"})
+
 @socketio.on("end_question")
 def handle_end_question(data):
     room = Room.query.get(RedeemCode.query.filter_by(code_enter=data.get("code")).first().room_id)
@@ -477,7 +474,8 @@ def handle_end_question(data):
                 question=current_question.id,
                 participant_id=participant.id,
                 answer="Пропущений...",  
-                is_correct=False 
+                is_correct=False,
+                question_index = room.index_question
             )
             db.session.add(skip_answer)
 

@@ -14,8 +14,9 @@
         <div class="report">
             <div class="header-report">
                 <div class="tabs">
-                    <button class="tab selected">Загальний огляд</button>
+                    <button class="tab selected" id="general">Загальний огляд</button>
                     <button class="tab not">Питання</button>
+                    <button class="tab not" id="graphic">Графік</button>
                 </div>
                 <div class="sorting">
                     <p>Сортирувати за %: <button id="sortBtn"><</button></p>
@@ -25,6 +26,14 @@
                 <div class="">
 
                 </div>
+            </div>
+            <div class="chart-container hide">
+                <div class="chart-card">
+                    <h3>Успішність відповідей по питаннях</h3>
+                    <div id="questionsChart"></div>
+                </div>
+
+                <input type="hidden" id="room_id" value="{{ room.id }}">
             </div>
             <div class="judah">
                 <div class="participants-info">
@@ -88,5 +97,8 @@
         <button id="closeModal" type="button">ОК</button>
     </div>
     <script src="{{ url_for('reports_app.static', filename='js/sort.js') }}"></script>
+    <script src="{{ url_for('static', filename= 'js/ApexCharts.js') }}"></script>
+    <script src="{{ url_for('reports_app.static', filename='js/room_charts.js') }}"></script>
+    <script src="{{ url_for('reports_app.static', filename='js/switch.js') }}"></script>
     <script src="{{ url_for('reports_app.static', filename='js/loadInfoStudent.js') }}"></script>
 {% endblock %}
