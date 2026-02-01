@@ -15,21 +15,44 @@
 {% block content %}
     <main> 
         <div>
-            <form method="post">
-                <p>Додайте нового учня</p>
-                <input type="text" name="student_login" placeholder="Придумайте логін учня">
-                <input type="text" name="student_surname" placeholder="Вкажіть прізвище учня">
-                <input type="text" name="student_name" placeholder="Вкажіть ім'я учня">
-                <button>Додати учня</button>
-            </form>
-            {% if new_student %}
-                <p>Передайте учню його дані:<br>Логін: {{ new_student.login }}<br>Пароль: {{ new_student.password }}</p>
-            {% endif %}
+            <div class="addnewclass">
+                <button id="add">Додайте нового учня!</button>
+            </div>
         </div>
         <div>
             {% for student in classroom.students %}
-                <p>{{student.login}}: {{student.surname}} {{student.name}}</p>
+                <div>
+                    <p>{{student.login}}: {{student.surname}} {{student.name}}</p>
+                    <button class="get-data-login">Дані входу</button>
+                </div>
             {% endfor %}
         </div>
     </main>
+    <form id="form" class="create-form {% if not errors %}hideform{% endif %}" method="post">
+        <button type="button" id="close" class="close"><img src="{{ url_for('classroom_app.static', filename='images/cross.svg') }}"></button>
+        <p>Додайте нового учня</p>
+        <div>
+            <label for="student_login">Придумайте логін учня:</label>
+            <input type="text" name="student_login" id="student_login" placeholder="Логін учня">
+        </div>
+        <div>
+            <label for="student_surname">Вкажіть прізвище учня:</label>
+            <input type="text" name="student_surname" placeholder="Прізвище учня">
+        </div>
+        <div>
+            <label for="student_name">Вкажіть ім'я учня:</label>
+            <input type="text" name="student_name" placeholder="Ім'я учня">
+        </div>
+        <button type="submit" class="submit">Додати учня</button>
+    </form>
+    <div id="modalInfo" class="modalinfo {% if not new_student %}hideform{% endif %}">
+        <h4>Передайте учню його дані:</h4>
+        <p><b>Логін</b>: <span id="login">{{ new_student.login }}</span></p>
+        <p><b>Пароль</b>: <span id="password">{{ new_student.password }}</span></p>
+        <button type="button" class="submit">OK</button>
+    </div>
+    {% if new_student %}
+    {% endif %}
+    <div class="blur {% if not new_student %}hideform{% elif not errors %}hideform{% endif %}" id="blur"></div>
+    <script src="{{ url_for('classroom_app.static', filename='js/form.js') }}"></script>
 {% endblock %}

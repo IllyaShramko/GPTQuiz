@@ -14,23 +14,36 @@
 
 {% block content %}
     <main>
-        <div class="table">
-            <div class="header-table">
-                <div><p>Клас</p></div>
-                <div></div>
-                <div><p>К-сть учнів</p></div>
+        <div class="headerClassroom">
+            <h1>Ваші класи:</h1>
+            <div class="addnewclass">
+                <button id="add">Додайте новий клас!</button>
             </div>
+        </div>
+        {% if class_groups %}
             <div class="content">
-                <form method="post">
-                    <p>Додайте ще один клас!</p>
-                    <input type="number" name="number" maxlength="2">
-                    <input type="text" name="char" maxlength="1">
-                    <button>Додати</button>
-                </form>
                 {% for classroom in class_groups %}
                     <a href="/classrooms/{{ classroom.id }}">{{ classroom.number }}-{{classroom.char}}</a>
                 {% endfor %}
             </div>
-        </div>
+        {% else %}
+            <h2>У вас поки що немає класів...</h2>
+        {% endif %}
     </main>
+    <form method="post" id="form" class="create-form {% if not errors %}hideform{% endif %}">
+        <button type="button" id="close" class="close"><img src="{{ url_for('classroom_app.static', filename='images/cross.svg') }}"></button>
+        <p>Додати новий клас</p>
+        <div>
+            <label for="number">Число класу:</label>
+            <input type="number" id="number" name="number" max="11" required>
+        </div>
+        <div>
+            <label for="char">Літера класу:</label>
+            <input type="text"   id="char" name="char" maxlength="1" required>
+        </div>
+        <h3>{{ errors }}</h3>
+        <button type="submit" class="submit">Додати</button>
+    </form>
+    <div class="blur {% if not errors %}hideform{% endif %}" id="blur"></div>
+    <script src="{{ url_for('classroom_app.static', filename='js/form.js') }}"></script>
 {% endblock %}

@@ -91,7 +91,7 @@ def get_report_answers(room_id):
         percent = int((correct / total) * 100) if total > 0 else 0
         
         result.append({
-            "question": f"Q{idx}",
+            "question": f"Q{idx + 1}",
             "succesfull": percent 
         })
 

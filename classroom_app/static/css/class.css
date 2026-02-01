@@ -5,13 +5,108 @@ main {
     display: flex;
     flex-direction: column;
 }
-main form {
+main div div {
     display: flex;
-    flex-direction: column;
     gap: 10px;
-    width: 300px;
 }
 main p {
     color: white;
     opacity: 0.8;
+}
+.create-form, .modalinfo {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    background-color: #2b2b2b;
+    border-radius: 15px;
+    padding: 25px;
+    gap: 15px;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s ease;
+    z-index: 7;
+}
+.create-form * {
+    color: white;
+}
+.create-form p {
+    font-size: 20px;
+}
+.create-form h3 {
+    font-size: 16px;
+}
+.create-form div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+}
+.create-form label {
+    font-size: 16px;
+}
+.create-form div input {
+    height: 35px;
+    padding: 5px 15px;
+    border-radius: 5px;
+    border: 1px #181818 solid;
+    background-color: #202020;
+    text-align: start;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}   
+.create-form button {
+    cursor: pointer;
+}
+.submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #9C47FF;
+    border: none;
+}
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 25px;
+    background: none;
+    border: none;
+}
+.close img {
+    width: 25px;
+}
+.modalinfo h3 {
+    font-size: 20px;
+}
+.modalinfo p {
+    font-size: 16px;
+}
+.blur {
+    position: fixed;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2.5px);
+    z-index: 6;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s ease;
+}
+.hideform {
+    opacity: 0;
+    visibility: hidden;
 }

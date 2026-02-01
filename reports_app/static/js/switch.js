@@ -3,6 +3,7 @@ const generalBtn = document.getElementById("general")
 const studentsInfo = document.querySelector(".judah")
 const graphicInfo = document.querySelector(".chart-container")
 let current_page = "general"
+const roomId = document.getElementById('room_id').value;
 
 graphicBtn.addEventListener("click", ()=>{
     if (current_page == "graphic") {
@@ -14,6 +15,8 @@ graphicBtn.addEventListener("click", ()=>{
     generalBtn.classList.remove("selected")
     generalBtn.classList.add("not")
     studentsInfo.classList.add("hide")
+    console.log(roomId)
+    loadRoomStats(roomId);
     current_page = "graphic"
 })
 generalBtn.addEventListener("click", ()=>{

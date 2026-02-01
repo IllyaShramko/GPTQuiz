@@ -1,9 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const roomId = document.getElementById('room_id').value;
-    loadRoomStats(roomId);
-});
+
 
 async function loadRoomStats(roomId) {
+    if (document.querySelector("#questionsChart").innerHTML.trim()) {
+        return
+    } 
     try {
         const response = await fetch(`/reports/room_stats/${roomId}`);
         const data = await response.json();
