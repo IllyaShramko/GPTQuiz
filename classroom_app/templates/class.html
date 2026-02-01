@@ -14,6 +14,7 @@
 
 {% block content %}
     <main> 
+        <input type="hidden" id="classroomId" value="{{ classroom.id }}">
         <div>
             <div class="addnewclass">
                 <button id="add">Додайте нового учня!</button>
@@ -23,7 +24,7 @@
             {% for student in classroom.students %}
                 <div>
                     <p>{{student.login}}: {{student.surname}} {{student.name}}</p>
-                    <button class="get-data-login">Дані входу</button>
+                    <button class="get-data-login" value="{{ student.id }}">Дані входу</button>
                 </div>
             {% endfor %}
         </div>
@@ -43,16 +44,20 @@
             <label for="student_name">Вкажіть ім'я учня:</label>
             <input type="text" name="student_name" placeholder="Ім'я учня">
         </div>
+        <h3 id="errors">{{ errors }}</h3>
         <button type="submit" class="submit">Додати учня</button>
     </form>
     <div id="modalInfo" class="modalinfo {% if not new_student %}hideform{% endif %}">
         <h4>Передайте учню його дані:</h4>
-        <p><b>Логін</b>: <span id="login">{{ new_student.login }}</span></p>
-        <p><b>Пароль</b>: <span id="password">{{ new_student.password }}</span></p>
-        <button type="button" class="submit">OK</button>
+        <div class="info-in-modal">
+            <p><b>Логін</b>: <span id="login">{{ new_student.login }}</span></p>
+            <p><b>Пароль</b>: <span id="password">{{ new_student.password }}</span></p>
+        </div>
+        <button type="button" id="okbtn" class="submit">OK</button>
     </div>
     {% if new_student %}
     {% endif %}
-    <div class="blur {% if not new_student %}hideform{% elif not errors %}hideform{% endif %}" id="blur"></div>
+    <div class="blur {% if not new_student and not errors %}hideform{% endif %}" id="blur"></div>
     <script src="{{ url_for('classroom_app.static', filename='js/form.js') }}"></script>
+    <script src="{{ url_for('classroom_app.static', filename='js/getDataLogin.js') }}"></script>
 {% endblock %}

@@ -527,3 +527,15 @@ def handle_end_question(data):
         },
         room=f"teacher_{room.host}"
     )
+
+@socketio.on("add_15_sec")
+def handle_add_time(data):
+    code_enter = data.get("code")
+    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
+    if not redeem:
+        return
+
+    room = Room.query.get(redeem.room_id)
+    if not room:
+        return
+    socketio.emit("add_time", room=str(room.id))

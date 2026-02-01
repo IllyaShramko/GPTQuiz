@@ -466,17 +466,26 @@ main {
 }
 #header {
     position: absolute;
-    height: 5vh;
+    height: 50px;
     width: 100vw;
     background-color: #383838;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     padding: 5px 15px;
+    align-items: center;
     color: white;
 }
+.img-timer {
+    height: 40px;
+}
+
 #header div {
     display: flex;
     justify-content: end;
+    align-items: center;
     gap: 5px;
+}
+.timer {
+    justify-content: center !important;
 }
 #header div p {
     font-size: 20px;
@@ -491,7 +500,10 @@ main {
         height: auto;
     }
     #header {
-        height: 4vh;
+        height: 40px;
+    }
+    .img-timer {
+        height: 30px;
     }
     #general {
         width: 90vw;

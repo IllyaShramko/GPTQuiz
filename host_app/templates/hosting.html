@@ -173,7 +173,8 @@
                 let remainingTime = endTime - currentTime;
 
                 document.getElementById("15sAdd").onclick = () => {
-                    endTime += 15; 
+                    endTime += 15;
+                    socket.emit("add_15_sec", { code: code }) 
                 }
 
                 const timerDiv = document.getElementById('timer');
@@ -199,7 +200,7 @@
                             socket.emit("end_question", { code: code });
                             clearInterval(timerInterval);
                         }
-                    }, 250);
+                    }, 150);
                 }
             });
             socket.on("quiz_start_teacher", (data) => {

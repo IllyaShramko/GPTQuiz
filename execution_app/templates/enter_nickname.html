@@ -9,6 +9,10 @@
     <body>
         <header style="display:none;" id="header">
             <h2 class="title-logo">GPTQuiz</h2>
+            <div class="timer">
+                <img class="img-timer" src="{{ url_for('execution_app.static', filename='images/timer.svg') }}">
+                <h3><span id="minutes">00</span>:<span id="seconds">00</span></h3>
+            </div>
             <div>
                 <p id="currentQ"></p>
                 <p>/</p>
@@ -45,9 +49,35 @@
                 let username = "{{ username }}"
                 let student_id= "{{ student.id }}"
                 let answer1, answerDiv, my_hash;
-                
-                
                 const quizId = '{{ quiz.id }}'
+                let timeLeft = 0; 
+                let timerInterval = null;
+
+                const minutesSpan = document.getElementById("minutes");
+                const secondsSpan = document.getElementById("seconds");
+
+                function updateTimerDisplay() {
+                    let mins = Math.floor(timeLeft / 60);
+                    let secs = timeLeft % 60;
+                    minutesSpan.textContent = mins.toString().padStart(2, '0');
+                    secondsSpan.textContent = secs.toString().padStart(2, '0');
+                }
+
+                function startTimer(duration) {
+                    clearInterval(timerInterval);
+                    timeLeft = duration;
+                    updateTimerDisplay();
+
+                    timerInterval = setInterval(() => {
+                        if (timeLeft > 0) {
+                            timeLeft--;
+                            updateTimerDisplay();
+                        } else {
+                            clearInterval(timerInterval);
+                        }
+                    }, 1000);
+                }
+                
 
                 console.log("Reconnect Hash:", student_id);
                 socket.emit("join_room", { code, quizId, student_id });
@@ -157,6 +187,7 @@
                 }
     
                 socket.on("quiz_start_student", data => {
+                    startTimer(45)
                     div.style.display = 'none';
                     if (answered) {
                         answered = !answered
@@ -373,6 +404,9 @@
                 })
 
                 socket.on("student_result", (data) => {
+                    clearInterval(timerInterval);
+                    timeLeft = 0;
+                    updateTimerDisplay();
                     if (document.getElementById('waitingDiv')) {
                         document.getElementById('waitingDiv').remove();
                     }
@@ -459,6 +493,10 @@
                     url = window.location.origin + "/student/report/" + data.hash_code
                     window.location.href = url;
                 }); 
+                socket.on("add_time", () => { 
+                    timeLeft += 15;
+                    updateTimerDisplay();
+                });
             })
         </script>
         <!--  -->
