@@ -243,22 +243,86 @@
                         
                     } else if (data.type === "enter answer") {
                         generalDiv.classList.add('fill');
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.id = 'textAnswer';
-                        input.placeholder = 'Введіть вашу відповідь тут...';
-                        answersDiv.appendChild(input);
+
+                        const charContainer = document.createElement('div');
+                        charContainer.id = 'charInputsContainer';
+
+                        const correctAnswer = String(data.correct_answer);
+                        const inputs = []; 
+
+                        correctAnswer.split('').forEach((char, index) => {
+                            if (char === ' ') {
+                                const spacer = document.createElement('div');
+                                spacer.style.width = '30px'; 
+                                charContainer.appendChild(spacer);
+                                inputs.push({ type: 'space' });
+                            } else {
+                                const charInput = document.createElement('input');
+                                charInput.type = 'text';
+                                charInput.maxLength = 1;
+                                charInput.inputMode = 'text';
+                                charInput.setAttribute('autocomplete', 'off');
+                                charInput.setAttribute('spellcheck', 'false');
+
+                                charInput.classList.add('char-box');
+                                charInput.style.width = '40px';
+                                charInput.style.textAlign = 'center';
+                                charInput.style.fontSize = '20px';
+                                charInput.style.textTransform = 'uppercase';
+
+                                charInput.addEventListener('input', (e) => {
+                                    if (e.target.value.length === 1) {
+                                        const nextInput = charContainer.querySelectorAll('input')[Array.from(charContainer.querySelectorAll('input')).indexOf(charInput) + 1];
+                                        if (nextInput) nextInput.focus();
+                                    }
+                                });
+
+                                charInput.addEventListener('keydown', (e) => {
+                                    if (e.key === 'Backspace') {
+                                        if (charInput.value === '') {
+                                            const allInputs = Array.from(charContainer.querySelectorAll('input'));
+                                            const currentIndex = allInputs.indexOf(charInput);
+                                            if (currentIndex > 0) {
+                                                const prevInput = allInputs[currentIndex - 1];
+                                                prevInput.focus();
+                                                prevInput.value = '';   
+                                            }
+                                        }
+                                    }
+                                });
+
+                                charContainer.appendChild(charInput);
+                                inputs.push({ type: 'input', el: charInput });
+                            }
+                        });
+
+                        answersDiv.appendChild(charContainer);
+
                         const sendBtn = document.createElement('button');
                         sendBtn.id = 'sendBtn';
                         sendBtn.textContent = "Відправити -->";
+
                         sendBtn.onclick = () => {
-                            const answer = input.value.trim();
-                            if (!answer) {
-                                alert("Будь ласка, введіть вашу відповідь.");
+                            let finalAnswer = "";
+                            let inputIdx = 0;
+                            correctAnswer.split('').forEach(char => {
+                                if (char === ' ') {
+                                    finalAnswer += " ";
+                                } else {
+                                    const inputEl = charContainer.querySelectorAll('input')[inputIdx];
+                                    finalAnswer += inputEl.value;
+                                    inputIdx++;
+                                }
+                            });
+
+                            if (finalAnswer.trim().length === 0) {
+                                alert("Будь ласка, введіть відповідь.");
                                 return;
                             }
-                            uploadAnswer(answer, data.id);
+
+                            uploadAnswer(finalAnswer, data.id);
                         };
+
                         answersDiv.appendChild(sendBtn);
                     } else {
                         const btn1 = document.createElement('button');
