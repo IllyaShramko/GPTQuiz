@@ -3,8 +3,8 @@ from project import DATABASE as db
 from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
 from library_app.models import RedeemCode, Quiz, Room, Question, SessionParticipant, SessionAnswer, StudentReport
+from classroom_app import Student
 import json, flask, time
-from sqlalchemy import func
 from flask import request, session
 
 def create_student_report(participant_id, room_id):
@@ -18,7 +18,7 @@ def create_student_report(participant_id, room_id):
     score = correct
     percentage = round((correct / total) * 100) if total else 0
 
-    grade = str(round(percentage * 12 / 100))
+    grade = percentage / 100 * 12 // 1
 
     report = StudentReport(
         participant_id=participant_id,
@@ -30,6 +30,7 @@ def create_student_report(participant_id, room_id):
         max_score=max_score,
         percentage=percentage,
         grade=grade,
+        student_id=flask_login.current_user.id
     )
 
     DATABASE.session.add(report)
@@ -37,12 +38,11 @@ def create_student_report(participant_id, room_id):
 
     return report.hash_code
 
-
 @socketio.on("join_room")
 def handle_join(data):
-    username = data.get("username")
     code_enter = data.get("code")
     quiz_id = data.get("quizId")
+    student_id = data.get("student_id")
 
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     if not redeem:
@@ -59,124 +59,47 @@ def handle_join(data):
         emit("join_error", {"message": "Комната не найдена"})
         return
     
-    session_id = session.sid if hasattr(session, 'sid') else request.sid
-    
     participants = SessionParticipant.query.filter_by(room_id=room.id).filter_by(is_connected = True).all()
-    students = [p.nickname for p in participants]
-
-    if username in students:
-        emit("join_error", {"message": "Нікнейм вже використовується"})
-        return
-    
-    participant = SessionParticipant(nickname=username, room_id=room.id, session_id=session_id, is_connected = True, user_id= flask_login.current_user.id if flask_login.current_user.is_authenticated else None)
-
-    try:
-        DATABASE.session.add(participant)
-        DATABASE.session.commit()
-        session['participant_id'] = participant.id
-    except Exception as e:
-        DATABASE.session.rollback()
-        print("Ошибка при добавлении участника:", e)
-        emit("join_error", {"message": "Не удалось добавить участника"})
-        return
-
-    join_room(str(room.id))
-    join_room(f"student_{participant.id}")
-
-    students.append(participant.nickname)    
-    room.students = students
-    DATABASE.session.commit()
-
-    emit("joined_success", {"quiz_name": redeem.name, "reconnect_hash": participant.reconnect_hash})
-    emit("user_list_update", {"students": students}, room=str(room.id))
-
-    if room.index_question is not None and 0 <= room.index_question < len(quiz.questions):
-        current_question = quiz.questions[room.index_question]
-        emit("quiz_start_student", {
-            "quiz_name": quiz.name,
-            "name": current_question.name,
-            "type": current_question.type,
-            "variant_1": current_question.variant_1,
-            "variant_2": current_question.variant_2,
-            "variant_3": current_question.variant_3,
-            "variant_4": current_question.variant_4,
-            "correct_answer": current_question.correct_answer,
-            "image": current_question.image,
-            "id": current_question.id
-        })
-
-        existing_participant = SessionParticipant.query.filter_by(nickname=username, room_id=room.id, is_connected=True).first()
-        if existing_participant:
-            existing_participant.is_connected = True
+    username = flask_login.current_user.surname + " " + flask_login.current_user.name
+    students = [[f"{p.student_profile.surname} {p.student_profile.name}", p.reconnect_hash] for p in participants]
+    existing_participiant = SessionParticipant.query.filter_by(student_id=student_id, room_id=room.id).first()
+    if not existing_participiant:
+        print("Участника нет в комнате, добавление...")
+        existing_participiant = SessionParticipant(
+            room_id=room.id, 
+            is_connected=True,
+            student_id=flask_login.current_user.id
+        )
+        try:
+            DATABASE.session.add(existing_participiant)
             DATABASE.session.commit()
-
-            answer_status = SessionAnswer.query.filter_by(participant_id=existing_participant.id, question=current_question.id).first()
-
-            if answer_status:
-                emit(
-                    "current_question_info",
-                    {
-                        "question": current_question.type,
-                        "is_correct": answer_status.is_correct,
-                        "answer_id": answer_status.get_answer(answer_status.answer),
-                    }
-                )
-            else:
-                emit(
-                    "current_question_info",
-                    {
-                        "question": current_question.type,
-                        "is_correct": "skipped",
-                        "answer_id": None,
-                    }
-                )
+            students.append([username, existing_participiant.reconnect_hash])    
+            room.students = students
+            DATABASE.session.commit()
+            print(f"Участник (id: {existing_participiant.id}, student_id: {student_id}) успешно добавлен")
+        except Exception as e:
+            DATABASE.session.rollback()
+            print("Ошибка при добавлении участника:", e)
+            emit("join_error", {"message": "Не удалось добавить участника"})
             return
-
-
-
-@socketio.on("auto_join_room")
-def handle_auto_join(data):
-    code_enter = data.get("code")
-    quiz_id = data.get("quizId")
-    reconnect_hash = data.get("reconnectHash")
-    print(code_enter, quiz_id, reconnect_hash)
-    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
-    if not redeem:
-        emit("auto_join_error", {"message": "Код не найден"})
-        return
-
-    quiz = Quiz.query.get(quiz_id)
-    if not quiz:
-        emit("auto_join_error", {"message": "Викторина не найдена"})
-        return
-
-    room = Room.query.get(redeem.room_id)
-    if not room:
-        emit("auto_join_error", {"message": "Комната не найдена"})
-        return
-    print(redeem, quiz, room)
-    existing_participant = SessionParticipant.query.filter_by(reconnect_hash=reconnect_hash, room_id=room.id, is_connected=True).first()
-    print(existing_participant)
-    if existing_participant:
-        existing_participant.is_connected = True
+    elif existing_participiant.is_connected == False:
+        existing_participiant.is_connected = True
+        
+        students.append([username, existing_participiant.reconnect_hash])    
+        room.students = students
         DATABASE.session.commit()
-        participant = existing_participant
     else:
-        emit("auto_join_error", {"message": "Сесія не найдена"})
-        return
-    
+        print("Участник есть в комнате")
+    session['participant_id'] = existing_participiant.id
     join_room(str(room.id))
-    join_room(f"student_{participant.id}")
+    join_room(f"student_{existing_participiant.id}")
 
-    participants = SessionParticipant.query.filter_by(room_id=room.id, is_connected=True).all()
-    students = [p.nickname for p in participants]
-    room.students = students
-    DATABASE.session.commit()
-    session['participant_id'] = participant.id
-    emit("joined_success", {"quiz_name": redeem.name})
+
+    emit("joined_success", {"quiz_name": redeem.name, "hash": existing_participiant.reconnect_hash})
+    print("students:", students)
     emit("user_list_update", {"students": students}, room=str(room.id))
 
-    if room.index_question is not None and 0 <= room.index_question < len(quiz.questions):
+    if room.index_question is not None and 0 <= room.index_question <= len(quiz.questions):
         current_question = quiz.questions[room.index_question]
         emit("quiz_start_student", {
             "quiz_name": quiz.name,
@@ -191,10 +114,12 @@ def handle_auto_join(data):
             "id": current_question.id,
             "current_question": room.index_question
         })
-
-        answer_status = SessionAnswer.query.filter_by(participant_id=participant.id, question=current_question.id).first()
+        answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).count()
+        if answers != len(students):
+            return
+        answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
+        
         if answer_status:
-            print(answer_status.get_answer(answer_status.answer))
             emit(
                 "current_question_info",
                 {
@@ -217,21 +142,20 @@ def handle_auto_join(data):
 @socketio.on("remove_student")
 def handle_remove_student(data):
     code_enter = data.get("code")
-    username = data.get("username")
+    student = data.get("student")
+    print("Видалено:", student)
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     if not redeem:
         return
     room = Room.query.get(redeem.room_id)
     if not room:
         return
-    participant = SessionParticipant.query.filter_by(room_id=room.id, nickname=username).first()
+    participant = SessionParticipant.query.filter_by(room_id=room.id, reconnect_hash= student[1]).first()
     if not participant:
         return
     participant.is_connected = False
     DATABASE.session.commit()
-    emit("remove_student_client", {"username": username}, room=str(room.id))
-
-
+    emit("remove_student_client", {"hash": student[1]}, room=str(room.id))
 
 @socketio.on("host_join")
 def handle_host_join(data):
@@ -248,13 +172,13 @@ def handle_host_join(data):
     join_room(f"teacher_{room.host}")
 
     participants = SessionParticipant.query.filter_by(room_id=room.id, is_connected=True).all()
-    students = [p.nickname for p in participants]
-    room.students = students
-    DATABASE.session.commit()
+    students = [[f"{p.student_profile.surname} {p.student_profile.name}", p.reconnect_hash] for p in participants]
+
     emit("user_list_update", {"students": students}, room=str(room.id))
 
     if not flask_login.current_user.is_authenticated or flask_login.current_user.id != room.host:
-        return
+        if flask.session.get("user_role") != "teacher":
+            return
 
     quiz = Quiz.query.get(room.quiz) if room and room.quiz else None
 
@@ -284,6 +208,7 @@ def handle_host_join(data):
 
         answers = SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
         if answers:
+            print("AAAAAAAAAAAAAAAAAAA", answers)
             if len(answers) == len(participants):
                 results = []
                 for ans in answers:
@@ -297,7 +222,7 @@ def handle_host_join(data):
 
                     results.append({
                         "student_id": ans.participant_id,
-                        "nickname": participant.nickname,
+                        "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
                         "answer": user_answer_text,
                         "is_correct": ans.is_correct,
                         "correct_answer": correct_text,
@@ -365,14 +290,14 @@ def handle_start(data):
     end_time = int(time.time() + duration)
     emit("question_timer", {"end_time": end_time, "duration": duration}, room=room_id)
 
-
 @socketio.on("answer")
 def handle_answer(data):
     question_id = data.get("question_id")
     answer = data.get("answer")   
     username = data.get("username")
     code_enter = data.get("code")
-
+    my_hash = data.get("my_hash")   
+    print(my_hash)
     if not question_id:
         print("question_id is None or missing in data")
         return
@@ -381,8 +306,8 @@ def handle_answer(data):
     if not question:
         print(f"No question found with id: {question_id}")
         return
-
-    participant = SessionParticipant.query.get(session['participant_id'])
+    print(session.get("participant_id"))
+    participiant = SessionParticipant.query.get(session.get("participant_id"))
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     room = Room.query.get(redeem.room_id)
 
@@ -409,11 +334,12 @@ def handle_answer(data):
         is_correct = str(answer).lower() == str(question.correct_answer).lower()
 
     session_answer = SessionAnswer(
-        room_id = room.id if room else None,
+        room_id = room.id,
         question = question.id,
-        participant_id = participant.id,
+        participant_id = participiant.id,
         answer = answer,
-        is_correct = is_correct
+        is_correct = is_correct,
+        question_index = room.index_question
     )
 
     try:
@@ -434,6 +360,7 @@ def handle_answer(data):
 
         emit('student_answer', {
             'username': username,
+            "hash": my_hash,
             'answer': answer,
             'question_id': question_id
         }, room=str(room.id), include_self=False)
@@ -484,7 +411,7 @@ def handle_next(data):
         emit("quiz_start_student", question_data, room=room_id)
         emit("quiz_start_teacher", question_data, room=room_id)
 
-        duration = 30
+        duration = 45
         end_time = int(time.time() + duration)
         emit("question_timer", {"end_time": end_time, "duration": duration}, room=room_id)
     else:
@@ -499,8 +426,6 @@ def handle_quiz_end_msg(data):
         return
     room = Room.query.get(redeem.room_id)
     emit("end_msg", {}, room=str(room.id))
-
-
 
 @socketio.on("end_quiz")
 def handle_quiz_end(data):
@@ -525,6 +450,7 @@ def handle_show_quiz_results(data):
     if not room:
         return
     emit("quiz_results", {"url": f"/report/{room.id}"})
+
 @socketio.on("end_question")
 def handle_end_question(data):
     room = Room.query.get(RedeemCode.query.filter_by(code_enter=data.get("code")).first().room_id)
@@ -548,7 +474,8 @@ def handle_end_question(data):
                 question=current_question.id,
                 participant_id=participant.id,
                 answer="Пропущений...",  
-                is_correct=False 
+                is_correct=False,
+                question_index = room.index_question
             )
             db.session.add(skip_answer)
 
@@ -567,7 +494,7 @@ def handle_end_question(data):
 
         results.append({
             "student_id": ans.participant_id,
-            "nickname": participant.nickname,
+            "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
             "answer": user_answer_text,
             "is_correct": ans.is_correct,
             "correct_answer": correct_text,
@@ -600,3 +527,15 @@ def handle_end_question(data):
         },
         room=f"teacher_{room.host}"
     )
+
+@socketio.on("add_15_sec")
+def handle_add_time(data):
+    code_enter = data.get("code")
+    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
+    if not redeem:
+        return
+
+    room = Room.query.get(redeem.room_id)
+    if not room:
+        return
+    socketio.emit("add_time", room=str(room.id))

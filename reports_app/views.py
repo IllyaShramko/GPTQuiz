@@ -52,7 +52,7 @@ def get_student_report(student_id):
 
     return {
         "id": student.id,
-        "nickname": student.nickname,
+        "nickname": f"{student.student_profile.surname} {student.student_profile.name}",
         "answers": [
             {
                 "question_text": ans.question_obj.name if ans.question_obj else "",
@@ -64,3 +64,35 @@ def get_student_report(student_id):
             for ans in answers
         ]
     }
+
+def get_report_answers(room_id):
+    answers = SessionAnswer.query.filter_by(room_id=room_id).all()
+
+    stats_map = {}
+
+    for ans in answers:
+        idx = ans.question_index
+        if idx is None:
+            continue
+            
+        if idx not in stats_map:
+            stats_map[idx] = {'total': 0, 'correct': 0}
+        
+        stats_map[idx]['total'] += 1
+        if ans.is_correct:
+            stats_map[idx]['correct'] += 1
+
+    result = []
+    
+    for idx in sorted(stats_map.keys()):
+        total = stats_map[idx]['total']
+        correct = stats_map[idx]['correct']
+        
+        percent = int((correct / total) * 100) if total > 0 else 0
+        
+        result.append({
+            "question": f"Q{idx + 1}",
+            "succesfull": percent 
+        })
+
+    return flask.jsonify(result)

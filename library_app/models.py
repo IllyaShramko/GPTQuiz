@@ -11,6 +11,13 @@ class StudentReport(DATABASE.Model):
 
     student_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("student.id"))
 
+    participant_id = DATABASE.Column(
+        DATABASE.Integer,
+        DATABASE.ForeignKey("session_participant.id"),
+        nullable=False,
+        unique=True 
+    )
+
     room_id = DATABASE.Column(
         DATABASE.Integer,
         DATABASE.ForeignKey("room.id"),
@@ -25,7 +32,7 @@ class StudentReport(DATABASE.Model):
     max_score = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
     percentage = DATABASE.Column(DATABASE.Integer, nullable=False, default=0)
 
-    grade = DATABASE.Column(DATABASE.String(10), nullable=True)
+    grade = DATABASE.Column(DATABASE.Integer, nullable=True)
 
     hash_code = DATABASE.Column(DATABASE.String(64), unique=True,
         nullable=False,
@@ -33,6 +40,12 @@ class StudentReport(DATABASE.Model):
     )
 
     created_at = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
+
+    participant = DATABASE.relationship(
+        "SessionParticipant",
+        backref=DATABASE.backref("report", uselist=False),
+        lazy=True
+    )
 
     room = DATABASE.relationship(
         "Room",
@@ -68,11 +81,6 @@ class Question(DATABASE.Model):
             "image": self.image,
             "answers": [a.to_dict() for a in self.answers] if self.answers else []
         }
-    
-    
-
-
-
 class RedeemCode(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
     name = DATABASE.Column(DATABASE.String(100), nullable = False)
@@ -81,6 +89,31 @@ class RedeemCode(DATABASE.Model):
     hosted_by = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
 
+class Quiz(DATABASE.Model):
+    id = DATABASE.Column(DATABASE.Integer, primary_key = True)
+    name = DATABASE.Column(DATABASE.String(100), nullable = False)
+    description = DATABASE.Column(DATABASE.String, nullable = False)
+    count_questions = DATABASE.Column(DATABASE.Integer, nullable = False)
+    author_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'))
+    image = DATABASE.Column(DATABASE.String(100), nullable = False)
+    is_draft = DATABASE.Column(DATABASE.Boolean, default=True)
+    questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
+    codes = DATABASE.relationship("RedeemCode", backref="quiz")
+    rooms = DATABASE.relationship("Room", backref="roomsQuiz", lazy=True)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "count_questions": self.count_questions,
+            "author": {
+                "name": self.user.name,
+                "surname": self.user.surname
+            } if self.user else None,
+            "image": self.image,
+            "codes": self.codes
+        }   
+
 class Room(DATABASE.Model):
     __tablename__ = 'room'
     id = DATABASE.Column(DATABASE.Integer, primary_key=True)
@@ -88,6 +121,7 @@ class Room(DATABASE.Model):
     index_question = DATABASE.Column(DATABASE.Integer)
     quiz = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("quiz.id"))
     host = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"))
+    group_class_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("group_class.id"))
     status = DATABASE.Column(DATABASE.String, default= "waiting")
     answered_students = DATABASE.Column(DATABASE.Integer, default=0)
     redeem_codes = DATABASE.relationship("RedeemCode", backref="room", lazy=True)
@@ -96,9 +130,9 @@ class Room(DATABASE.Model):
     date = DATABASE.Column(DATABASE.DateTime, server_default=func.now())
     archived = DATABASE.Column(DATABASE.Boolean, default=False)
     def get_report(self):
-        from .models import SessionParticipant, SessionAnswer, Question
+        from .models import SessionAnswer, Question
 
-        participants = SessionParticipant.query.filter_by(room_id=self.id).all()
+        participants = self.session_participants
         report = []
 
         for p in participants:
@@ -125,7 +159,7 @@ class Room(DATABASE.Model):
 
             report.append({
                 "participant_id": p.id,
-                "nickname": p.nickname,
+                "nickname": f"{p.student_profile.surname} {p.student_profile.name}",
                 "percent": percent,
                 "answers": answers_data,
                 "grade": grade,
@@ -134,42 +168,13 @@ class Room(DATABASE.Model):
 
         return sorted(report, key=lambda x: x["percent"], reverse=True)
 
-
-
-class Quiz(DATABASE.Model):
-    id = DATABASE.Column(DATABASE.Integer, primary_key = True)
-    name = DATABASE.Column(DATABASE.String(100), nullable = False)
-    description = DATABASE.Column(DATABASE.String, nullable = False)
-    count_questions = DATABASE.Column(DATABASE.Integer, nullable = False)
-    author_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey('user.id'))
-    image = DATABASE.Column(DATABASE.String(100), nullable = False)
-    is_draft = DATABASE.Column(DATABASE.Boolean, default=True)
-    questions = DATABASE.relationship(Question, backref = 'quiz', lazy = True)
-    codes = DATABASE.relationship("RedeemCode", backref="quiz")
-    rooms = DATABASE.relationship(Room, backref="roomsQuiz", lazy=True)
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "count_questions": self.count_questions,
-            "author": {
-                "name": self.user.name,
-                "surname": self.user.surname
-            } if self.user else None,
-            "image": self.image,
-            "codes": self.codes
-        }   
-
 class SessionParticipant(DATABASE.Model):
     id = DATABASE.Column(DATABASE.Integer, primary_key = True)
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"))
-    nickname = DATABASE.Column(DATABASE.String(100), nullable = False)
-    session_id = DATABASE.Column(DATABASE.String(255), nullable=True)
     is_connected = DATABASE.Column(DATABASE.Boolean, default=True)
-    user_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("user.id"), nullable=True)
-    reconnect_hash = DATABASE.Column(DATABASE.String(64), unique=True, nullable=False, default=lambda: uuid.uuid4().hex)
-    __table_args__ = (UniqueConstraint("room_id", "nickname", "session_id", name="uq_partc_once"),)
+    reconnect_hash = DATABASE.Column(DATABASE.String(32), unique=True, nullable=False, default=lambda: uuid.uuid4().hex[:32])
+    student_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("student.id"), nullable=True)
+    
 
 class SessionAnswer(DATABASE.Model):
     __tablename__ = "session_answer"
@@ -178,6 +183,7 @@ class SessionAnswer(DATABASE.Model):
     room_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("room.id"), nullable=True)
     question = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("question.id"))
     participant_id = DATABASE.Column(DATABASE.Integer, DATABASE.ForeignKey("session_participant.id"))
+    question_index = DATABASE.Column(DATABASE.Integer)
     answer = DATABASE.Column(DATABASE.JSON(), nullable=True)
     is_correct = DATABASE.Column(DATABASE.Boolean, default=False)
 

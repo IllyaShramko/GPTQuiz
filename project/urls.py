@@ -1,5 +1,5 @@
 from .settings import project
-import home_app, user_app, admin_app, library_app, execution_app, history_app, reports_app, host_app
+import home_app, user_app, admin_app, library_app, execution_app, history_app, reports_app, host_app, classroom_app, student_app
 
 home_app.home_app.add_url_rule(
     rule= '/',
@@ -40,7 +40,11 @@ user_app.user_app.add_url_rule(
     view_func = user_app.validate_code,
     methods= ["POST", "GET"]
 )
-
+user_app.user_app.add_url_rule(
+    rule= '/create_admin/',
+    view_func= user_app.create_admin    ,
+    methods= ["POST"]
+)
 
 project.register_blueprint(blueprint= user_app.user_app)
 admin_app.admin_app.add_url_rule(
@@ -94,16 +98,17 @@ library_app.library_app.add_url_rule(
 project.register_blueprint(blueprint= library_app.library_app)
 
 execution_app.execution_app.add_url_rule(
+    rule = '/login_student/',
+    view_func = execution_app.render_login_student,
+    methods = ["POST", "GET"]
+)
+
+execution_app.execution_app.add_url_rule(
     rule = '/execution/',
     view_func = execution_app.render_enter_code,
     methods = ["POST", "GET"]
 )
 
-execution_app.execution_app.add_url_rule(
-    rule = '/reportStudent/<hash_code>',
-    view_func = execution_app.report_view,
-    methods = ["POST", "GET"]
-)
 
 project.register_blueprint(blueprint = execution_app.execution_app)
 
@@ -135,7 +140,11 @@ reports_app.reports_app.add_url_rule(
     view_func= reports_app.render_archived_reports,
     methods= ["POST", "GET"]
 )
-
+reports_app.reports_app.add_url_rule(
+    rule= "/reports/room_stats/<int:room_id>",
+    view_func= reports_app.get_report_answers,
+    methods= ["GET"]
+)
 project.register_blueprint(blueprint= reports_app.reports_app)
 
 host_app.host_app.add_url_rule(
@@ -149,3 +158,47 @@ host_app.host_app.add_url_rule(
     methods= ["POST", "GET"]
 )
 project.register_blueprint(blueprint = host_app.host_app) 
+
+classroom_app.classroom_app.add_url_rule(
+    rule= '/',
+    view_func= classroom_app.render_classrooms,
+    methods= ["POST", "GET"]
+)
+
+classroom_app.classroom_app.add_url_rule(
+    rule= '/<int:id>',
+    view_func= classroom_app.render_classroom,
+    methods= ["POST", "GET"]
+)
+classroom_app.classroom_app.add_url_rule(
+    rule= '/get-student-info/<int:id_student>/<int:id_classroom>',
+    view_func= classroom_app.get_data_login_student,
+    methods= ["GET"]
+)
+
+project.register_blueprint(
+    blueprint= classroom_app.classroom_app,
+    url_prefix= "/classrooms/"
+)
+
+student_app.student_app.add_url_rule(
+    rule="/",
+    view_func= student_app.render_student_page,
+    methods= ["GET"]
+)
+
+student_app.student_app.add_url_rule(
+    rule = '/report/<hash_code>',
+    view_func = student_app.report_view,
+    methods = ["GET", "POST"]
+)
+student_app.student_app.add_url_rule(
+    rule="/api/student_stats/<int:student_id>",
+    view_func= student_app.get_student_stats,
+    methods = ["GET", "POST"]
+)
+
+project.register_blueprint(
+    blueprint= student_app.student_app,
+    url_prefix= "/student/"
+)

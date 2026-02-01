@@ -16,36 +16,30 @@
             
             <input type="hidden" id="quizCreate" value="">
             <div class="links">
-                <a class="tab-link" href="/library/">
+                <a class="tab-link" href="{{ url_for('classroom_app.render_classrooms') }}">
+                    <div>
+                        <img src="{{ url_for('static', filename= 'images/classroom.svg') }}">
+                        <p>Мої класи</p>
+                    </div>
+                    <div class="divider myClassLink"></div>
+                </a>
+                <a class="tab-link" href="{{ url_for('library_app.render_library') }}">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/library.svg') }}">
                         <p>Бібліотека</p>
                     </div>
                     <div class="divider libraryLink"></div>
                 </a>
-                <a class="tab-link" href="/history/">
-                    <div>
-                        <img src="{{ url_for('static', filename= 'images/history.svg') }}">
-                        <p>Історія</p>
-                    </div>
-                    <div class="divider historyLink"></div>
-                </a>
-                <a class="tab-link" href="/reports/">
+                <a class="tab-link" href="{{ url_for('reports_app.render_reports_page') }}">
                     <div>
                         <img src="{{ url_for('static', filename= 'images/reports.svg') }}">
                         <p>Звіти</p>
                     </div>
                     <div class="divider reportsLink"></div>
                 </a>
-                <!-- <a class="tab-link" href="" class="gpt-quiz-ai">
-                    <div>
-                        <img src="{{ url_for('static', filename= 'images/ai.svg') }}">
-                        <p class="ai-text">GPTQuiz AI</p>
-                    </div>
-                </a> -->
             </div>
         </aside>
-        <div class="nav">
+        <header class="nav">
             <div class="firstNav">
                 <h2>{% block name_page %}{% endblock %}</h2>
             </div>
@@ -61,12 +55,11 @@
                     <img src="{{ url_for('admin_app.static', filename= 'images/logout.svg') }}">
                 </a>
             </div>
-        </div>
+        </header>
         {% block content %}
         
         {% endblock %}
     </body>
     <script src="{{ url_for('static', filename= 'js/getDraft.js') }}"></script>
     <script src="{{ url_for('static', filename= 'js/ripple.js') }}"></script>
-    <script src="{{ url_for('library_app.static', filename = 'js/createQuiz.js')}}"></script>
 </html>

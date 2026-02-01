@@ -96,15 +96,15 @@
                 data.students.forEach(student => {
                     const li = document.createElement("li");
                     const p = document.createElement("p")
-                    p.textContent = student;
+                    p.textContent = student[0];
                     li.appendChild(p)
-                    li.id = student;
+                    li.id = student[1];
                     const deleteBtn = document.createElement("button");
                     const deleteImg = document.createElement("img");
                     deleteImg.src = "{{ url_for('host_app.static', filename='images/delete.svg') }}";
                     deleteBtn.appendChild(deleteImg);
                     deleteBtn.onclick = () => {
-                        socket.emit("remove_student", { code: code, username: student });
+                        socket.emit("remove_student", { code: code, student: student });
                     };
                     deleteBtn.classList.add("delete-user-btn");
                     li.appendChild(deleteBtn);
@@ -113,7 +113,7 @@
             });
 
             socket.on("remove_student_client", (data) => {
-                const userLi = document.getElementById(data.username);
+                const userLi = document.getElementById(data.hash);
                 if (userLi) {
                     userLi.remove();
                 }
@@ -173,7 +173,8 @@
                 let remainingTime = endTime - currentTime;
 
                 document.getElementById("15sAdd").onclick = () => {
-                    endTime += 15; 
+                    endTime += 15;
+                    socket.emit("add_15_sec", { code: code }) 
                 }
 
                 const timerDiv = document.getElementById('timer');
@@ -199,7 +200,7 @@
                             socket.emit("end_question", { code: code });
                             clearInterval(timerInterval);
                         }
-                    }, 250);
+                    }, 150);
                 }
             });
             socket.on("quiz_start_teacher", (data) => {
@@ -272,7 +273,7 @@
             })
 
             socket.on("student_answer", (data) => {
-                const user = document.getElementById(data.username)
+                const user = document.getElementById(data.hash)
                 const checkMark = document.createElement('img') 
                 checkMark.src = '{{ url_for("host_app.static", filename = "images/check-mark.svg") }}'
                 checkMark.classList.add('check_mark')
