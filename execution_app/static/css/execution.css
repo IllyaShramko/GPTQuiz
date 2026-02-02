@@ -498,7 +498,7 @@ main {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-content: center;
 }
 @keyframes spin {
     from { transform: rotate(0deg); }
