@@ -50,6 +50,7 @@ main {
     font-size: 16px;
     background-color: #9C47FF;
     border: none;
+    color: white;
 }
 .close {
     position: absolute;
@@ -85,4 +86,96 @@ main {
 .hideform {
     opacity: 0;
     visibility: hidden;
+}
+.btnnav {
+    font-size: 16px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+.apexcharts-toolbar {
+    z-index: 3 !important;
+}
+
+.stats {
+    display: flex;
+    flex-direction: column;
+}
+.stats h1 {
+    text-align: center;
+    color: white;
+}
+.controls-container {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.controls-container p {
+    color: white;
+}
+
+.date-input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.date-input:focus {
+    border-color: #008FFB;
+}
+
+.update-btn {
+    padding: 10px 25px;
+    cursor: pointer;
+    background: #008FFB;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+.update-btn:hover {
+    opacity: 0.8;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 25px;
+    padding: 20px;
+}
+
+.chart-card {
+    background: #212121;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.chart-card h3 {
+    text-align: center;
+    color: #ecdcdc;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.history {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+.history h2 {
+    color: white;
+}
+.history a{
+    display: flex;
+    flex-direction: column;
+    color: white;
 }

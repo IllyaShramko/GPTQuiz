@@ -4,15 +4,11 @@ from library_app.models import Question, SessionAnswer, SessionParticipant, Stud
 from user_app.models import User
 
 def render_student_page():
-    student= Student.query.get(flask_login.current_user.id)
-    
-    results = student.my_reports
-    print(results)
 
     return flask.render_template(
         template_name_or_list= 'student_home.html',
         current_user = flask_login.current_user,
-        results = results
+        results = flask_login.current_user.my_reports
     )
 
 def get_student_stats(student_id):

@@ -49,6 +49,7 @@ main p {
 }
 .create-form h3 {
     font-size: 16px;
+    color: #e92c2c;
 }
 .create-form div {
     display: flex;
@@ -66,11 +67,12 @@ main p {
     border: 1px #181818 solid;
     background-color: #202020;
     text-align: start;
+    color: white;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }   
 .create-form button {
     cursor: pointer;
@@ -85,6 +87,7 @@ input::-webkit-inner-spin-button {
     font-size: 16px;
     background-color: #9C47FF;
     border: none;
+    color: white;
 }
 .close {
     position: absolute;
@@ -114,4 +117,36 @@ input::-webkit-inner-spin-button {
 .hideform {
     opacity: 0;
     visibility: hidden;
+}
+#add {
+    height: 40px;
+    background-color: #1ca700;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: "inter";
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
+}
+.studentsContainer {
+    position: relative;
+    width: 100%;
+}
+.studentsContainer ol{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+}
+.studentContainer {
+    color: white;
+}
+.student {
+    color: white;
+    text-decoration: underline;
 }

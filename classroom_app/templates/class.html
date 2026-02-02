@@ -20,12 +20,15 @@
                 <button id="add">Додайте нового учня!</button>
             </div>
         </div>
-        <div>
-            {% for student in classroom.students %}
-                <div>
-                    <a href="/classrooms/student/{{ student.id }}">{{ student.login }}: {{ student.surname }} {{ student.name }}</a>
-                </div>
-            {% endfor %}
+        <div class="studentsContainer">
+            <h3 style="color: white;">Ваші учні:</h3>
+            <ol>
+                {% for student in classroom.students %}
+                    <li class="studentContainer">
+                        <a href="/classrooms/student/{{ student.id }}" class="student">{{ student.login }}: {{ student.surname }} {{ student.name }}</a>
+                    </li>
+                {% endfor %}
+            </ol>
         </div>
     </main>
     <form id="form" class="create-form {% if not errors %}hideform{% endif %}" method="post">
@@ -37,24 +40,16 @@
         </div>
         <div>
             <label for="student_surname">Вкажіть прізвище учня:</label>
-            <input type="text" name="student_surname" placeholder="Прізвище учня">
+            <input type="text" name="student_surname" id="student_surname" placeholder="Прізвище учня">
         </div>
         <div>
             <label for="student_name">Вкажіть ім'я учня:</label>
-            <input type="text" name="student_name" placeholder="Ім'я учня">
+            <input type="text" name="student_name" id="student_name" placeholder="Ім'я учня">
         </div>
         <h3 id="errors">{{ errors }}</h3>
         <button type="submit" class="submit">Додати учня</button>
     </form>
-    <div id="modalInfo" class="modalinfo {% if not new_student %}hideform{% endif %}">
-        <h4>Передайте учню його дані:</h4>
-        <div class="info-in-modal">
-            <p><b>Логін</b>: <span id="login">{{ new_student.login }}</span></p>
-            <p><b>Пароль</b>: <span id="password">{{ new_student.password }}</span></p>
-        </div>
-        <button type="button" id="okbtn" class="submit">OK</button>
-    </div>
-    <div class="blur {% if not new_student and not errors %}hideform{% endif %}" id="blur"></div>
+    <div class="blur {% if not errors %}hideform{% endif %}" id="blur"></div>
     <script src="{{ url_for('classroom_app.static', filename='js/form.js') }}"></script>
     <script src="{{ url_for('classroom_app.static', filename='js/getDataLogin.js') }}"></script>
 {% endblock %}
