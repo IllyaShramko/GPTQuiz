@@ -23,8 +23,7 @@
         <div>
             {% for student in classroom.students %}
                 <div>
-                    <a href="/classroom/student/{{ student.id }}">{{ student.login }}: {{ student.surname }} {{ student.name }}</a>
-                    <button class="get-data-login" value="{{ student.id }}">Дані входу</button>
+                    <a href="/classrooms/student/{{ student.id }}">{{ student.login }}: {{ student.surname }} {{ student.name }}</a>
                 </div>
             {% endfor %}
         </div>
@@ -55,8 +54,6 @@
         </div>
         <button type="button" id="okbtn" class="submit">OK</button>
     </div>
-    {% if new_student %}
-    {% endif %}
     <div class="blur {% if not new_student and not errors %}hideform{% endif %}" id="blur"></div>
     <script src="{{ url_for('classroom_app.static', filename='js/form.js') }}"></script>
     <script src="{{ url_for('classroom_app.static', filename='js/getDataLogin.js') }}"></script>

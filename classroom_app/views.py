@@ -72,6 +72,7 @@ def render_student_information(id):
     
     return flask.render_template(
         "student.html",
+        username = flask_login.current_user.login,
         student=student
     )
 
@@ -82,6 +83,9 @@ def get_data_login_student(id_student, id_classroom):
         "password": ""
     }
     student = Student.query.get(id_student)
+    if flask.session.get("user_role") != "teacher":
+        response["status"] = 403
+        return response
     if not student:
         response["status"] = 404
         return response
@@ -95,7 +99,6 @@ def get_data_login_student(id_student, id_classroom):
     if classroom.teacher_id != flask_login.current_user.id:
         response["status"] = 403
         return response
-
     response["login"] = student.login
     response["password"] = student.password
     return response

@@ -14,7 +14,18 @@
 
 {% block content %}
     <main>
-
+        <button id="getDataLogin" value="{{ student.id }}">Дані входу</button>
     </main>
+    <div id="modalInfo" class="modalinfo hideform">
+        <input type="hidden" id="classroomId" value="{{ student.classroom.id }}">
+        <h4>Передайте учню його дані:</h4>
+        <div class="info-in-modal">
+            <p><b>Логін</b>: <span id="login"></span></p>
+            <p><b>Пароль</b>: <span id="password"></span></p>
+        </div>
+        <button type="button" id="okbtn" class="submit">OK</button>
+    </div>
+    <div class="blur hideform" id="blur"></div>
+    <script src="{{ url_for('classroom_app.static', filename='js/getDataLogin.js') }}"></script>
     <script src="{{ url_for('static', filename= 'js/ApexCharts.js') }}"></script>
 {% endblock %}

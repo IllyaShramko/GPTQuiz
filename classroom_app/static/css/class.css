@@ -14,7 +14,7 @@ main p {
     color: white;
     opacity: 0.8;
 }
-.create-form, .modalinfo {
+.create-form {
     position: fixed;
     left: 50%;
     top: 50%;
@@ -41,7 +41,7 @@ main p {
 .modalinfo h4 {
     font-size: 20px;
 }
-.create-form, .modalinfo * {
+.create-form {
     color: white;
 }
 .create-form p {
@@ -72,7 +72,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }   
-.create-form button, .modalinfo button {
+.create-form button {
     cursor: pointer;
     font-weight: 500;
 }
@@ -96,12 +96,6 @@ input::-webkit-inner-spin-button {
 }
 .close img {
     width: 25px;
-}
-.modalinfo h3 {
-    font-size: 20px;
-}
-.modalinfo p {
-    font-size: 16px;
 }
 .blur {
     position: fixed;
