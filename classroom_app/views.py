@@ -63,6 +63,18 @@ def render_classroom(id):
         errors=errors
     )
 
+def render_student_information(id):
+    student = Student.query.get(id)
+    if not student:
+        return flask.redirect("/admin/", 404)
+    if student.classroom.teacher_id != flask_login.current_user.id:
+        return flask.redirect("/admin/", 403)
+    
+    return flask.render_template(
+        "student.html",
+        student=student
+    )
+
 def get_data_login_student(id_student, id_classroom):
     response = {
         "status": 200,
