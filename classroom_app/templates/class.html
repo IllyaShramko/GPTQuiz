@@ -23,7 +23,7 @@
         <div>
             {% for student in classroom.students %}
                 <div>
-                    <p>{{student.login}}: {{student.surname}} {{student.name}}</p>
+                    <a href="/classroom/student/{{ student.id }}">{{ student.login }}: {{ student.surname }} {{ student.name }}</a>
                     <button class="get-data-login" value="{{ student.id }}">Дані входу</button>
                 </div>
             {% endfor %}

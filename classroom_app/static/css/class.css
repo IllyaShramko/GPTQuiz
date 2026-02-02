@@ -4,6 +4,7 @@ main {
     top: 60px;
     display: flex;
     flex-direction: column;
+    padding: 30px;
 }
 main div div {
     display: flex;

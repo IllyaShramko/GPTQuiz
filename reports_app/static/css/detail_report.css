@@ -63,7 +63,6 @@
     color: #9C47FF;
     border: none;
     border-bottom: #9C47FF 5px solid;
-    
 }
 .not {
     color: #AFAFAF;
@@ -74,7 +73,7 @@
     font-size: 22px;
     font-weight: 300;
     border-radius: 5px;
-    
+    cursor: pointer;
     background: none;
     padding: 10px;
 }

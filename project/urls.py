@@ -170,10 +170,17 @@ classroom_app.classroom_app.add_url_rule(
     view_func= classroom_app.render_classroom,
     methods= ["POST", "GET"]
 )
+
 classroom_app.classroom_app.add_url_rule(
     rule= '/get-student-info/<int:id_student>/<int:id_classroom>',
     view_func= classroom_app.get_data_login_student,
     methods= ["GET"]
+)
+
+classroom_app.classroom_app.add_url_rule(
+    rule= "/student/<int:id>",
+    view_func= classroom_app.render_student_information,
+    methods = ["GET", "POST"]
 )
 
 project.register_blueprint(

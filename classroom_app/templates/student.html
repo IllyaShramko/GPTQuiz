@@ -1,0 +1,20 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}
+    {{ student.surname }} {{ student.name }}
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('classroom_app.static', filename= 'css/student.css') }}">
+{% endblock %}
+
+{% block name_page %}
+    Учень: {{ student.surname }} {{ student.name }}
+{% endblock %}
+
+{% block content %}
+    <main>
+
+    </main>
+    <script src="{{ url_for('static', filename= 'js/ApexCharts.js') }}"></script>
+{% endblock %}
