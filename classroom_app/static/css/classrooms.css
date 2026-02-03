@@ -8,6 +8,10 @@ main {
     padding: 35px;
     gap: 20px;
 }
+.no-classrooms-text {
+    color: white;
+    opacity: 0.8;
+}
 .content {
     display: flex;
     flex-wrap: wrap;

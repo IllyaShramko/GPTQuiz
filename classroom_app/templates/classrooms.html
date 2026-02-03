@@ -23,11 +23,11 @@
         {% if class_groups %}
             <div class="content">
                 {% for classroom in class_groups %}
-                    <a href="/classrooms/{{ classroom.id }}">{{ classroom.number }}-{{classroom.char}}</a>
+                    <a href="/classrooms/{{ classroom.id }}">{{ classroom.number }}-{{ classroom.char }}</a>
                 {% endfor %}
             </div>
         {% else %}
-            <h2>У вас поки що немає класів...</h2>
+            <h2 class="no-classrooms-text">У вас поки що немає класів...</h2>
         {% endif %}
     </main>
     <form method="post" id="form" class="create-form {% if not errors %}hideform{% endif %}">

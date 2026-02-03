@@ -115,9 +115,19 @@ def handle_join(data):
             "current_question": room.index_question
         })
         answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).count()
-        if answers != len(students):
-            return
         answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
+        if answers != len(students):
+            print("ANSWERSERWRE STATUS:", answer_status)
+            if answer_status:
+                emit(
+                    "current_question_info",
+                    {
+                        "question": current_question.type,
+                        "is_correct": "wait",
+                        "answer_id": None,
+                    }
+                )
+            return
         
         if answer_status:
             emit(
@@ -339,7 +349,7 @@ def handle_answer(data):
         participant_id = participiant.id,
         answer = answer,
         is_correct = is_correct,
-        question_index = room.index_question
+        question_index = room.index_question + 1
     )
 
     try:

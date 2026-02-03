@@ -512,7 +512,12 @@ main {
     #charInputsContainer {
         background-color: #323232;
     }
-
+    #lobby {
+        width: 95%;
+    }
+    #users {
+        max-height: 45vh;
+    }
     #question {
         background: #323232;
         border-radius: 15px;

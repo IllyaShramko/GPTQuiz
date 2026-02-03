@@ -2,9 +2,11 @@ main {
     position: relative;
     left: 220px;
     top: 60px;
+    width: calc(100% - 220px);
     display: flex;
     flex-direction: column;
-    padding: 30px;
+    align-items: center;
+    padding: 20px;
 }
 main div div {
     display: flex;
@@ -14,6 +16,50 @@ main p {
     color: white;
     opacity: 0.8;
 }
+.table {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center; 
+    padding: 10px 20px 30px;
+    gap: 10px;
+    background-color: #3A3A3A;
+    border-radius: 30px;
+}
+.header-classroom{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+.tabs{
+    display: flex;
+    gap: 10px;
+}
+.selected{
+    color: #9C47FF;
+    border: none;
+    border-bottom: #9C47FF 5px solid;
+}
+.not {
+    color: #AFAFAF;
+    border: none;
+}
+.tab{
+    font-size: 22px;
+    font-weight: 300;
+    border-radius: 5px;
+    cursor: pointer;
+    background: none;
+    padding: 10px;
+}
+.addnewclass {
+    display: flex;
+    align-items: center;
+}
+/*  */
 .create-form {
     position: fixed;
     left: 50%;

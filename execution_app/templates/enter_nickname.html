@@ -183,7 +183,7 @@
     
                     answered = !answered
                     console.log({answer: answer, question_id: questionID, username, code});
-                    socket.emit("answer", {answer: answer, question_id: questionID, username, code});
+                    socket.emit("answer", {answer: answer, question_id: questionID, username, code, my_hash});
                 }
     
                 socket.on("quiz_start_student", data => {
@@ -387,7 +387,10 @@
             
                 socket.on("current_question_info", data => {
                     blockPanel()
-
+                    console.log(data.answer_id)
+                    if (data.answer_id === "wait") {
+                        return
+                    }
                     document.getElementById('waitingDiv').remove();
                     document.getElementById("WWblur").classList.add('hideblur');
                     const allBtns = document.querySelectorAll('.answer-button, label');
