@@ -1,4 +1,6 @@
+from datetime import datetime
 import flask, flask_login
+from library_app.models import Room, StudentReport
 from project.settings import DATABASE
 from .models import GroupClass, Student
 
@@ -102,3 +104,42 @@ def get_data_login_student(id_student, id_classroom):
     response["login"] = student.login
     response["password"] = student.password
     return response
+
+def get_class_stats(id):
+    start_date_str = flask.request.args.get('start_date')
+    end_date_str = flask.request.args.get('end_date')
+
+    start_dt = datetime.strptime(start_date_str, '%Y-%m-%d').date() if start_date_str else None
+    end_dt = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else None
+
+    classroom = GroupClass.query.get(id)
+    if not classroom:
+        return flask.jsonify({"labels": [], "success_rates": []})
+
+    all_stats = []
+    
+    for room in classroom.rooms:
+        room_date = room.date.date()
+
+        if start_dt and room_date < start_dt: continue
+        if end_dt and room_date > end_dt: continue
+
+        percentages = [report.percentage for report in room.student_reports]
+        
+        if percentages:
+            avg_room_success = round(sum(percentages) / len(percentages), 1)
+            all_stats.append({
+                "date": room_date.strftime('%Y-%m-%d'),
+                "code": f"({room.redeem_codes[0].code_enter})", 
+                "rate": avg_room_success 
+            })
+
+    all_stats.sort(key=lambda x: x['date'])
+
+    labels = [[item['date'], f"{item['code']}"] for item in all_stats]
+    rates = [item['rate'] for item in all_stats]
+
+    return flask.jsonify({
+        "labels": labels,
+        "success_rates": rates
+    })

@@ -183,6 +183,12 @@ classroom_app.classroom_app.add_url_rule(
     methods = ["GET", "POST"]
 )
 
+classroom_app.classroom_app.add_url_rule(
+    rule= "/class_stats/<int:id>",
+    view_func= classroom_app.get_class_stats,
+    methods = ["GET"]
+)
+
 project.register_blueprint(
     blueprint= classroom_app.classroom_app,
     url_prefix= "/classrooms/"

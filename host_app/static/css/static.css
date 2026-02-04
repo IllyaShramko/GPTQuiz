@@ -25,6 +25,10 @@
 .buttons {
     display: flex;
     gap: 15px;
+    align-items: center;
+}
+.buttons label {
+    color: white;
 }
 form {
     display: flex;

@@ -1,5 +1,3 @@
-
-
 async function loadRoomStats(roomId) {
     if (document.querySelector("#questionsChart").innerHTML.trim()) {
         return

@@ -20,18 +20,56 @@
         <div class="table">
             <div class="header-classroom">
                 <div class="tabs">
-                    <button class="tab selected" id="general">Учні</button>
+                    <button class="tab selected" id="students">Учні</button>
                     <button class="tab not" id="graphic">Успішність</button>
                     <div class="addnewclass">
                         <button id="add">Додати нового учня</button>
                     </div>
                 </div>
             </div>
-            {% for student in classroom.students %}
-                <div class="studentContainer">
-                    <a href="/classrooms/student/{{ student.id }}" class="student">{{ student.login }}: {{ student.surname }} {{ student.name }}</a>
+            <div class="students">
+                <div class="header-students">
+                    <div class="header-start">
+                        <div class="number">
+                            <h3>№</h3>
+                        </div>
+                        <div>
+                            <h3>Призвіще Ім'я</h3>
+                        </div>
+                    </div>
+                    <div>
+
+                    </div>
                 </div>
-            {% endfor %}
+                <div class="content">
+                    {% for student in classroom.students %}
+                        <div class="studentContainer">
+                            <div class="student-start">
+                                <div class="number">
+                                    <h3>{{ loop.index }}</h3>
+                                </div>
+                                <a href="/classrooms/student/{{ student.id }}">
+                                    <h3 class="student">{{ student.surname }} {{ student.name }}</h3>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="chart-container hide">
+                <h3>Успішність класу за період</h3>
+                <div class="controls-container">
+                    <input type="date" id="start_date" class="date-input">
+                    <p>—</p>
+                    <input type="date" id="end_date" class="date-input">
+                    <button onclick="updateCharts()" class="update-btn">Оновити дані</button>
+                </div>
+                <div class="chart-card">
+                    <div id="successfulRate"></div>
+                </div>
+
+                <input type="hidden" id="classroom_id" value="{{ classroom.id }}">
+            </div>
         </div>
     </main>
     <form id="form" class="create-form {% if not errors %}hideform{% endif %}" method="post">
@@ -53,6 +91,9 @@
         <button type="submit" class="submit">Додати учня</button>
     </form>
     <div class="blur {% if not errors %}hideform{% endif %}" id="blur"></div>
+    <script src="{{ url_for('static', filename= 'js/ApexCharts.js') }}"></script>
     <script src="{{ url_for('classroom_app.static', filename='js/form.js') }}"></script>
+    <script src="{{ url_for('classroom_app.static', filename='js/classroomCharts.js') }}"></script>
+    <script src="{{ url_for('classroom_app.static', filename='js/switch.js') }}"></script>
     <script src="{{ url_for('classroom_app.static', filename='js/getDataLogin.js') }}"></script>
 {% endblock %}
