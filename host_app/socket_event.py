@@ -475,7 +475,7 @@ def handle_show_quiz_results(data):
     room = Room.query.get(redeem.room_id)
     if not room:
         return
-    time.sleep(0.5)
+    time.sleep(1)
     emit("quiz_results", {"url": f"/report/{room.id}"})
 
 @socketio.on("end_question")

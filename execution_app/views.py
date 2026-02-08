@@ -10,16 +10,16 @@ def render_login_student():
             if student.password == flask.request.form['password']:
                 flask_login.login_user(student)
                 flask.session['user_role'] = 'student'
-                return flask.redirect('/execution/')
+                redirect_url = flask.request.args.get("redirect_to")
+                return flask.redirect(f'/execution?code={redirect_url}')
     return flask.render_template(template_name_or_list= 'login_student.html')
 
 def render_enter_code():
-    if not flask_login.current_user.is_authenticated:
-        return flask.redirect("/login_student/")
-    if flask.session.get("user_role") != "student":
-        return flask.redirect("/login_student/")
-    
     code = flask.request.args.get("code")
+    if not flask_login.current_user.is_authenticated:
+        return flask.redirect(f"/login_student?redirect_to={code}")
+    if flask.session.get("user_role") != "student":
+        return flask.redirect(f"/login_student?redirect_to={code}")
     if code:
         quiz = RedeemCode.query.filter_by(code_enter= code).first_or_404().quiz
         room = RedeemCode.query.filter_by(code_enter=code).first().room
