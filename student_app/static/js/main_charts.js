@@ -80,7 +80,8 @@ window.onload = function() {
         dataLabels: {
             enabled: true,
             formatter: function (val, opts) {
-                return opts.w.config.labels[opts.seriesIndex].split(" ")[1];
+                const label = opts.w.config.labels[opts.seriesIndex];
+                return label && typeof label === 'string' ? label.split(" ")[1] : '';
             },
             style: {
                 fontSize: '14px',

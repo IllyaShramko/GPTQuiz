@@ -283,7 +283,7 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
+    align-items: center;
     gap: 15px;
 
     width: 920px;
@@ -498,7 +498,7 @@ main {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-content: center;
 }
 @keyframes spin {
     from { transform: rotate(0deg); }
@@ -512,7 +512,12 @@ main {
     #charInputsContainer {
         background-color: #323232;
     }
-
+    #lobby {
+        width: 95%;
+    }
+    #users {
+        max-height: 45vh;
+    }
     #question {
         background: #323232;
         border-radius: 15px;

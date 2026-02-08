@@ -16,17 +16,60 @@
     <main> 
         <input type="hidden" id="classroomId" value="{{ classroom.id }}">
         <div>
-            <div class="addnewclass">
-                <button id="add">Додайте нового учня!</button>
-            </div>
         </div>
-        <div>
-            {% for student in classroom.students %}
-                <div>
-                    <a href="/classroom/student/{{ student.id }}">{{ student.login }}: {{ student.surname }} {{ student.name }}</a>
-                    <button class="get-data-login" value="{{ student.id }}">Дані входу</button>
+        <div class="table">
+            <div class="header-classroom">
+                <div class="tabs">
+                    <button class="tab selected" id="students">Учні</button>
+                    <button class="tab not" id="graphic">Успішність</button>
+                    <div class="addnewclass">
+                        <button id="add">Додати нового учня</button>
+                    </div>
                 </div>
-            {% endfor %}
+            </div>
+            <div class="students">
+                <div class="header-students">
+                    <div class="header-start">
+                        <div class="number">
+                            <h3>№</h3>
+                        </div>
+                        <div>
+                            <h3>Призвіще Ім'я</h3>
+                        </div>
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
+                <div class="content">
+                    {% for student in classroom.students %}
+                        <div class="studentContainer">
+                            <div class="student-start">
+                                <div class="number">
+                                    <h3>{{ loop.index }}</h3>
+                                </div>
+                                <a href="/classrooms/student/{{ student.id }}">
+                                    <h3 class="student">{{ student.surname }} {{ student.name }}</h3>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="chart-container hide">
+                <h3>Успішність класу за період</h3>
+                <div class="controls-container">
+                    <input type="date" id="start_date" class="date-input">
+                    <p>—</p>
+                    <input type="date" id="end_date" class="date-input">
+                    <button onclick="updateCharts()" class="update-btn">Оновити дані</button>
+                </div>
+                <div class="chart-card">
+                    <div id="successfulRate"></div>
+                </div>
+
+                <input type="hidden" id="classroom_id" value="{{ classroom.id }}">
+            </div>
         </div>
     </main>
     <form id="form" class="create-form {% if not errors %}hideform{% endif %}" method="post">
@@ -38,26 +81,19 @@
         </div>
         <div>
             <label for="student_surname">Вкажіть прізвище учня:</label>
-            <input type="text" name="student_surname" placeholder="Прізвище учня">
+            <input type="text" name="student_surname" id="student_surname" placeholder="Прізвище учня">
         </div>
         <div>
             <label for="student_name">Вкажіть ім'я учня:</label>
-            <input type="text" name="student_name" placeholder="Ім'я учня">
+            <input type="text" name="student_name" id="student_name" placeholder="Ім'я учня">
         </div>
         <h3 id="errors">{{ errors }}</h3>
         <button type="submit" class="submit">Додати учня</button>
     </form>
-    <div id="modalInfo" class="modalinfo {% if not new_student %}hideform{% endif %}">
-        <h4>Передайте учню його дані:</h4>
-        <div class="info-in-modal">
-            <p><b>Логін</b>: <span id="login">{{ new_student.login }}</span></p>
-            <p><b>Пароль</b>: <span id="password">{{ new_student.password }}</span></p>
-        </div>
-        <button type="button" id="okbtn" class="submit">OK</button>
-    </div>
-    {% if new_student %}
-    {% endif %}
-    <div class="blur {% if not new_student and not errors %}hideform{% endif %}" id="blur"></div>
+    <div class="blur {% if not errors %}hideform{% endif %}" id="blur"></div>
+    <script src="{{ url_for('static', filename= 'js/ApexCharts.js') }}"></script>
     <script src="{{ url_for('classroom_app.static', filename='js/form.js') }}"></script>
+    <script src="{{ url_for('classroom_app.static', filename='js/classroomCharts.js') }}"></script>
+    <script src="{{ url_for('classroom_app.static', filename='js/switch.js') }}"></script>
     <script src="{{ url_for('classroom_app.static', filename='js/getDataLogin.js') }}"></script>
 {% endblock %}

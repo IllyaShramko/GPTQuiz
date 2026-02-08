@@ -25,6 +25,13 @@ host
         </div>
         <div class="buttons">
             <form method="post">
+                <label for="choice">Оберіть клас:</label>
+                <select id="choice" name="group_class" required>
+                    <option value="" disabled selected>Клас</option>
+                    {% for clsr in user.classes %}
+                        <option value="{{ clsr.id }}">{{ clsr.number }}-{{ clsr.char }}</option>
+                    {% endfor %}
+                </select>
                 <button id="submit-btn" type="submit" name="btn" value="host">Задати на виконання</button>
             </form>
             {% if user.id == quiz.author_id %}
@@ -40,7 +47,6 @@ host
                 <div class="question">
                     {% if question.image %}
                         <img src="{{ url_for('library_app.static', filename= 'images/' + question.image) }}">
-                        
                     {% endif %}
                     <h2>Запитання {{ loop.index }}: {{ question.name }}</h2>
                     <h2>Варіанти відповіді:</h2>

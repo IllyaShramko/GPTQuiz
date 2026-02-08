@@ -3,6 +3,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}  {% endblock %} | GPTQuiz</title>
+        <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/atom.svg') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename= 'css/base_admin.css') }}">
         {% block head %} 
         {% endblock %}
@@ -42,6 +43,7 @@
         <header class="nav">
             <div class="firstNav">
                 <h2>{% block name_page %}{% endblock %}</h2>
+                <div>{% block extended_name %}{% endblock %}</div>
             </div>
             <div class="secondNav">
                 <form class="createForm" action="/get-draft/">

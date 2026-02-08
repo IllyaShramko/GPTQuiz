@@ -115,9 +115,19 @@ def handle_join(data):
             "current_question": room.index_question
         })
         answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).count()
-        if answers != len(students):
-            return
         answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
+        if answers != len(students):
+            print("ANSWERSERWRE STATUS:", answer_status)
+            if answer_status:
+                emit(
+                    "current_question_info",
+                    {
+                        "question": current_question.type,
+                        "is_correct": "wait",
+                        "answer_id": None,
+                    }
+                )
+            return
         
         if answer_status:
             emit(
@@ -211,6 +221,10 @@ def handle_host_join(data):
             print("AAAAAAAAAAAAAAAAAAA", answers)
             if len(answers) == len(participants):
                 results = []
+                total = len(participants)
+                correct = 0
+                wrong = 0
+                skipped = 0
                 for ans in answers:
                     participant = SessionParticipant.query.get(ans.participant_id)
                     correct_text = ans.right_answers()
@@ -219,7 +233,13 @@ def handle_host_join(data):
 
                     user_answer_text = ans.get_answer(ans.answer)
                     user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
-
+                    if ans.is_correct:
+                        correct += 1
+                    else: 
+                        if user_answer_text == "Птропущений" or user_answer_text == "Пропущений...":
+                            skipped += 1
+                        else:
+                            wrong += 1
                     results.append({
                         "student_id": ans.participant_id,
                         "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
@@ -234,6 +254,12 @@ def handle_host_join(data):
                 socketio.emit(
                     "teacher_results",
                     {
+                        "donut_data": {
+                            "total_participiants": total,
+                            "correct": correct,
+                            "wrong": wrong,
+                            "skipped": skipped
+                        },
                         "results": results,
                         "index_question": room.index_question,
                         "total_questions": len(quiz.questions)
@@ -339,7 +365,7 @@ def handle_answer(data):
         participant_id = participiant.id,
         answer = answer,
         is_correct = is_correct,
-        question_index = room.index_question
+        question_index = room.index_question + 1
     )
 
     try:
@@ -449,6 +475,7 @@ def handle_show_quiz_results(data):
     room = Room.query.get(redeem.room_id)
     if not room:
         return
+    time.sleep(0.5)
     emit("quiz_results", {"url": f"/report/{room.id}"})
 
 @socketio.on("end_question")
@@ -483,6 +510,10 @@ def handle_end_question(data):
 
     answers = SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
     results = []
+    total = len(all_participants)
+    correct = 0
+    wrong = 0
+    skipped = 0
     for ans in answers:
         participant = SessionParticipant.query.get(ans.participant_id)
         correct_text = ans.right_answers() 
@@ -491,7 +522,13 @@ def handle_end_question(data):
 
         user_answer_text = ans.get_answer(ans.answer) 
         user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
-
+        if ans.is_correct:
+            correct += 1
+        else: 
+            if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
+                skipped += 1
+            else:
+                wrong += 1
         results.append({
             "student_id": ans.participant_id,
             "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
@@ -521,6 +558,12 @@ def handle_end_question(data):
     socketio.emit(
         "teacher_results",
         {
+            "donut_data": {
+                "total_participiants": total,
+                "correct": correct,
+                "wrong": wrong,
+                "skipped": skipped
+            },
             "results": results,
             "index_question": room.index_question,
             "total_questions": len(quiz.questions)

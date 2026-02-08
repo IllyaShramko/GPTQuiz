@@ -39,12 +39,10 @@
     flex-direction: column;
     width: 95%;
     align-items: center; 
-
     padding: 10px 20px 30px;
     gap: 10px;
     background-color: #3A3A3A;
     border-radius: 30px;
-
 }
 
 .header-report{
