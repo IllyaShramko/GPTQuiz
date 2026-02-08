@@ -303,6 +303,45 @@ li:hover .check_mark {
     width: 24px;
 }
 #resultsContainer {
+    position: relative;
+    display: flex;
+    width: calc(100% - 240px);
+    height: 100vh;
+    gap: 10px;
+}
+.diagramContainer {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+.dataAnswersContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    gap: 25px;
+    border-right: 3px solid #202020;
+}
+.percentage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 26px;
+}
+.dataTexts {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dataTexts img {
+    width: 35px;
+    height: 35px;
+}
+.dataTexts h4 {
+    font-size: 20px;
+}
+.studentsContainer {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -314,8 +353,8 @@ li:hover .check_mark {
     gap: 10px;
     padding: 10px;
     border-radius: 10px;
-    width: 400px;
-    height: 350px;
+    width: 300px;
+    height: 250px;
     background-color: #383838;
 }
 
@@ -338,7 +377,7 @@ li:hover .check_mark {
     height: 40px;
 }
 .student-avatar-nickname h4 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
 }
 .student-answer h5 {

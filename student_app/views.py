@@ -65,15 +65,10 @@ def report_view(hash_code):
     
     print(name_teacher)
 
-    gradef = int(report.percentage / 100 * 12 // 1)
-    num = report.percentage / 100 * 12 - gradef
-    if num >= 0.5:
-        gradef += 1
     
 
     return flask.render_template(
         "student_report.html",
-        gradef= gradef,
         name_teacher=name_teacher,
         report=report,
         participant=participant,

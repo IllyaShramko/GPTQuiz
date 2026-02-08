@@ -137,16 +137,7 @@ class Room(DATABASE.Model):
 
         for p in participants:
             answers = SessionAnswer.query.filter_by(room_id=self.id, participant_id=p.id).all()
-            total_questions = len(answers)
-            correct = sum(1 for a in answers if a.is_correct)
-            percent = (correct * 100 // total_questions) if total_questions else 0
-            grade = (percent / 100) * 12 
-            decimal_part = grade - int(grade)  
-            if decimal_part > 0.5:
-                grade = int(grade) + 1 
-            else:
-                grade = round(grade)  
-            grade = int(grade)
+            student_report = p.report
             answers_data = []
             for a in answers:
                 q = Question.query.get(a.question)
@@ -160,9 +151,9 @@ class Room(DATABASE.Model):
             report.append({
                 "participant_id": p.id,
                 "nickname": f"{p.student_profile.surname} {p.student_profile.name}",
-                "percent": percent,
+                "percent": student_report.percentage,
                 "answers": answers_data,
-                "grade": grade,
+                "grade": student_report.grade,
                 "report": p.report
             })
 
