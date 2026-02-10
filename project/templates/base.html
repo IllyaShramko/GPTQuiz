@@ -8,23 +8,20 @@
         <link rel="stylesheet" href="{{ url_for('static', filename= 'css/base.css') }}">
     </head>
     <body>
-        
-        {% if not is_auth %}
-            <nav class="without-auth">
-                <a href="/" class="logo-title">
-                    <img src="{{ url_for('static', filename= 'images/atom.svg') }}">
-                    <h1>GPTQuiz</h1>
-                </a>
-                <p>{{ ignore_links }}</p>
-                {% if not ignore_links %}
-                    <div class="links">
-                        <a href="/execution/" class="enter-code">Введіть код</a>
-                        <a href="/login/" class="login">Увійти</a>
-                        <a href="/signup/" class="signin">Зареєструватися</a>
-                    </div>  
-                {% endif %}
-            </nav>
-        {% endif %}
+        <header class="without-auth">
+            <a href="/" class="logo-title">
+                <img src="{{ url_for('static', filename= 'images/atom.svg') }}">
+                <h1>GPTQuiz</h1>
+            </a>
+            <p>{{ ignore_links }}</p>
+            {% if not ignore_links %}
+                <div class="links">
+                    <a href="/execution/" class="enter-code">Введіть код</a>
+                    <a href="/login/" class="login">Увійти</a>
+                    <a href="/signup/" class="signin">Зареєструватися</a>
+                </div>  
+            {% endif %}
+        </header>
         
         {% block content %}
         

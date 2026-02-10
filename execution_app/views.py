@@ -11,13 +11,15 @@ def render_login_student():
                 flask_login.login_user(student)
                 flask.session['user_role'] = 'student'
                 redirect_url = flask.request.args.get("redirect_to")
-                return flask.redirect(f'/execution?code={redirect_url}')
+                return flask.redirect(redirect_url)
     return flask.render_template(template_name_or_list= 'login_student.html')
 
 def render_enter_code():
     code = flask.request.args.get("code")
     if not flask_login.current_user.is_authenticated:
-        return flask.redirect(f"/login_student?redirect_to={code}")
+        if not code:
+            return flask.redirect("/login_student?redirect_to=/execution/")
+        return flask.redirect(f"/login_student?redirect_to=/execution?code={code}")
     if flask.session.get("user_role") != "student":
         return flask.redirect(f"/login_student?redirect_to={code}")
     if code:
