@@ -36,7 +36,7 @@ function renderChart(categories, values) {
                 distributed: true,
             }
         },
-        colors: ['#FF4560', '#FEB019', '#00E396', '#008FFB', '#775DD0'],
+        colors: ['#775DD0'],
         
         dataLabels: {
             enabled: true,
