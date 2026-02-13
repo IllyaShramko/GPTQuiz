@@ -1,11 +1,12 @@
 import flask
 import flask_login
+from flask_mail import Message
 
 from classroom_app import Student
+import project
 from .models import User, VerificationCode
-from project.flask_config import api_instance
+from project.flask_config import mail
 from project.settings import DATABASE
-from brevo_python.models import SendSmtpEmail, SendSmtpEmailTo, SendSmtpEmailSender
 import random, re, os, dotenv
 
 dotenv.load_dotenv()
@@ -70,18 +71,20 @@ def send_code():
     except Exception as e:
         print(e)
     flask.session['email_code'] = codeDB.id
-    print(email)
-    send_smtp_email = SendSmtpEmail(
-        sender=SendSmtpEmailSender(email= os.getenv("MAIL_USERNAME"), name="GPTQuiz"),
-        to=[SendSmtpEmailTo(email=email, name="Шановний Користувач")],
+    print(f"Sending code to: {email}")
+    msg = Message(
         subject="Ваш код підтвердження",
-        html_content=f"<strong>Ваш код підтвердження: {code}</strong>"
+        recipients=[email],  
+        sender=project.project.config['MAIL_USERNAME'],
+        html=f"<strong>Ваш код підтвердження: {code}</strong>" 
     )
+
     try:
-        response = api_instance.send_transac_email(send_smtp_email)
-        print("ОК:", response)
+        mail.send(msg)
+        print("ОК: Письмо улетело")
     except Exception as e:
-        print("Error sending email", e)
+        print("Ошибка отправки:", e)
+    
     return flask.jsonify({'message': f'Код відправленно на {email}'})
 
 def validate_code():
@@ -179,7 +182,7 @@ def create_admin():
         try:
             DATABASE.session.add(user)
             DATABASE.session.commit()
-            return flask.redirect('/login/')
+            return {"login": "admin", "password": "admin"}
         except:
             return "Не вдалося створити користувача"
 

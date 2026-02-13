@@ -1,7 +1,6 @@
 alembic==1.17.2
 bidict==0.23.1
 blinker==1.9.0
-brevo-python==1.2.0
 certifi==2025.11.12
 click==8.3.1
 colorama==0.4.6
@@ -10,6 +9,7 @@ dotenv==0.9.9
 eventlet==0.40.4
 Flask==3.1.2
 Flask-Login==0.6.3
+Flask-Mail==0.10.0
 Flask-Migrate==4.1.0
 Flask-SocketIO==5.5.1
 Flask-SQLAlchemy==3.1.1
