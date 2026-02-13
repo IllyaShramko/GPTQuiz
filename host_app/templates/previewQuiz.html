@@ -52,45 +52,18 @@ host
                     <h2>Варіанти відповіді:</h2>
                     <div class="answers">
                         {% if question.type != 'enter answer' %}
-                            {% if "1" in question.correct_answer %}
-                                <div class="answer correct">
-                                    <p>{{ question.variant_1 }}</p>
-                                </div>
-                            {% else %}
-                                <div class="answer">
-                                    <p>{{ question.variant_1 }}</p>
-                                </div>
-                            {% endif %}
-
-                            {% if "2" in question.correct_answer %}
-                                <div class="answer correct">
-                                    <p>{{ question.variant_2 }}</p>
-                                </div>
-                            {% else %}
-                                <div class="answer">
-                                    <p>{{ question.variant_2 }}</p>
-                                </div>
-                            {% endif %}
-
-                            {% if "3" in question.correct_answer %}
-                                <div class="answer correct">
-                                    <p>{{ question.variant_3 }}</p>
-                                </div>
-                            {% else %}
-                                <div class="answer">
-                                    <p>{{ question.variant_3 }}</p>
-                                </div>
-                            {% endif %}
-
-                            {% if "4" in question.correct_answer %}
-                                <div class="answer correct">
-                                    <p>{{ question.variant_4 }}</p>
-                                </div>
-                            {% else %}
-                                <div class="answer">
-                                    <p>{{ question.variant_4 }}</p>
-                                </div>  
-                            {% endif %}
+                            <div class="answer">
+                                <p>{{ question.variant_1 }}</p>
+                            </div>
+                            <div class="answer">
+                                <p>{{ question.variant_2 }}</p>
+                            </div>
+                            <div class="answer">
+                                <p>{{ question.variant_3 }}</p>
+                            </div>
+                            <div class="answer">
+                                <p>{{ question.variant_4 }}</p>
+                            </div>  
                         {% else %}
                             <div class="answer correct">
                                 <p>{{ question.variant_1 }}</p>
