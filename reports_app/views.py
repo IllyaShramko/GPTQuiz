@@ -3,20 +3,37 @@ from library_app.models import Quiz, RedeemCode, StudentReport, Room, SessionPar
 from project.settings import DATABASE
 
 def render_reports_page():
-    rooms = Room.query.filter_by(host=flask_login.current_user.id).all() 
+    rooms = Room.query.filter_by(host=flask_login.current_user.id, archived = False).all()
+    rooms.reverse()
     for room in rooms:
         reports = room.student_reports
         if reports and len(reports) > 0:
             
             room.success_rate = int(sum(r.percentage for r in reports) / len(reports))
-            print(len(reports))
         else:
             room.success_rate = 0
-            print(0)
     return flask.render_template(
         template_name_or_list='reports.html',
         rooms=rooms,
-        username = flask_login.current_user.login
+        username = flask_login.current_user.login,
+        archive = False
+    )
+
+def render_archived_reports():
+    rooms = Room.query.filter_by(host=flask_login.current_user.id, archived = True).all()
+    rooms.reverse()
+    for room in rooms:
+        reports = room.student_reports
+        if reports and len(reports) > 0:
+            
+            room.success_rate = int(sum(r.percentage for r in reports) / len(reports))
+        else:
+            room.success_rate = 0
+    return flask.render_template(
+        template_name_or_list='reports.html',
+        rooms=rooms,
+        username = flask_login.current_user.login,
+        archive = True
     )
 
 def render_detail_report(room_id):
@@ -35,7 +52,7 @@ def get_student_report(student_id):
 
     return {
         "id": student.id,
-        "nickname": student.nickname,
+        "nickname": f"{student.student_profile.surname} {student.student_profile.name}",
         "answers": [
             {
                 "question_text": ans.question_obj.name if ans.question_obj else "",
@@ -47,3 +64,35 @@ def get_student_report(student_id):
             for ans in answers
         ]
     }
+
+def get_report_answers(room_id):
+    answers = SessionAnswer.query.filter_by(room_id=room_id).all()
+
+    stats_map = {}
+
+    for ans in answers:
+        idx = ans.question_index
+        if idx is None:
+            continue
+            
+        if idx not in stats_map:
+            stats_map[idx] = {'total': 0, 'correct': 0}
+        
+        stats_map[idx]['total'] += 1
+        if ans.is_correct:
+            stats_map[idx]['correct'] += 1
+
+    result = []
+    
+    for idx in sorted(stats_map.keys()):
+        total = stats_map[idx]['total']
+        correct = stats_map[idx]['correct']
+        
+        percent = int((correct / total) * 100) if total > 0 else 0
+        
+        result.append({
+            "question": f"Q{idx}",
+            "succesfull": percent 
+        })
+
+    return flask.jsonify(result)

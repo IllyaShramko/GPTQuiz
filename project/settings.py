@@ -15,5 +15,5 @@ project.secret_key = os.environ.get('SECRET_KEY')
 DATABASE = flask_sqlalchemy.SQLAlchemy(app=project)
 migrate = flask_migrate.Migrate(app=project, db=DATABASE)
 
-socketio = SocketIO(app=project)
+socketio = SocketIO(app=project, async_mode="eventlet")
 

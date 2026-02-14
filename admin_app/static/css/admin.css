@@ -4,22 +4,27 @@
     box-sizing: border-box;
     text-decoration: none;
 }
+.mainAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    width: calc(100% - 220px);
+}
 .search{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 90%;
     height: 150px;
     background-color: #252525;
-    position: absolute;
-    right: 0;
-    top: 80px;
     gap: 10px;
 }
 .search h2 {
     font-family: "Inter";
-    font-size: 30px;
+    font-size: 26px;
     font-weight: 300;
     color: white;
 }
@@ -51,16 +56,12 @@
     cursor: pointer;
 }
 .active-quizes{
-    position: absolute;
-    right: 0;
-    top: 230px;
-    width: 87%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
     gap: 10px;
-    padding-top: 20px;
 }
 .active-quizes h2{
     font-family: "inter";
@@ -72,9 +73,8 @@
     justify-content: center;
     align-items: start;
     flex-wrap: wrap;
-    /* max-width: 80vw; */
+    max-width: 80%;
     gap: 25px;
-    max-width: 1300px;
 }
 .quiz {
     display: flex;

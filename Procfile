@@ -1,1 +1,0 @@
-web: mkdir -p ./library_app/static/images/questions && flask --app project db init && flask --app project db migrate && flask --app project db upgrade && gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 -b 0.0.0.0:$PORT wsgi:project

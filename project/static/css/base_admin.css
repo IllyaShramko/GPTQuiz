@@ -18,6 +18,7 @@
     margin: 0;
     box-sizing: border-box;
     font-family: Inter, sans-serif;
+    text-decoration: none;
 }
 
 ::-webkit-scrollbar {
@@ -75,21 +76,25 @@ aside img{
 h1{
     color: white;
     font-family: "inter";
-    font-size: 26px;
+    font-size: 24px;
 }
-aside button{
+.createForm button{
     width: 100%;
-    height: 50px;
+    height: 40px;
     background-color: #22CE00;
     border: none;
     border-radius: 10px;
     color: white;  
     font-family: "inter";
-    font-size: 20px;
+    font-size: 16px;
     cursor: pointer;
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
 }
-aside button:hover {
+.createForm button:hover {
     background-color: #27ea00;
 }
 .links{
@@ -118,6 +123,7 @@ aside button:hover {
     align-items: center;
     gap: 5px;
 }
+
 .divider{
     width: 70%;
     height: 3px;
@@ -135,19 +141,37 @@ aside button:hover {
 
 .nav{
     width: 100%;
-    height: 80px;
-    position: absolute;
+    height: 60px;
+    position: fixed;
     right: 0;
     background-color: #333333;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding-right: 15px;
+    padding-left: 300px;
     gap: 20px;
     z-index: 4;
 }
-.nav a img{
+.secondNav {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+.firstNav h2 {
+    font-family: "Inter";
+    font-size: 20px;
+    color: white;
+}
+.firstNav {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.secondNav a img{
     width: 90%;
     height: 100%;
 }
@@ -155,28 +179,28 @@ aside button:hover {
     height: 40px;
     width: 40px;
 }
-.nav a{
-    font-family: "Inter";
-    font-size: 22px;
+.secondNav a{
+    font-size: 16px;
     color: white;
     text-decoration: none;
 }
 .enter-code{
-    height: 45px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px 20px 10px 20px;
+    padding: 5px 15px;
     border: white 1px solid;
     border-radius: 10px;    
+    background: none;
 }
 .ai-text {
     color: #B26FFF;
 }
 
 textarea:focus, input:focus{
-  transition: all 0.2s ease-in-out;
-  outline:solid #B26FFF 1px ;
+    transition: all 0.2s ease-in-out;
+    outline:solid #B26FFF 1px ;
 }
 @keyframes ripple-animation {
     to {

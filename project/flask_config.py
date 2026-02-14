@@ -1,9 +1,15 @@
 from dotenv import load_dotenv
-import brevo_python, os
+import flask_mail, os
+from .settings import project
 
 load_dotenv()
 
-configuration = brevo_python.Configuration()
-configuration.api_key['api-key'] = os.getenv("BREVO-API-KEY")
 
-api_instance = brevo_python.TransactionalEmailsApi(brevo_python.ApiClient(configuration))
+project.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
+project.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT'))
+project.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS') == 'True'
+project.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+project.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+project.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
+
+mail = flask_mail.Mail(project)

@@ -1,10 +1,15 @@
 import flask
 import flask_login
+from flask_mail import Message
+
+from classroom_app import Student
+import project
 from .models import User, VerificationCode
-from project.flask_config import api_instance
+from project.flask_config import mail
 from project.settings import DATABASE
-from brevo_python.models import SendSmtpEmail, SendSmtpEmailTo, SendSmtpEmailSender
-import random, re
+import random, re, os, dotenv
+
+dotenv.load_dotenv()
 
 def validate_data():
     data = flask.request.get_json()
@@ -14,7 +19,6 @@ def validate_data():
     surname = data.get("surname", "").strip()
     email = data.get("email", "").strip()
     password = data.get("password", "")
-    # confirm_password = data.get("confirmPassword", "")
 
     errors = {
         "success": True,
@@ -67,18 +71,20 @@ def send_code():
     except Exception as e:
         print(e)
     flask.session['email_code'] = codeDB.id
-    print(email)
-    send_smtp_email = SendSmtpEmail(
-        sender=SendSmtpEmailSender(email="test.python.1488@gmail.com", name="Ваше имя"),
-        to=[SendSmtpEmailTo(email=email, name="Шановний Користувач")],
+    print(f"Sending code to: {email}")
+    msg = Message(
         subject="Ваш код підтвердження",
-        html_content=f"<strong>Ваш код підтвердження: {code}</strong>"
+        recipients=[email],  
+        sender=project.project.config['MAIL_USERNAME'],
+        html=f"<strong>Ваш код підтвердження: {code}</strong>" 
     )
+
     try:
-        response = api_instance.send_transac_email(send_smtp_email)
-        print("ОК:", response)
-    except:
-        print("Error sending email")
+        mail.send(msg)
+        print("ОК: Письмо улетело")
+    except Exception as e:
+        print("Ошибка отправки:", e)
+    
     return flask.jsonify({'message': f'Код відправленно на {email}'})
 
 def validate_code():
@@ -127,20 +133,34 @@ def render_signup():
             DATABASE.session.commit()
             return flask.redirect('/login/')
         except:
-            return "Не вдалося створити користувача"  
-            
-            
-        
+            return "Не вдалося створити користувача"
     return flask.render_template(template_name_or_list='signup.html')
 
 
 def render_login():
+    error_msg = None
+    selected = True
     if flask.request.method == "POST":
-        for user in User.query.filter_by(login = flask.request.form['login']):
-            if user.password == flask.request.form['password']:
-                flask_login.login_user(user)
-                return flask.redirect('/admin/')
-    return flask.render_template(template_name_or_list= 'login.html')
+        if flask.request.form["button"] == "teacher":
+            for user in User.query.filter_by(login = flask.request.form['login']):
+                if user.password == flask.request.form['password']:
+                    flask_login.login_user(user)
+                    flask.session['user_role'] = 'teacher'
+                    return flask.redirect('/admin/')
+            error_msg = "Неправильний логін або пароль"
+        elif flask.request.form["button"] == "student":
+            for student in Student.query.filter_by(login = flask.request.form['login']):
+                if student.password == flask.request.form['password']:
+                    flask_login.login_user(student)
+                    flask.session['user_role'] = 'student'
+                    return flask.redirect('/student/')
+            error_msg = "Неправильний логін або пароль"
+            selected = False
+    return flask.render_template(
+        template_name_or_list= 'login.html',
+        error_msg= error_msg,
+        selected= selected
+    )
 
 def render_profile():
     user = flask_login.current_user
@@ -150,6 +170,21 @@ def render_profile():
         username = flask_login.current_user.login
     )
 
+def create_admin():
+    if flask.request.method == "POST":
+        user= User(
+            login = "admin",
+            name = "name",
+            surname = "surname",
+            email = "",
+            password = "admin"
+        )
+        try:
+            DATABASE.session.add(user)
+            DATABASE.session.commit()
+            return {"login": "admin", "password": "admin"}
+        except:
+            return "Не вдалося створити користувача"
 
 def logout():
     flask_login.logout_user()

@@ -7,19 +7,27 @@
         <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     </head>
     <body>
-        <div id="student-result"></div>
-            <div id="join-form" method="post" class = 'form_enter'>
-                <p>GPTQuiz</p>
-                <div class = 'input_code'>
-                    <input type="text" id="username" value="{{ username }}" name="input-nickname" placeholder="Введіть нікнейм">
-                    <button class="button_code" type="button"><span class = 'button_span'>ДАЛІ</span>→</button>
-                </div> 
+        <header style="display:none;" id="header">
+            <h2 class="title-logo">GPTQuiz</h2>
+            <div class="timer">
+                <img class="img-timer" src="{{ url_for('execution_app.static', filename='images/timer.svg') }}">
+                <h3><span id="minutes">00</span>:<span id="seconds">00</span></h3>
             </div>
+            <div>
+                <p id="currentQ"></p>
+                <p>/</p>
+                <p>{{ quiz.questions|length }}</p>
+            </div>
+        </header>
+        <div id="student-result"></div>
         <div class="waiting-divdiv">
 
         </div>
-        <div id="lobby" style="display:none;">
+        <div id="lobby">
             <h1 id="quiz-title">{{ quiz.name }}</h1>
+            <h2>Ім'я вчителя: {{ teacher.name }} {{ teacher.surname }}</h2>
+            <h2>Кількість запитань: {{ quiz.questions|length }}</h2>
+            <hr>
             <h2>Під'єднані користувачі:</h2>
             <ul id="users"></ul>
         </div>
@@ -38,23 +46,78 @@
                 const code = urlParams.get("code");
                 const div = document.getElementById('lobby');
                 let answered = false;
-                let username, answer1, answerDiv;
-                
-                
+                let username = "{{ username }}"
+                let student_id= "{{ student.id }}"
+                let answer1, answerDiv, my_hash;
                 const quizId = '{{ quiz.id }}'
-    
-                document.querySelector(".button_code").addEventListener("click", () => {
-                    username = document.getElementById("username").value;
-                    if (!username) return alert("Введіть нікнейм!");
-                    if (!code) return alert("Код кімнати не знайдено!");
-    
-                    socket.emit("join_room", { username, code, quizId });
-                })
+                let timeLeft = 0; 
+                let timerInterval = null;
+
+                const minutesSpan = document.getElementById("minutes");
+                const secondsSpan = document.getElementById("seconds");
+
+                function updateTimerDisplay() {
+                    let mins = Math.floor(timeLeft / 60);
+                    let secs = timeLeft % 60;
+                    minutesSpan.textContent = mins.toString().padStart(2, '0');
+                    secondsSpan.textContent = secs.toString().padStart(2, '0');
+                }
+
+                function startTimer(duration) {
+                    clearInterval(timerInterval);
+                    timeLeft = duration;
+                    updateTimerDisplay();
+
+                    timerInterval = setInterval(() => {
+                        if (timeLeft > 0) {
+                            timeLeft--;
+                            updateTimerDisplay();
+                        } else {
+                            clearInterval(timerInterval);
+                        }
+                    }, 1000);
+                }
+                
+
+                console.log("Reconnect Hash:", student_id);
+                socket.emit("join_room", { code, quizId, student_id });
+                
+                socket.on("auto_join_error", data => {
+                    console.log("ERORORO:", data.message)
+                });
+
+                socket.on("join_error", data => {
+                    alert(data.message);
+                });
                 
                 socket.on("joined_success", data => {
-                    document.getElementById("join-form").style.display = "none";
                     document.getElementById("lobby").style.display = "flex";
+                    document.getElementById("header").style.display = "grid";
+                    document.getElementById("currentQ").textContent = "0"
                     document.getElementById("quiz-title").textContent = data.quiz_name;
+                    my_hash = data.hash
+                    console.log("MY_HASH:", my_hash)
+                });
+                
+                socket.on("join_error", data => {
+                    alert(data.message);
+                });
+    
+                socket.on("user_list_update", data => {
+                    const userList = document.getElementById("users");
+                    userList.innerHTML = ""; 
+                    console.log(data);
+                    data.students.forEach(student => {
+                        const li = document.createElement("li");
+                        li.textContent = student[0];
+                        userList.appendChild(li);
+                    });
+                });
+
+                socket.on("remove_student_client", data => {
+                    if (data.hash !== my_hash) return;
+                    alert("Вас видалено з кімнати.");
+                    window.location.href = "/";
                 });
     
                 function blockPanel(msg = "Зачекайте...") {
@@ -85,6 +148,7 @@
                     if (answered) {
                         return
                     }
+                    blockPanel();
                     
                     answer1 = answer
                     answersDiv = document.getElementById('answers');
@@ -118,11 +182,12 @@
                     }
     
                     answered = !answered
-                    socket.emit("answer", {answer: answer, question_id: questionID, username, code});
-                    blockPanel();
+                    console.log({answer: answer, question_id: questionID, username, code});
+                    socket.emit("answer", {answer: answer, question_id: questionID, username, code, my_hash});
                 }
     
                 socket.on("quiz_start_student", data => {
+                    startTimer(45)
                     div.style.display = 'none';
                     if (answered) {
                         answered = !answered
@@ -178,23 +243,87 @@
                         
                     } else if (data.type === "enter answer") {
                         generalDiv.classList.add('fill');
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.id = 'textAnswer';
-                        input.placeholder = 'Введіть вашу відповідь тут...';
-                        answersDiv.appendChild(input);
+
+                        const charContainer = document.createElement('div');
+                        charContainer.id = 'charInputsContainer';
+
+                        const correctAnswer = String(data.correct_answer);
+                        const inputs = []; 
+
+                        correctAnswer.split('').forEach((char, index) => {
+                            if (char === ' ') {
+                                const spacer = document.createElement('div');
+                                spacer.style.width = '30px'; 
+                                charContainer.appendChild(spacer);
+                                inputs.push({ type: 'space' });
+                            } else {
+                                const charInput = document.createElement('input');
+                                charInput.type = 'text';
+                                charInput.maxLength = 1;
+                                charInput.inputMode = 'text';
+                                charInput.setAttribute('autocomplete', 'off');
+                                charInput.setAttribute('spellcheck', 'false');
+
+                                charInput.classList.add('char-box');
+                                charInput.style.width = '40px';
+                                charInput.style.textAlign = 'center';
+                                charInput.style.fontSize = '20px';
+                                charInput.style.textTransform = 'uppercase';
+
+                                charInput.addEventListener('input', (e) => {
+                                    if (e.target.value.length === 1) {
+                                        const nextInput = charContainer.querySelectorAll('input')[Array.from(charContainer.querySelectorAll('input')).indexOf(charInput) + 1];
+                                        if (nextInput) nextInput.focus();
+                                    }
+                                });
+
+                                charInput.addEventListener('keydown', (e) => {
+                                    if (e.key === 'Backspace') {
+                                        if (charInput.value === '') {
+                                            const allInputs = Array.from(charContainer.querySelectorAll('input'));
+                                            const currentIndex = allInputs.indexOf(charInput);
+                                            if (currentIndex > 0) {
+                                                const prevInput = allInputs[currentIndex - 1];
+                                                prevInput.focus();
+                                                prevInput.value = '';   
+                                            }
+                                        }
+                                    }
+                                });
+
+                                charContainer.appendChild(charInput);
+                                inputs.push({ type: 'input', el: charInput });
+                            }
+                        });
+
+                        answersDiv.appendChild(charContainer);
+
                         const sendBtn = document.createElement('button');
                         sendBtn.id = 'sendBtn';
                         sendBtn.textContent = "Відправити -->";
+
                         sendBtn.onclick = () => {
-                            const answer = input.value.trim();
-                            if (!answer) {
-                                alert("Будь ласка, введіть вашу відповідь.");
+                            let finalAnswer = "";
+                            let inputIdx = 0;
+                            correctAnswer.split('').forEach(char => {
+                                if (char === ' ') {
+                                    finalAnswer += " ";
+                                } else {
+                                    const inputEl = charContainer.querySelectorAll('input')[inputIdx];
+                                    finalAnswer += inputEl.value;
+                                    inputIdx++;
+                                }
+                            });
+
+                            if (finalAnswer.trim().length === 0) {
+                                alert("Будь ласка, введіть відповідь.");
                                 return;
                             }
-                            uploadAnswer(answer, data.id);
+
+                            uploadAnswer(finalAnswer, data.id);
                         };
-                        answersDiv.appendChild(sendBtn);
+
+                        generalDiv.appendChild(sendBtn);
                     } else {
                         const btn1 = document.createElement('button');
                         const btn2 = document.createElement('button');
@@ -252,27 +381,18 @@
                             Wblur.classList.add('hideblur');
                         });
                     }
+                    document.getElementById("currentQ").textContent = data.current_question
                     document.getElementById('notifyDiv').remove();
                 });
-                
-                socket.on("join_error", data => {
-                    alert(data.message);
-                });
-    
-                socket.on("user_list_update", data => {
-                    const userList = document.getElementById("users");
-                    userList.innerHTML = ""; 
-                    console.log(data.students);
-                    data.students.forEach(student => {
-                        const li = document.createElement("li");
-                        li.textContent = student;
-                        userList.appendChild(li);
-                    });
-                });
-    
-                socket.on("student_result", (data) => {
-                    console.log("👉 Результат студента:", data);
+            
+                socket.on("current_question_info", data => {
+                    blockPanel()
+                    console.log(data.answer_id)
+                    if (data.answer_id === "wait") {
+                        return
+                    }
                     document.getElementById('waitingDiv').remove();
+                    document.getElementById("WWblur").classList.add('hideblur');
                     const allBtns = document.querySelectorAll('.answer-button, label');
                     
                     if (data.type === 'one answer') {
@@ -312,7 +432,67 @@
                     const notifyDiv = document.createElement('div')
                     notifyDiv.classList.add('notify-div')
                     notifyDiv.id = 'notifyDiv'
-                    if (data.is_correct) {
+                    console.log(data)
+                    if (data.answer_id[0] === "Пропущений") {
+                        if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                            document.getElementById("WWblur").classList.remove('hideblur');
+                        }
+                        notifyDiv.classList.add('notify-skipped')
+                        notifyDiv.innerHTML = `
+                                <h2>Пропущено</h2>
+                        `
+                    }
+                    else if (data.is_correct) {
+                        if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                            document.getElementById("WWblur").classList.remove('hideblur');
+                        }
+                        notifyDiv.classList.add('notify-correct')
+                        notifyDiv.innerHTML = `
+                                <h2>Правильно</h2>
+                        `
+                    }
+                    else {
+                        if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                            document.getElementById("WWblur").classList.remove('hideblur');
+                        }
+                        notifyDiv.classList.add('notify-wrong')
+                        notifyDiv.innerHTML = `
+                                <h2>Не правильно</h2>
+                        `
+                    }
+                    document.body.appendChild(notifyDiv);
+                    void notifyDiv.offsetWidth;
+                    void notifyDiv.offsetHeight
+                    notifyDiv.style.width = '100vw';
+                    setTimeout(() => {
+                        notifyDiv.style.top = "80%";
+                        notifyDiv.style.height = '50px';
+                    }, 2500);
+                })
+
+                socket.on("student_result", (data) => {
+                    clearInterval(timerInterval);
+                    timeLeft = 0;
+                    updateTimerDisplay();
+                    if (document.getElementById('waitingDiv')) {
+                        document.getElementById('waitingDiv').remove();
+                    }
+                    if (document.getElementById("WWblur").classList.contains('hideblur')) {
+                        document.getElementById("WWblur").classList.remove('hideblur');
+                    }
+                    const allBtns = document.querySelectorAll('.answer-button, label');
+                    
+                    const notifyDiv = document.createElement('div')
+                    notifyDiv.classList.add('notify-div')
+                    notifyDiv.id = 'notifyDiv'
+
+                    if (data.answer_id === "Пропущений...") {
+                        notifyDiv.classList.add('notify-skipped')
+                        notifyDiv.innerHTML = `
+                                <h2>Пропущено</h2>
+                        `
+                    }
+                    else if (data.is_correct) {
                         notifyDiv.classList.add('notify-correct')
                         notifyDiv.innerHTML = `
                                 <h2>Правильно</h2>
@@ -332,6 +512,43 @@
                         notifyDiv.style.top = "80%";
                         notifyDiv.style.height = '50px';
                     }, 2500);
+                    
+                    if (data.type === 'one answer') {
+                        if (data.is_correct) {
+                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            answerBtn.style.opacity = 1;
+                            answerBtn.style.backgroundColor = 'green';
+                        }
+                        else {
+                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            answerBtn.style.opacity = 1;
+                            answerBtn.style.backgroundColor = 'red';
+                            const correctBtn = document.getElementById(`answerBtn${data.correct_answer_id}`);
+                            if (correctBtn) {
+                                correctBtn.style.opacity = 1;
+                                correctBtn.style.backgroundColor = 'green';
+                            }
+                        }
+                    }
+                    else if (data.type === 'multiple answers') {
+                        if (data.answer_id !== "Пропущений...") {
+                            allBtns.forEach(btn => {
+                                const btnId = parseInt(btn.value);
+                                if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
+                                    btn.style.opacity = 0; 
+                            }});
+                            const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                            userAnswerBtns.forEach(btn => {
+                                btn.style.opacity = 1;
+                                btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
+                            });
+                            const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                            correctAnswerBtns.forEach(btn => {
+                                btn.style.opacity = 1;
+                                btn.style.backgroundColor = 'green';
+                            });
+                        }
+                    }
                 });
     
                 socket.on("end_msg", data => {
@@ -340,9 +557,13 @@
     
     
                 socket.on("end_quiz", data => {
-                    url = window.location.origin + "/reportStudent/" + data.hash_code
+                    url = window.location.origin + "/student/report/" + data.hash_code
                     window.location.href = url;
                 }); 
+                socket.on("add_time", () => { 
+                    timeLeft += 15;
+                    updateTimerDisplay();
+                });
             })
         </script>
         <!--  -->

@@ -64,7 +64,7 @@ input {
     gap: 1vh;
 }
 
-button {
+.submit button {
     color: #FFFFFF;
     font-family: 'Inter', sans-serif;
     font-size: calc(1vw + 0.5vh);
@@ -78,10 +78,9 @@ button {
     transition: background-color 0.3s;
 }
 
-button:hover {
+.submit button:hover {
     background-color: #2b4edc;
 }
-
 .submit p {
     color: #FFFFFF;
     font-family: 'Inter', sans-serif;
@@ -96,4 +95,27 @@ button:hover {
 
 .submit p a:hover {
     text-decoration: underline;
+}
+
+.choose-login {
+    display: flex;
+    gap: 15px;
+}
+.button-auth {
+    width: 150px;
+    height: 40px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: border-bottom 0.3s ease;
+}
+.button-auth.selected {
+    border-bottom: 2px #9747FF solid;
+    cursor: auto;
+}
+.error-msg {
+    color: red;
+    font-size: 16px;
 }

@@ -2,32 +2,18 @@
     font-family: 'Inter';
     color: white;
 }
-header{
-    position: relative;
-    top: 80px;
-    left: 220px;
-    width: calc(100% - 220px);
-    height: 80px;
-    display: flex;
-    align-items: center;
-    padding-left: 130.5px;
-    background-color: #262626;
+.reportsLink {
+    opacity: 1;
+    width: 100%;
 }
-header h2{
-    font-family: 'Inter';
-    color: white;
-    font-weight: 300;
-    font-size: 24px;
-}
-
 .summary-conteiner{
     position: relative;
-    top: 80px;
+    top: 60px;
     left: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px;
+    padding: 45px;
     gap: 15px;
     width: calc(100% - 220px);
 
@@ -44,15 +30,8 @@ header h2{
     background-color: #3a3a3a;
 }
 
-.report img  {
-    width: 140px;
-    height: 64px;
-    object-fit: cover;
-    border-radius: 10px;
-}
 .reports-info {
     width: 100%;
-    
     border-radius: 20px;
     border: 2px solid #2b2b2b;
     overflow: hidden;
@@ -60,14 +39,17 @@ header h2{
 .titles {
     width: 100%;
     height: 44px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 170px 40px 1fr 380px;
+    gap: 30px;
     align-items: center;
-    justify-content: space-between;
-    padding-left: 190px;
-    padding-right: 60px;
     background-color: #2b2b2b;
 }
-
+.titlessub {
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    gap: 40px;
+}
 .reports {
     display: flex;
     flex-direction: column;
@@ -77,13 +59,27 @@ header h2{
     position: relative;
     width: 100%;
     height: 80px;
-    display: flex;
-    padding: 9px;
+    display: grid;
+    grid-template-columns: 155px 75px 1fr 330px;
+    align-items: center;
     padding-left: 20px;
     padding-right: 50px;
     gap: 10px;
     text-decoration: none;
     border-top: 2px #2b2b2b solid;
+}
+.infoRoom {
+    display: grid;
+    grid-template-columns: 95px 85px 100px;
+    gap: 40px;
+    font-size: 20px;
+    font-weight: 500;
+}
+.report img  {
+    width: 140px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 10px;
 }
 .titleRoom {
     display: flex;
@@ -92,7 +88,6 @@ header h2{
 }
 #name{
     position: relative;
-    width: 47.2vw;
     font-size: 20px;
     font-weight: 400;
 }
@@ -100,26 +95,15 @@ header h2{
     font-size: 16px;
     font-weight: 300;
     text-align: center;
-    width: 100px;
     color: #B26FFF;
 }
-.infoRoom {
-    display: flex;
-    align-items: center;
-    gap: 50px;
-    font-size: 20px;
-    font-weight: 500;
-}
 #rate {
-    width: 56px;
     text-align: center;
 }
 #students {
-    width: 60px;
-    text-align: end;
+    text-align: center;
 }
 #date1 {
-    width: 110px;
     text-align: center;
 }
 
@@ -233,4 +217,19 @@ header h2{
     border: #B26FFF 2px solid;
     border-radius: 5px;
     cursor: pointer;
+}
+.archive-btn {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #262626;
+    display: flex;
+    justify-items: center;
+    padding: 10px;
+    border-radius: 10px;
+}
+.archive-btn > img {
+    width: 100%;
 }

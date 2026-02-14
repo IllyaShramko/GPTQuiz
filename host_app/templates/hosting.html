@@ -62,6 +62,8 @@
         </div>
         <div id="Wblur" class="hideblur"></div>
 
+        <script src="{{ url_for('static', filename= 'js/ApexCharts.js') }}"></script>
+        <script src="{{ url_for('host_app.static', filename='js/donut_chart.js') }}"></script>
         <script>
             const socket = io();
             const code = "{{ code }}"; 
@@ -91,14 +93,32 @@
                 console.log(data.students);
                 usersList.innerHTML = '';
                 usersText.textContent = `Участники: (${data.students.length})`;
+                
                 data.students.forEach(student => {
                     const li = document.createElement("li");
                     const p = document.createElement("p")
-                    p.textContent = student;
+                    p.textContent = student[0];
                     li.appendChild(p)
-                    li.id = student;
+                    li.id = student[1];
+                    const deleteBtn = document.createElement("button");
+                    const deleteImg = document.createElement("img");
+                    deleteImg.src = "{{ url_for('host_app.static', filename='images/delete.svg') }}";
+                    deleteBtn.appendChild(deleteImg);
+                    deleteBtn.onclick = () => {
+                        socket.emit("remove_student", { code: code, student: student });
+                    };
+                    deleteBtn.classList.add("delete-user-btn");
+                    li.appendChild(deleteBtn);
                     usersList.appendChild(li);
                 });
+            });
+
+            socket.on("remove_student_client", (data) => {
+                const userLi = document.getElementById(data.hash);
+                if (userLi) {
+                    userLi.remove();
+                }
+                usersText.textContent = `Участники: (${document.getElementById("users").childElementCount})`;
             });
 
             socket.on("teacher_results", (data) => {
@@ -110,17 +130,84 @@
                 container.innerHTML = "";
                 console.log("Received teacher_results:", data.results);
                 div.innerHTML = ""
-                data.results.forEach(res => {
-                    const div = document.createElement("div");
-                    div.innerHTML = `
-                        <b>${res.nickname}</b> — ${res.answer} 
-                        ${res.is_correct ? "✅" : "❌"}
-                    `;
-                    container.appendChild(div);
-                });
+                const avatarUrl = "{{ url_for('host_app.static', filename='images/avatar.svg') }}";
+                const studentsContainer = document.createElement("div")
+                studentsContainer.classList.add("studentsContainer")
 
+                data.results.forEach(res => {
+                    const divA = document.createElement("div");
+                    divA.classList.add("student-answer")
+                    divA.classList.add(res.is_correct ? "student-right" : "student-wrong")
+                    divA.innerHTML = `
+                        <div class="student-avatar-nickname">
+                            <img src="${avatarUrl}">
+                            <h4>${res.nickname}</h4>
+                        </div>
+                        <h5>Відповідь:</h5>
+                        <div class="answers-student">
+                            ${
+                                Array.isArray(res.answer)
+                                    ? res.answer
+                                        .map(ans => `<div><p>${ans}</p></div>`)
+                                        .join("")
+                                    : `<div><p>${res.answer}</p></div>`
+                            }
+                        </div>
+                    `;
+                    studentsContainer.appendChild(divA);
+                });
+                const diagramContainer = document.createElement("div")
+                diagramContainer.classList.add("diagramContainer")
+                const chartContainer = document.createElement("div")
+                chartContainer.id = "chart"
+                const dataAnswersContainer = document.createElement("div")
+                dataAnswersContainer.classList.add("dataAnswersContainer")
+                //
+                const correctContainer = document.createElement("div")
+                correctContainer.classList.add("dataTexts")
+                const wrongContainer = document.createElement("div")
+                wrongContainer.classList.add("dataTexts")
+                const skippedContainer = document.createElement("div")
+                skippedContainer.classList.add("dataTexts")
+                //
+                const correctImg = document.createElement("img")
+                correctImg.src = "{{ url_for('host_app.static', filename= 'images/correct_answers.svg') }}"
+                correctContainer.appendChild(correctImg)
+                const wrongImg = document.createElement("img")
+                wrongImg.src = "{{ url_for('host_app.static', filename= 'images/wrong_answers.svg') }}"
+                wrongContainer.appendChild(wrongImg)
+                const skippedImg = document.createElement("img")
+                skippedImg.src = "{{ url_for('host_app.static', filename= 'images/skipped_answers.svg') }}"
+                skippedContainer.appendChild(skippedImg)
+                //
+                const correctText = document.createElement("h4")
+                correctText.textContent = `Правильно: ${data.donut_data.correct}/${data.donut_data.total_participiants}`
+                correctContainer.appendChild(correctText)
+                const wrongText = document.createElement("h4")
+                wrongText.textContent = `Неправильно: ${data.donut_data.wrong}/${data.donut_data.total_participiants}`
+                wrongContainer.appendChild(wrongText)
+                const skippedText = document.createElement("h4")
+                skippedText.textContent = `Пропущено: ${data.donut_data.skipped}/${data.donut_data.total_participiants}`
+                skippedContainer.appendChild(skippedText)
+                const summaryPercentage = document.createElement("h4")
+                summaryPercentage.classList.add("percentage")
+                summaryPercentage.textContent = `${((data.donut_data.correct / data.donut_data.total_participiants) * 100).toFixed(0)}%`
                 
+                diagramContainer.appendChild(chartContainer)
+                diagramContainer.appendChild(summaryPercentage)
+                dataAnswersContainer.appendChild(diagramContainer)
+                dataAnswersContainer.appendChild(correctContainer)
+                dataAnswersContainer.appendChild(wrongContainer)
+                dataAnswersContainer.appendChild(skippedContainer)
+                
+                container.appendChild(dataAnswersContainer)
+                container.appendChild(studentsContainer)
                 console.log(data)
+                renderDonut(data1 = {
+                    correct: data.donut_data.correct,
+                    wrong: data.donut_data.wrong,
+                    skipped: data.donut_data.skipped
+                })
                 if (data.index_question == data.total_questions-1) {
                     nextBtn.innerText = "Кінець";
                     nextBtn.onclick = () => socket.emit("quiz_end_msg", { code: code });
@@ -128,8 +215,6 @@
                     nextBtn.onclick = () => socket.emit("next_question", { code: code });
                 }
             });
-
-            
 
             let endTime = 0;
             socket.on("question_timer", (data) => {
@@ -139,8 +224,8 @@
                 let remainingTime = endTime - currentTime;
 
                 document.getElementById("15sAdd").onclick = () => {
-                    endTime += 15; 
-                    console.log("Добавили 15 секунд. Новый endTime: " + endTime);
+                    endTime += 15;
+                    socket.emit("add_15_sec", { code: code }) 
                 }
 
                 const timerDiv = document.getElementById('timer');
@@ -166,7 +251,7 @@
                             socket.emit("end_question", { code: code });
                             clearInterval(timerInterval);
                         }
-                    }, 250);
+                    }, 150);
                 }
             });
             socket.on("quiz_start_teacher", (data) => {
@@ -239,7 +324,8 @@
             })
 
             socket.on("student_answer", (data) => {
-                const user = document.getElementById(data.username)
+                const user = document.getElementById(data.hash)
+                console.log("data:", data)
                 const checkMark = document.createElement('img') 
                 checkMark.src = '{{ url_for("host_app.static", filename = "images/check-mark.svg") }}'
                 checkMark.classList.add('check_mark')
@@ -258,6 +344,9 @@
                 document.body.appendChild(endBtn);
             });
             socket.on("end_msg", data => {
+                nextBtn.innerHTML = `
+                    <img src="{{ url_for('host_app.static', filename= 'gifs/loading.gif') }}" style="height: 20px; width: 20px;">
+                `
                 socket.emit("show_quiz_results", {code: code})
             }) 
 
@@ -267,7 +356,6 @@
                     window.location.href = `${data.url}`;
                 }
             });
-            
         </script>
         <script src="{{ url_for('host_app.static', filename='js/copy.js') }}"></script>
     </body>

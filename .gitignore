@@ -10,3 +10,4 @@ library_app/static/images/questions/*
 # 
 .env
 test.py
+test.html

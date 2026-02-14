@@ -22,13 +22,13 @@ def render_host_app(quizid):
     if flask.request.method == "POST":
         if flask.request.form["btn"] == "host":
             redeem_code= generate_code()
-            
-            room = Room(quiz = quiz.id, host= flask_login.current_user.id)
+            group_class = flask.request.form.get('group_class')
+            room = Room(quiz = quiz.id, host= flask_login.current_user.id, group_class_id= group_class)
             DATABASE.session.add(room)
             DATABASE.session.flush()
             
             code_db= RedeemCode(
-                quiz= quiz.id,
+                quiz= quiz,
                 name = quiz.name,
                 code_enter= redeem_code,
                 hosted_by= flask_login.current_user.id,
@@ -52,13 +52,8 @@ def render_host_app(quizid):
                 DATABASE.session.rollback()
                 print("Error: ", e)
             return flask.redirect("/admin/")
-            
-
-        
-            
-        
     return flask.render_template(
-        "host.html", quiz = quiz, code= code,
+        "previewQuiz.html", quiz = quiz, code= code,
         username = flask_login.current_user.login,
         user = flask_login.current_user
         )

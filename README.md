@@ -15,25 +15,16 @@
 
 ## Мета створення
 
-- 1
-- 2
-- 3
-- 4
-
 ---
 ## Склад команди
 
-#### Шрамко Ілля 
-- **Роль:** TEAMLEAD
-- **GitHub:** [Перейти](https://github.com/)
+#### Шрамко Ілля (`TEAMLEAD`)
+- **Роль:** Головний програміст, дизайнер
+- **GitHub:** [Перейти](https://github.com/IllyaShramko)
 
 #### Свистун Артем 
 - **Роль:** Програміст, дизайнер, верстка  
 - **GitHub:** [Перейти](https://github.com/asvistun5)
-
-#### Гомельська Вікторія 
-- **Роль:** Програміст, дизайнер, верстка  
-- **GitHub:** [Перейти](https://github.com/Viktoria0228)
 
 #### Потапенко Арина 
 - **Роль:** Програміст, дизайнер, верстка  
@@ -43,11 +34,7 @@
 - **Роль:** Програміст, дизайнер, верстка  
 - **GitHub:** [Перейти](https://github.com/HoworukhaPolina)
 
-#### Михайло Міщенко  
-- **Роль:** Програміст, дизайнер, верстка  
-- **GitHub:** [Перейти](https://github.com/DeKlain4ik)
-
 ---
 ```
-flask --app .\project\ db init | flask --app .\project\ db migrate | flask --app .\project\ db upgrade
+flask --app project db init && flask --app project db migrate && flask --app project db upgrade
 ```

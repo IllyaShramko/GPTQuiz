@@ -163,13 +163,23 @@ li{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 25px;
+    min-height: 25px;
 }
 li > p{
-    width: 80%;
+    width: 90%;
+}
+.delete-user-btn {
+    display: none;
+    width: 20px;
+}
+li:hover .delete-user-btn {
+    display: block;
 }
 .check_mark{
     width: 20px;
+}
+li:hover .check_mark {
+    display: none;
 }
 .bottom-box {
     position: absolute;
@@ -243,6 +253,7 @@ li > p{
 }
 .modal img {
     max-width: 100%;
+    min-width: 95%;
     max-height: 100%;
     border-radius: 5px;
 }
@@ -290,4 +301,107 @@ li > p{
 }
 .img-copy {
     width: 24px;
+}
+#resultsContainer {
+    position: relative;
+    display: flex;
+    width: calc(100% - 240px);
+    height: 100vh;
+    gap: 10px;
+}
+.diagramContainer {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+.dataAnswersContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    gap: 25px;
+    border-right: 3px solid #202020;
+}
+.percentage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 26px;
+}
+.dataTexts {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dataTexts img {
+    width: 35px;
+    height: 35px;
+}
+.dataTexts h4 {
+    font-size: 20px;
+}
+.studentsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 25px;
+}
+.student-answer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 300px;
+    height: 250px;
+    background-color: #383838;
+}
+
+.student-right {
+    border-top: #22CE00 3px solid;
+}
+
+.student-wrong {
+    border-top: #F03C39 3px solid;
+}
+
+.student-avatar-nickname {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+.student-avatar-nickname img {
+    width: 40px;
+    height: 40px;
+}
+.student-avatar-nickname h4 {
+    font-size: 20px;
+    font-weight: 500;
+}
+.student-answer h5 {
+    font-size: 20px;
+}
+.answers-student {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    gap: 5px;
+
+}
+.answers-student div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 5px 3px;
+    border-radius: 5px;
+    background-color: #4D4D4D;
+}
+.answers-student div p {
+    font-size: 16px;
+    font-weight: 500;
 }

@@ -1,26 +1,20 @@
 ::-webkit-scrollbar{
     display: none;
 }
-.created-by-me-create{
-    position: relative;
-    top: 80px;
-    left: 220px;
+.libraryLink {
+    opacity: 1;
+    width: 100%;
+}
+.library-container {
     width: calc(100% - 220px);
-    height: 80px;
+    position: relative;
+    top: 60px;
+    left: 220px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    padding: 0 130.5px;
-    background-color: #262626;
-    border-radius: 0;
+    gap: 30px;
 }
-.created-by-me-create h2{
-    font-family: 'Inter';
-    color: white;
-    font-weight: 300;
-    font-size: 24px;
-}
-
 .created-by-me-create button {
     width: 135px;
     height: 45px;
@@ -35,19 +29,8 @@
     font-weight: 500;
     font-size: 16px;
     cursor: pointer;
-
-}
-.created-by-me-create button a{
-    text-decoration: none;
-    color: white;
-    width: 100%;
-    /* height: 100%; */
-    text-align: center;
-
 }
 .created-by-me{
-    width: calc(100% - 220px);
-    position: relative;
     top: 80px;
     left: 220px;
     display: flex;
@@ -58,43 +41,50 @@
     padding-top: 20px;
 }
 
-form{
-    height: 47px;
-    width: auto;
+
+.search{
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: white;
-    border-radius: 20px;
-    padding-left: 10px;
-    padding-right: 5px;
-    overflow: hidden;
-    gap: 5px;
+    width: 100%;
+    height: 150px;
+    background-color: #252525;
+    gap: 10px;
 }
-
-form img{
+.search h2 {
+    font-family: "Inter";
+    font-size: 26px;
+    font-weight: 300;
+    color: white;
+}
+.search form img{
     width: 25px;
     height: 25px;
 }
-
-form input{
-    height: 100%;
-    width: 475px;
-    border: none;
-    background: none;
-    font-family: "Inter";
-    font-size: 16px;
-
+.search form {
+    height: 40px;
+    background-color: white;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 5px;
 }
-
-form button{
+.search form input{
     height: 100%;
-    width: 40px;
+    width: 450px;
     border: none;
+    padding-left: 5px;
+    font-family: "Inter";
+    font-size: 14px;
+}
+.search form button{
     background: none;
+    border: none;
     cursor: pointer;
 }
-
 .created-by-me p{
     font-family: "Inter";
     font-size: 18px;
@@ -116,17 +106,12 @@ textarea:focus, input:focus{
 
 .quizes {
     display: flex;
-    flex-direction: row;
-    align-items: start;
     justify-content: center;
-    width: calc(100% - 220px);
-    position: absolute;
-    left: 220px;
-    top: 355px;
     gap: 10px;
-    padding: 0 180px;
-    padding-bottom: 25px;
-    flex-wrap: wrap;    
+    width: 80%;
+    padding: 0 20px;
+    padding-bottom: 30px;
+    flex-wrap: wrap;
 }
 
 .quiz {

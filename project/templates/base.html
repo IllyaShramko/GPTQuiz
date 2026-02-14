@@ -4,26 +4,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}  {% endblock %} | GPTQuiz</title>
         {% block head %}  {% endblock %}
+        <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/atom.svg') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename= 'css/base.css') }}">
     </head>
     <body>
-        
-        {% if not is_auth %}
-            <nav class="without-auth">
-                <a href="/" class="logo-title">
-                    <img src="{{ url_for('static', filename= 'images/atom.svg') }}">
-                    <h1>GPTQuiz</h1>
-                </a>
+        <header class="without-auth">
+            <a href="/" class="logo-title">
+                <img src="{{ url_for('static', filename= 'images/atom.svg') }}">
+                <h1>GPTQuiz</h1>
+            </a>
+            <p>{{ ignore_links }}</p>
+            {% if not ignore_links %}
                 <div class="links">
                     <a href="/execution/" class="enter-code">Введіть код</a>
                     <a href="/login/" class="login">Увійти</a>
                     <a href="/signup/" class="signin">Зареєструватися</a>
-                </div>
-            </nav>
-        {% endif %}
+                </div>  
+            {% endif %}
+        </header>
         
-
-
         {% block content %}
         
         {% endblock %}
