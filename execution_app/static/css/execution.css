@@ -534,8 +534,9 @@ main {
     }
     #general {
         width: 90vw;
-        height: 95vh;
+        height: 90vh;
         padding: 30px 0;
+        padding-top: 50px;
     }
     #question {
         flex-direction: column;
@@ -561,6 +562,6 @@ main {
     #sendBtn {
         left: 50%;
         transform: translateX(-50%);
-        bottom: -35px;
+        bottom: 10px;
     }
 }
