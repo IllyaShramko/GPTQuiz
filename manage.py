@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 import project, os
 
 if __name__ == '__main__':
