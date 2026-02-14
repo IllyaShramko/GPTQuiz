@@ -173,16 +173,16 @@ def render_profile():
 def create_admin():
     if flask.request.method == "POST":
         user= User(
-            login = "admin",
+            login = "cool_admin",
             name = "name",
             surname = "surname",
             email = "",
-            password = "admin"
+            password = "12qw12qw12qw"
         )
         try:
             DATABASE.session.add(user)
             DATABASE.session.commit()
-            return {"login": "admin", "password": "admin"}
+            return {"login": "cool_admin", "password": "12qw12qw12qw"}
         except:
             return "Не вдалося створити користувача"
 
