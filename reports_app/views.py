@@ -70,7 +70,7 @@ def get_quiz_questions_for_report(room_id):
     if room.host != flask_login.current_user.id:
         return {"error": "forbidden"}, 403
     
-    quiz = room.quiz
+    quiz = Quiz.query.get(room.quiz)
     if not quiz:
         return {"error": "quiz not found"}, 404
     
