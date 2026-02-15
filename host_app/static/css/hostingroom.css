@@ -126,6 +126,7 @@ body {
     font-size: 40px;
     letter-spacing: 0.4em;
 }
+
 #start-quiz {
     width: 100%;
     padding: 15px;
@@ -170,7 +171,16 @@ li > p{
 }
 .delete-user-btn {
     display: none;
-    width: 20px;
+    width: 35зx;
+    height: 35px;
+    overflow: hidden;
+    border: none;
+    background: none;
+}
+.delete-user-btn img{
+    width: 35px;
+    height: 35px;
+    border: none;
 }
 li:hover .delete-user-btn {
     display: block;
