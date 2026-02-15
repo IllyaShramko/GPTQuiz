@@ -15,7 +15,7 @@
         <div class="header-report">
             <div class="tabs">
                 <button class="tab selected" id="general">Загальний огляд</button>
-                <button class="tab not">Питання</button>
+                <button class="tab not" id="questions">Питання</button>
                 <button class="tab not" id="graphic">Графік</button>
             </div>
             <div class="sorting">
@@ -80,6 +80,18 @@
                             </div>
                         </div>
                     {% endif %}
+                {% endfor %}
+            </div>
+            <div id="questionsContainer">
+                {% for question in questions %}
+                    <div class="question-card">
+                        <h3>{{ question.text }}</h3>
+                        <div class="question-stats">
+                            <p>Правильні: {{ question.correct }}</p>
+                            <p>Помилки: {{ question.wrong }}</p>
+                            <p>Пропущені: {{ question.skipped }}</p>
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
         </div>
