@@ -164,15 +164,17 @@ li{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 25px;
+    min-height: 35px;
 }
 li > p{
-    width: 90%;
+    /*width: 90%;*/
+    flex: 1;
 }
 .delete-user-btn {
     display: none;
-    width: 35зx;
+    width: 35px;
     height: 35px;
+    flex-shrink: 0;
     overflow: hidden;
     border: none;
     background: none;
@@ -186,7 +188,9 @@ li:hover .delete-user-btn {
     display: block;
 }
 .check_mark{
-    width: 20px;
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
 }
 li:hover .check_mark {
     display: none;
