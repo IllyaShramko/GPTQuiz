@@ -167,7 +167,7 @@ li{
     min-height: 35px;
 }
 li > p{
-    /*width: 90%;*/
+    width: 90%;
     flex: 1;
 }
 .delete-user-btn {
@@ -188,8 +188,8 @@ li:hover .delete-user-btn {
     display: block;
 }
 .check_mark{
-    width: 35px;
-    height: 35px;
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
 }
 li:hover .check_mark {
