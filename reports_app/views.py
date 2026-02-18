@@ -65,6 +65,34 @@ def get_student_report(student_id):
         ]
     }
 
+def get_quiz_questions_for_report(room_id):
+    room = Room.query.get_or_404(room_id)
+    if room.host != flask_login.current_user.id:
+        return {"error": "forbidden"}, 403
+
+    quiz = Quiz.query.get(room.quiz)
+    if not quiz:
+        return {"error": "quiz not found"}, 404
+
+    return flask.jsonify([
+        {
+            "id": q.id,
+            "question_text": q.name,
+            "type": q.type,
+            "variants": [
+                v for v in [
+                    q.variant_1,
+                    q.variant_2,
+                    q.variant_3,
+                    q.variant_4,
+                    q.variant_5
+                ] if v
+            ],
+            "image": q.image
+        }
+        for q in quiz.questions
+    ])
+
 def get_report_answers(room_id):
     answers = SessionAnswer.query.filter_by(room_id=room_id).all()
 
