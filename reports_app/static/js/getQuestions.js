@@ -8,7 +8,9 @@ function renderQuestions(questions) {
         let variantsHTML = "";
 
         q.variants.forEach(variant => {
-            variantsHTML += `<div class="question-block">${variant}</div>`;
+            variantsHTML += `<div class="question-block">
+                <p>${variant}</p>
+            </div>`;
         });
 
         block.innerHTML = `

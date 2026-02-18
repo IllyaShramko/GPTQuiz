@@ -406,7 +406,10 @@
     display: none;
 }
 .questions-container {
-    width: 100%;
+    width: 98%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 .questions-container > div {
     display: flex;
@@ -419,7 +422,6 @@
 .questions-container div h3 {
     font-weight: 500;
     font-size: 20px;
-    height: 48px;
 }
 .questions-block {
     display: flex;
@@ -428,9 +430,11 @@
     gap: 10px;
 }
 .question-block {
-    font-weight: 500;
-    font-size: 16px;
     background-color: #656565;
     padding: 5px 7px;
     border-radius: 5px;
+}
+.question-block p {
+    font-size: 16px;
+    font-weight: 300;
 }
