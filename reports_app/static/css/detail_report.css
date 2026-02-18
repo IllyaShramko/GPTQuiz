@@ -405,6 +405,9 @@
 .tab-content.hide {
     display: none;
 }
+.questions-container {
+    width: 100%;
+}
 .questions-container > div {
     display: flex;
     flex-direction: column;

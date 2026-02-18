@@ -21,6 +21,8 @@ function switchTab(tab) {
     /* judah tut */
     if (tab === "graphic") {
         loadRoomStats(roomId);
+    } else if (tab === "questions") {
+        loadQuestions(roomId);
     }
 
     currentPage = tab;

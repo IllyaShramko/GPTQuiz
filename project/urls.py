@@ -145,6 +145,11 @@ reports_app.reports_app.add_url_rule(
     view_func= reports_app.get_report_answers,
     methods= ["GET"]
 )
+reports_app.reports_app.add_url_rule(
+    rule= "/reports/<int:room_id>/questions",
+    view_func= reports_app.get_quiz_questions_for_report,
+    methods= ["GET"]
+)
 project.register_blueprint(blueprint= reports_app.reports_app)
 
 host_app.host_app.add_url_rule(
