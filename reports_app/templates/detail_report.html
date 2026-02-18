@@ -14,20 +14,26 @@
     <div class="report">
         <div class="header-report">
             <div class="tabs">
-                <button class="tab selected" id="general">Загальний огляд</button>
-                <button class="tab not" id="questions">Питання</button>
-                <button class="tab not" id="graphic">Графік</button>
+                <button class="tab selected" id="general" data-tab="general">Загальний огляд</button>
+                <button class="tab not" id="questions" data-tab="questions">Питання</button>
+                <button class="tab not" id="graphic" data-tab="graphic">Графік</button>
             </div>
             <div class="sorting">
                 <p>Сортирувати за %: <button id="sortBtn"><</button></p>
             </div>
         </div>
-        <div class="information">
-            <div class="">
-
+        <div class="questions-container tab-content hide" data-content="questions">
+            <div>
+                <h3>Як називається сила, що утримує планети на їхніх орбітах навколо Сонця?</h3>
+                <p>Варіанти відповідді:</p>
+                <div class="questions-block">
+                    <div class="question-block">Земля</div>
+                    <div class="question-block">Земля</div>
+                    <div class="question-block">Земля</div>
+                </div>
             </div>
         </div>
-        <div class="chart-container hide">
+        <div class="chart-container tab-content hide" data-content="graphic">
             <div class="chart-card">
                 <h3>Успішність відповідей по питаннях</h3>
                 <div id="questionsChart"></div>
@@ -35,7 +41,7 @@
 
             <input type="hidden" id="room_id" value="{{ room.id }}">
         </div>
-        <div class="judah">
+        <div class="judah tab-content" data-content="general">
             <div class="participants-info">
                 <div class="colors-of-correctness">
                     <div>
@@ -80,18 +86,6 @@
                             </div>
                         </div>
                     {% endif %}
-                {% endfor %}
-            </div>
-            <div id="questionsContainer">
-                {% for question in questions %}
-                    <div class="question-card">
-                        <h3>{{ question.text }}</h3>
-                        <div class="question-stats">
-                            <p>Правильні: {{ question.correct }}</p>
-                            <p>Помилки: {{ question.wrong }}</p>
-                            <p>Пропущені: {{ question.skipped }}</p>
-                        </div>
-                    </div>
                 {% endfor %}
             </div>
         </div>
