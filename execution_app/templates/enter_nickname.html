@@ -185,6 +185,14 @@
                     console.log({answer: answer, question_id: questionID, username, code});
                     socket.emit("answer", {answer: answer, question_id: questionID, username, code, my_hash});
                 }
+
+                function shuffleArray(array) {
+                    for (let i = array.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                    return array;
+                }
     
                 socket.on("quiz_start_student", data => {
                     startTimer(45)
@@ -216,15 +224,26 @@
                     answersDiv.id = 'answers';
                     
                     if (data.type === "multiple answers") {
-                        const variants = [data.variant_1, data.variant_2, data.variant_3, data.variant_4];
-                        variants.forEach((variant, index) => {
+                        const variants = [
+                            { text: data.variant_1, value: 1 },
+                            { text: data.variant_2, value: 2 },
+                            { text: data.variant_3, value: 3 },
+                            { text: data.variant_4, value: 4 }
+                        ];
+                                            
+                        shuffleArray(variants);
+
+                        variants.forEach(variant => {
                             const label = document.createElement('label');
                             const checkbox = document.createElement('input');
+                        
                             checkbox.type = 'checkbox';
-                            checkbox.value = `${index + 1}`;
-                            label.id = `answerBtn${index + 1}`;
+                            checkbox.value = variant.value;
+                        
+                            label.id = `answerBtn${variant.value}`;
                             label.appendChild(checkbox);
-                            label.append(`${variant}`);
+                            label.append(variant.text);
+                        
                             answersDiv.appendChild(label);
                         });
     
@@ -325,38 +344,28 @@
 
                         generalDiv.appendChild(sendBtn);
                     } else {
-                        const btn1 = document.createElement('button');
-                        const btn2 = document.createElement('button');
-                        const btn3 = document.createElement('button');
-                        const btn4 = document.createElement('button');
+                        const variants = [
+                           { text: data.variant_1, value: 1 },
+                           { text: data.variant_2, value: 2 },
+                           { text: data.variant_3, value: 3 },
+                           { text: data.variant_4, value: 4 }
+                        ];
+
+                        shuffleArray(variants)
                         
-                        btn1.textContent = `${data.variant_1}`;
-                        btn2.textContent = `${data.variant_2}`;
-                        btn3.textContent = `${data.variant_3}`;
-                        btn4.textContent = `${data.variant_4}`;
-                        
-                        btn1.id = 'answerBtn1';
-                        btn1.value = 1;
-                        btn1.classList.add('answer-button');
-                        btn2.id = 'answerBtn2';
-                        btn2.value = 2;
-                        btn2.classList.add('answer-button');
-                        btn3.id = 'answerBtn3';
-                        btn3.value = 3;
-                        btn3.classList.add('answer-button');
-                        btn4.id = 'answerBtn4';
-                        btn4.value = 4;
-                        btn4.classList.add('answer-button');
-                        
-                        btn1.onclick = () => uploadAnswer(1, data.id, btn1.value);
-                        btn2.onclick = () => uploadAnswer(2, data.id, btn2.value);
-                        btn3.onclick = () => uploadAnswer(3, data.id, btn3.value);
-                        btn4.onclick = () => uploadAnswer(4, data.id, btn4.value);
-                        
-                        answersDiv.appendChild(btn1);
-                        answersDiv.appendChild(btn2);
-                        answersDiv.appendChild(btn3);
-                        answersDiv.appendChild(btn4);
+                        variants.forEach(variant => {
+                            const btn = document.createElement('button');
+                            const val = variant.value
+
+                            btn.textContent = variant.text;
+                            btn.id = `answerBtn${variant.value}`;
+                            btn.value = variant.value;
+                            btn.classList.add('answer-button');
+
+                            btn.onclick = () => uploadAnswer(val, data.id, val);
+
+                            answersDiv.appendChild(btn);
+                        });
                     }
                     generalDiv.appendChild(questionDiv);
                     
