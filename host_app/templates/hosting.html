@@ -347,7 +347,9 @@
                 nextBtn.innerHTML = `
                     <img src="{{ url_for('host_app.static', filename= 'gifs/loading.gif') }}" style="height: 20px; width: 20px;">
                 `
-                socket.emit("show_quiz_results", {code: code})
+                setTimeout(()=> {
+                    socket.emit("show_quiz_results", {code: code})
+                }, 100)
             }) 
 
 

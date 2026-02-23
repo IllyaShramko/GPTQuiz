@@ -115,11 +115,11 @@ def get_report_answers(room_id):
     for idx in sorted(stats_map.keys()):
         total = stats_map[idx]['total']
         correct = stats_map[idx]['correct']
-        
+        print("IDX:", idx,"\nTOTAL:", total, '\nCORRECT:', correct)
         percent = int((correct / total) * 100) if total > 0 else 0
         
         result.append({
-            "question": f"Q{idx}",
+            "question": f"Q{idx + 1}",
             "succesfull": percent 
         })
 

@@ -332,7 +332,6 @@ def handle_answer(data):
     if not question:
         print(f"No question found with id: {question_id}")
         return
-    print(session.get("participant_id"))
     participiant = SessionParticipant.query.get(session.get("participant_id"))
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     room = Room.query.get(redeem.room_id)
@@ -365,13 +364,14 @@ def handle_answer(data):
         participant_id = participiant.id,
         answer = answer,
         is_correct = is_correct,
-        question_index = room.index_question + 1
+        question_index = room.index_question
     )
 
     try:
         db.session.add(session_answer)
         db.session.commit()
         print("Result updated successfully.")
+        print("\n\nSTUDENT ANSWER:", session_answer.id, "\nQ idx:", session_answer.question_index, "\nIS_CORRect:", session_answer.is_correct)
     except Exception as e:
         db.session.rollback()
         print("Error occurred while updating result:", e)
@@ -379,10 +379,6 @@ def handle_answer(data):
     if redeem and room:
         room.answered_students = (room.answered_students or 0) + 1
         db.session.commit()
-
-        quiz = Quiz.query.get(room.quiz)
-        total_students = len(room.students or [])
-        print(f"Answered: {room.answered_students}, Total: {total_students}, Question Index: {room.index_question}, Total Questions: {len(quiz.questions)}")
 
         emit('student_answer', {
             'username': username,
@@ -541,7 +537,6 @@ def handle_end_question(data):
         })
 
     for res in results:
-        print(res)
         socketio.emit(
             "student_result",
             {

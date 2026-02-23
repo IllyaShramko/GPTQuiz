@@ -203,14 +203,6 @@
                     const title = document.createElement('h2');
                     title.textContent = data.name;
                     console.log(questionDiv, title, generalDiv);
-                    if (data.image) {
-                        const img = document.createElement('img');
-                        img.src = `/library/images/${data.image}`;
-                        img.alt = "Question Image";
-                        img.classList.add('question-image');
-                        img.id = 'questionImage';
-                        questionDiv.appendChild(img);
-                    }
                     questionDiv.appendChild(title);
                     const answersDiv = document.createElement('div');
                     answersDiv.id = 'answers';
@@ -357,6 +349,14 @@
                         answersDiv.appendChild(btn2);
                         answersDiv.appendChild(btn3);
                         answersDiv.appendChild(btn4);
+                    }
+                    if (data.image) {
+                        const img = document.createElement('img');
+                        img.src = `/library/images/${data.image}`;
+                        img.alt = "Question Image";
+                        img.classList.add('question-image');
+                        img.id = 'questionImage';
+                        questionDiv.appendChild(img);
                     }
                     generalDiv.appendChild(questionDiv);
                     
