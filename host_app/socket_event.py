@@ -1,3 +1,5 @@
+import random
+
 import flask_login
 from project import DATABASE as db
 from project.settings import DATABASE, socketio
@@ -101,15 +103,22 @@ def handle_join(data):
 
     if room.index_question is not None and 0 <= room.index_question <= len(quiz.questions):
         current_question = quiz.questions[room.index_question]
+        variants = [
+            {"id": 1, "text": current_question.variant_1},
+            {"id": 2, "text": current_question.variant_2},
+            {"id": 3, "text": current_question.variant_3},
+            {"id": 4, "text": current_question.variant_4}
+        ]
+        
+        hashed_correct = ""
+        for char in current_question.correct_answer:
+            hashed_correct += "a" if char != " " else " "
         emit("quiz_start_student", {
             "quiz_name": quiz.name,
             "name": current_question.name,
             "type": current_question.type,
-            "variant_1": current_question.variant_1,
-            "variant_2": current_question.variant_2,
-            "variant_3": current_question.variant_3,
-            "variant_4": current_question.variant_4,
-            "correct_answer": current_question.correct_answer,
+            "variants": variants,
+            "correct_answer": hashed_correct,
             "image": current_question.image,
             "id": current_question.id,
             "current_question": room.index_question
@@ -117,7 +126,6 @@ def handle_join(data):
         answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).count()
         answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
         if answers != len(students):
-            print("ANSWERSERWRE STATUS:", answer_status)
             if answer_status:
                 emit(
                     "current_question_info",
@@ -195,16 +203,24 @@ def handle_host_join(data):
     if room.index_question is not None and quiz and 0 <= room.index_question < len(quiz.questions):
         current_question = quiz.questions[room.index_question]
 
+        variants = [
+            {"id": 1, "text": current_question.variant_1},
+            {"id": 2, "text": current_question.variant_2},
+            {"id": 3, "text": current_question.variant_3},
+            {"id": 4, "text": current_question.variant_4}
+        ]
+        
+        hashed_correct = ""
+        for char in current_question.correct_answer:
+            hashed_correct += "a" if char != " " else " "
         question_data = {
             "id": current_question.id,
             "name": current_question.name,
             "type": current_question.type,
-            "variant_1": current_question.variant_1,
-            "variant_2": current_question.variant_2,
-            "variant_3": current_question.variant_3,
-            "variant_4": current_question.variant_4,
-            "correct_answer": current_question.correct_answer,
-            "image": current_question.image
+            "variants": variants,
+            "correct_answer": hashed_correct,
+            "image": current_question.image,
+            "current_question": room.index_question
         }
 
         socketio.emit("quiz_start_teacher", question_data, room=f"teacher_{room.host}")
@@ -218,7 +234,6 @@ def handle_host_join(data):
 
         answers = SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
         if answers:
-            print("AAAAAAAAAAAAAAAAAAA", answers)
             if len(answers) == len(participants):
                 results = []
                 total = len(participants)
@@ -294,17 +309,22 @@ def handle_start(data):
     room.index_question = 0
     DATABASE.session.commit()
     now_question = quiz.questions[0]
-    print(now_question.id)
-
+    variants = [
+        {"id": 1, "text": now_question.variant_1},
+        {"id": 2, "text": now_question.variant_2},
+        {"id": 3, "text": now_question.variant_3},
+        {"id": 4, "text": now_question.variant_4},
+    ]
+    
+    hashed_correct = ""
+    for char in now_question.correct_answer:
+        hashed_correct += "a" if char != " " else " "
     question_data = {
         "id": now_question.id,
         "name": now_question.name,
         "type": now_question.type,
-        "variant_1": now_question.variant_1,
-        "variant_2": now_question.variant_2,
-        "variant_3": now_question.variant_3,
-        "variant_4": now_question.variant_4,
-        "correct_answer": now_question.correct_answer,
+        "variants": variants,
+        "correct_answer": hashed_correct,
         "image": now_question.image,
         "current_question": room.index_question
     }
@@ -323,7 +343,6 @@ def handle_answer(data):
     username = data.get("username")
     code_enter = data.get("code")
     my_hash = data.get("my_hash")   
-    print(my_hash)
     if not question_id:
         print("question_id is None or missing in data")
         return
@@ -371,7 +390,6 @@ def handle_answer(data):
         db.session.add(session_answer)
         db.session.commit()
         print("Result updated successfully.")
-        print("\n\nSTUDENT ANSWER:", session_answer.id, "\nQ idx:", session_answer.question_index, "\nIS_CORRect:", session_answer.is_correct)
     except Exception as e:
         db.session.rollback()
         print("Error occurred while updating result:", e)
@@ -415,17 +433,25 @@ def handle_next(data):
 
     if room.index_question < len(quiz.questions):
         now_question = quiz.questions[room.index_question]
-        print(now_question.id)
+        
+        variants = [
+            {"id": 1, "text": now_question.variant_1},
+            {"id": 2, "text": now_question.variant_2},
+            {"id": 3, "text": now_question.variant_3},
+            {"id": 4, "text": now_question.variant_4}
+        ]
+        
 
+        hashed_correct = ""
+        for char in now_question.correct_answer:
+            hashed_correct += "a" if char != " " else " "
+        
         question_data = {
             "id": now_question.id,
             "name": now_question.name,
             "type": now_question.type,
-            "variant_1": now_question.variant_1,
-            "variant_2": now_question.variant_2,
-            "variant_3": now_question.variant_3,
-            "variant_4": now_question.variant_4,
-            "correct_answer": now_question.correct_answer,
+            "variants": variants,
+            "correct_answer": hashed_correct,
             "image": now_question.image,
             "current_question": room.index_question
         }

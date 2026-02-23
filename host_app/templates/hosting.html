@@ -256,8 +256,6 @@
             });
             socket.on("quiz_start_teacher", (data) => {
                 const checkMarks = document.getElementsByClassName('check_mark');
-                console.log(checkMarks);
-
                 if (checkMarks.length) {
                     const checkMarksArray = Array.from(checkMarks);
                     
@@ -289,10 +287,9 @@
                 const answersDiv = document.createElement("div")
                 answersDiv.id = 'answerDiv'
                 if (data.type != "enter answer") {
-                    answersDiv.innerHTML += `<p class="answerv">${data.variant_1}</p>`;
-                    answersDiv.innerHTML += `<p class="answerv">${data.variant_2}</p>`;
-                    answersDiv.innerHTML += `<p class="answerv">${data.variant_3}</p>`;
-                    answersDiv.innerHTML += `<p class="answerv">${data.variant_4}</p>`;
+                    data.variants.forEach(variant => {
+                        answersDiv.innerHTML += `<p class="answerv">${variant.text}</p>`;
+                    })
                 }
                 div.appendChild(questionDiv);
                 if (data.image) {

@@ -48,6 +48,15 @@
                 let answered = false;
                 let username = "{{ username }}"
                 let student_id= "{{ student.id }}"
+                
+                function shuffleArray(array) {
+                    const shuffled = [...array];
+                    for (let i = shuffled.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                    }
+                    return shuffled;
+                }
                 let answer1, answerDiv, my_hash;
                 const quizId = '{{ quiz.id }}'
                 let timeLeft = 0; 
@@ -96,7 +105,6 @@
                     document.getElementById("currentQ").textContent = "0"
                     document.getElementById("quiz-title").textContent = data.quiz_name;
                     my_hash = data.hash
-                    console.log("MY_HASH:", my_hash)
                 });
                 
                 socket.on("join_error", data => {
@@ -156,7 +164,7 @@
                     
                     if (!Array.isArray(answer1)) {
                         try {
-                            answerDiv = document.getElementById(`answerBtn${answer}`);
+                            answerDiv = document.querySelector(`.answer-button[value="${answer}"]`);
                             answers.forEach(btn => {
                                 if (btn.value != btnValue) {
                                     btn.style.opacity = 0
@@ -171,7 +179,7 @@
                     }
                     else if (Array.isArray(answer1)) {
                         answers.forEach(btn => {
-                            if (btnValue.includes(parseInt(btn.value))) {
+                            if (!btnValue.includes(parseInt(btn.getAttribute('data-value')))) {
                                 btn.style.opacity = 0
                             }
                             else {
@@ -182,7 +190,7 @@
                     }
     
                     answered = !answered
-                    console.log({answer: answer, question_id: questionID, username, code});
+                    // console.log({answer: answer, question_id: questionID, username, code});
                     socket.emit("answer", {answer: answer, question_id: questionID, username, code, my_hash});
                 }
     
@@ -192,6 +200,7 @@
                     if (answered) {
                         answered = !answered
                     }
+                    console.log(data.variants)
                     document.getElementById("WWblur").classList.add('hideblur');
                     const modal = document.getElementById('modalImage');
                     modal.classList.add('hidemodal');
@@ -202,21 +211,22 @@
                     questionDiv.id = 'question';
                     const title = document.createElement('h2');
                     title.textContent = data.name;
-                    console.log(questionDiv, title, generalDiv);
                     questionDiv.appendChild(title);
                     const answersDiv = document.createElement('div');
                     answersDiv.id = 'answers';
                     
                     if (data.type === "multiple answers") {
-                        const variants = [data.variant_1, data.variant_2, data.variant_3, data.variant_4];
-                        variants.forEach((variant, index) => {
+                        const shuffledVariants = shuffleArray(data.variants);
+                        shuffledVariants.forEach((variant, index) => {
                             const label = document.createElement('label');
                             const checkbox = document.createElement('input');
                             checkbox.type = 'checkbox';
-                            checkbox.value = `${index + 1}`;
+                            checkbox.value = `${variant.id}`;
                             label.id = `answerBtn${index + 1}`;
+                            label.classList.add("answer-button");
+                            label.setAttribute('data-value', variant.id);
                             label.appendChild(checkbox);
-                            label.append(`${variant}`);
+                            label.append(`${variant.text}`);
                             answersDiv.appendChild(label);
                         });
     
@@ -317,38 +327,16 @@
 
                         generalDiv.appendChild(sendBtn);
                     } else {
-                        const btn1 = document.createElement('button');
-                        const btn2 = document.createElement('button');
-                        const btn3 = document.createElement('button');
-                        const btn4 = document.createElement('button');
-                        
-                        btn1.textContent = `${data.variant_1}`;
-                        btn2.textContent = `${data.variant_2}`;
-                        btn3.textContent = `${data.variant_3}`;
-                        btn4.textContent = `${data.variant_4}`;
-                        
-                        btn1.id = 'answerBtn1';
-                        btn1.value = 1;
-                        btn1.classList.add('answer-button');
-                        btn2.id = 'answerBtn2';
-                        btn2.value = 2;
-                        btn2.classList.add('answer-button');
-                        btn3.id = 'answerBtn3';
-                        btn3.value = 3;
-                        btn3.classList.add('answer-button');
-                        btn4.id = 'answerBtn4';
-                        btn4.value = 4;
-                        btn4.classList.add('answer-button');
-                        
-                        btn1.onclick = () => uploadAnswer(1, data.id, btn1.value);
-                        btn2.onclick = () => uploadAnswer(2, data.id, btn2.value);
-                        btn3.onclick = () => uploadAnswer(3, data.id, btn3.value);
-                        btn4.onclick = () => uploadAnswer(4, data.id, btn4.value);
-                        
-                        answersDiv.appendChild(btn1);
-                        answersDiv.appendChild(btn2);
-                        answersDiv.appendChild(btn3);
-                        answersDiv.appendChild(btn4);
+                        const shuffledVariants = shuffleArray(data.variants);
+                        shuffledVariants.forEach((variant, index) => {
+                            const btn = document.createElement("button")
+                            btn.textContent = `${variant.text}`
+                            btn.id = `answerBtn${index + 1}`
+                            btn.value = variant.id
+                            btn.classList.add("answer-button")
+                            btn.onclick = () => uploadAnswer(btn.value, data.id, btn.value)
+                            answersDiv.appendChild(btn) 
+                        })
                     }
                     if (data.image) {
                         const img = document.createElement('img');
@@ -393,19 +381,19 @@
                     }
                     document.getElementById('waitingDiv').remove();
                     document.getElementById("WWblur").classList.add('hideblur');
-                    const allBtns = document.querySelectorAll('.answer-button, label');
+                    const allBtns = document.querySelectorAll('.answer-button');
                     
                     if (data.type === 'one answer') {
                         if (data.is_correct) {
-                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            const answerBtn = document.querySelector(`.answer-button[value="${data.answer_id}"]`);
                             answerBtn.style.opacity = 1;
                             answerBtn.style.backgroundColor = 'green';
                         }
                         else {
-                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            const answerBtn = document.querySelector(`.answer-button[value="${data.answer_id}"]`);
                             answerBtn.style.opacity = 1;
                             answerBtn.style.backgroundColor = 'red';
-                            const correctBtn = document.getElementById(`answerBtn${data.correct_answer_id}`);
+                            const correctBtn = document.querySelector(`.answer-button[value="${data.correct_answer_id}"]`);
                             if (correctBtn) {
                                 correctBtn.style.opacity = 1;
                                 correctBtn.style.backgroundColor = 'green';
@@ -414,16 +402,16 @@
                     }
                     else if (data.type === 'multiple answers') {
                         allBtns.forEach(btn => {
-                            const btnId = parseInt(btn.value);
-                            if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
+                            const btnId = parseInt(btn.getAttribute('data-value'));
+                            if (!data.answer_id.includes(btnId) && !data.correct_answer_id.includes(btnId)) {
                                 btn.style.opacity = 0; 
                         }});
-                        const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                        const userAnswerBtns = data.answer_id.map(id => document.querySelector(`.answer-button[data-value="${id}"]`));
                         userAnswerBtns.forEach(btn => {
                             btn.style.opacity = 1;
-                            btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
+                            btn.style.backgroundColor = 'red';
                         });
-                        const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                        const correctAnswerBtns = data.correct_answer_id.map(id => document.querySelector(`.answer-button[data-value="${id}"]`));
                         correctAnswerBtns.forEach(btn => {
                             btn.style.opacity = 1;
                             btn.style.backgroundColor = 'green';
@@ -480,7 +468,7 @@
                     if (document.getElementById("WWblur").classList.contains('hideblur')) {
                         document.getElementById("WWblur").classList.remove('hideblur');
                     }
-                    const allBtns = document.querySelectorAll('.answer-button, label');
+                    const allBtns = document.querySelectorAll('.answer-button');
                     
                     const notifyDiv = document.createElement('div')
                     notifyDiv.classList.add('notify-div')
@@ -515,15 +503,15 @@
                     
                     if (data.type === 'one answer') {
                         if (data.is_correct) {
-                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            const answerBtn = document.querySelector(`.answer-button[value="${data.answer_id}"]`);
                             answerBtn.style.opacity = 1;
                             answerBtn.style.backgroundColor = 'green';
                         }
                         else {
-                            const answerBtn = document.getElementById(`answerBtn${data.answer_id}`);
+                            const answerBtn = document.querySelector(`.answer-button[value="${data.answer_id}"]`);
                             answerBtn.style.opacity = 1;
                             answerBtn.style.backgroundColor = 'red';
-                            const correctBtn = document.getElementById(`answerBtn${data.correct_answer_id}`);
+                            const correctBtn = document.querySelector(`.answer-button[value="${data.correct_answer_id}"]`);
                             if (correctBtn) {
                                 correctBtn.style.opacity = 1;
                                 correctBtn.style.backgroundColor = 'green';
@@ -533,16 +521,16 @@
                     else if (data.type === 'multiple answers') {
                         if (data.answer_id !== "Пропущений...") {
                             allBtns.forEach(btn => {
-                                const btnId = parseInt(btn.value);
-                                if (btnId !== data.answer_id && btnId !== data.correct_answer_id) {
+                                const btnId = parseInt(btn.getAttribute('data-value'));
+                                if (!data.answer_id.includes(btnId) && !data.correct_answer_id.includes(btnId)) {
                                     btn.style.opacity = 0; 
                             }});
-                            const userAnswerBtns = data.answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                            const userAnswerBtns = data.answer_id.map(id => document.querySelector(`.answer-button[data-value="${id}"]`));
                             userAnswerBtns.forEach(btn => {
                                 btn.style.opacity = 1;
-                                btn.style.backgroundColor = btn.style.backgroundColor === 'green' ? 'green' : 'red';
+                                btn.style.backgroundColor = 'red';
                             });
-                            const correctAnswerBtns = data.correct_answer_id.map(id => document.getElementById(`answerBtn${id}`));
+                            const correctAnswerBtns = data.correct_answer_id.map(id => document.querySelector(`.answer-button[data-value="${id}"]`));
                             correctAnswerBtns.forEach(btn => {
                                 btn.style.opacity = 1;
                                 btn.style.backgroundColor = 'green';
