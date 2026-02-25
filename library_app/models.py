@@ -226,7 +226,6 @@ class SessionAnswer(DATABASE.Model):
                     answers.append(question.variant_4)
                 elif ans == "5":
                     answers.append(question.variant_5)
-            print(question.type, answers)
             return answers
         elif question.type == "enter answer":
             return question.correct_answer if question.correct_answer else []
@@ -234,7 +233,6 @@ class SessionAnswer(DATABASE.Model):
     def get_answer(self, answersswer):
         question = self.question_obj
         if question.type == "one answer":
-            print(answersswer, "Adlsldsldladl")
             if "Пропущений..." in [answersswer]:
                 return ["Пропущений"]
             if int(answersswer) == 1:
@@ -250,7 +248,6 @@ class SessionAnswer(DATABASE.Model):
         elif question.type == "multiple answers":
             if isinstance(question.correct_answer, list):
                 answers = []
-                print(answersswer, type(answersswer))
                 if not answersswer or "Пропущений..." in answersswer:
                     answers.append("Пропущений")
                     return answers
@@ -265,7 +262,6 @@ class SessionAnswer(DATABASE.Model):
                         answers.append(question.variant_4)
                     elif int(ans) == 5:
                         answers.append(question.variant_5)
-                print(question.type, answers)
                 return answers
         elif question.type == "enter answer":
             return answersswer

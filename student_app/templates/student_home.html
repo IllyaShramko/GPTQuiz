@@ -10,7 +10,10 @@
 
 {% block content %}
     <main>
-        <h1>Привіт, {{ current_user.surname }} {{ current_user.name }}!</h1>
+        <div class="welcome">
+            <h1 class="welcome-text">Привіт, {{ current_user.surname }} {{ current_user.name }}!</h1>
+            <a href="/execution/" class="enter-code">Код</a>
+        </div>
         <hr>
         <div>
             {% if not results %}

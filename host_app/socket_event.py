@@ -240,6 +240,12 @@ def handle_host_join(data):
                 correct = 0
                 wrong = 0
                 skipped = 0
+                count_answered = {
+                    "1": 0,
+                    "2": 0,
+                    "3": 0,
+                    "4": 0
+                }
                 for ans in answers:
                     participant = SessionParticipant.query.get(ans.participant_id)
                     correct_text = ans.right_answers()
@@ -251,10 +257,17 @@ def handle_host_join(data):
                     if ans.is_correct:
                         correct += 1
                     else: 
-                        if user_answer_text == "Птропущений" or user_answer_text == "Пропущений...":
+                        if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
                             skipped += 1
                         else:
                             wrong += 1
+                    if current_question.type != "enter answer":
+                        if isinstance(ans.answer, list):
+                            for answer in ans.answer:
+                                count_answered[str(answer)] += 1
+                        elif current_question.type == "one answer" and len(ans.answer) == 1:
+                            count_answered[str(ans.answer)] += 1
+
                     results.append({
                         "student_id": ans.participant_id,
                         "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
@@ -266,6 +279,29 @@ def handle_host_join(data):
                         "type": current_question.type
                     })
 
+                variants_with_answers = [
+                    {
+                        "id": 1,
+                        "text": current_question.variant_1,
+                        "answered": count_answered["1"]
+                    },
+                    {
+                        "id": 2,
+                        "text": current_question.variant_2,
+                        "answered": count_answered["2"]
+                    },
+                    {
+                        "id": 3,
+                        "text": current_question.variant_3,
+                        "answered": count_answered["3"]
+                    },
+                    {
+                        "id": 4,
+                        "text": current_question.variant_4,
+                        "answered": count_answered["4"]
+                    }
+                ]
+                print(variants_with_answers)
                 socketio.emit(
                     "teacher_results",
                     {
@@ -274,6 +310,11 @@ def handle_host_join(data):
                             "correct": correct,
                             "wrong": wrong,
                             "skipped": skipped
+                        },
+                        "question_data": {
+                            "name": current_question.name,
+                            "type": current_question.type,
+                            "variants": variants_with_answers,
                         },
                         "results": results,
                         "index_question": room.index_question,
@@ -287,7 +328,7 @@ def handle_host_join(data):
                     socketio.emit(
                         'student_answer',
                         {
-                            'username': participant.nickname,
+                            'hash': participant.reconnect_hash,
                             'answer': ans.get_answer(ans.answer) if ans.answer else ans.answer,
                             'question_id': current_question.id
                         },
@@ -536,6 +577,12 @@ def handle_end_question(data):
     correct = 0
     wrong = 0
     skipped = 0
+    count_answered = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+    }
     for ans in answers:
         participant = SessionParticipant.query.get(ans.participant_id)
         correct_text = ans.right_answers() 
@@ -544,6 +591,7 @@ def handle_end_question(data):
 
         user_answer_text = ans.get_answer(ans.answer) 
         user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+        print(type(ans.answer), ans.answer, "AAAAAAA")
         if ans.is_correct:
             correct += 1
         else: 
@@ -551,6 +599,12 @@ def handle_end_question(data):
                 skipped += 1
             else:
                 wrong += 1
+        if current_question.type != "enter answer":
+            if isinstance(ans.answer, list):
+                for answer in ans.answer:
+                    count_answered[str(answer)] += 1
+            elif current_question.type == "one answer" and len(ans.answer) == 1:
+                count_answered[str(ans.answer)] += 1
         results.append({
             "student_id": ans.participant_id,
             "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
@@ -576,6 +630,28 @@ def handle_end_question(data):
             room=f"student_{res['student_id']}"
         )
 
+    variants_with_answers = [
+        {
+            "id": 1,
+            "text": current_question.variant_1,
+            "answered": count_answered["1"]
+        },
+        {
+            "id": 2,
+            "text": current_question.variant_2,
+            "answered": count_answered["2"]
+        },
+        {
+            "id": 3,
+            "text": current_question.variant_3,
+            "answered": count_answered["3"]
+        },
+        {
+            "id": 4,
+            "text": current_question.variant_4,
+            "answered": count_answered["4"]
+        }
+    ]
     socketio.emit(
         "teacher_results",
         {
@@ -584,6 +660,11 @@ def handle_end_question(data):
                 "correct": correct,
                 "wrong": wrong,
                 "skipped": skipped
+            },
+            "question_data": {
+                "name": current_question.name,
+                "type": current_question.type,
+                "variants": variants_with_answers,
             },
             "results": results,
             "index_question": room.index_question,

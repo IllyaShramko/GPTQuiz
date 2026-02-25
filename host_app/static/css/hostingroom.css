@@ -23,6 +23,10 @@ body {
     justify-content: center;
     padding: 30px;
     gap: 50px;
+    z-index: -1;
+}
+#QandR.hide {
+    display: none;
 }
 #question {
     position: relative;
@@ -63,8 +67,9 @@ body {
     background-color: #454545;
     padding: 15px;
     border-radius: 5px;
+    font-size: 18px;
+    text-align: center;
 }
-
 #room {
     position: absolute;
     top: 50%;
@@ -74,7 +79,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 23vw;
+    width: 420px;
     padding: 15px;
     gap: 10px;
     background-color: #1A1A1A;
@@ -102,10 +107,8 @@ body {
     font-weight: 600;
 }
 .how-to-join h4 {
-
     font-weight: 600;
     font-size: 20px;
-
     color: #9BA1AD;
 }
 .how-to-join button {
@@ -307,8 +310,34 @@ li:hover .check_mark {
     display: flex;
     width: calc(100% - 240px);
     height: 100vh;
-    gap: 10px;
 }
+#resultsCotnainer.hide {
+    display: none;
+}
+/*  */
+.header-answers {
+    position: absolute;
+    display: flex;
+    left: 25px;
+    top: 20px;
+    gap: 15px;
+}
+.navButton {
+    font-size: 22px;
+    font-weight: 300;
+    border-radius: 5px;
+    cursor: pointer;
+    background: none;
+    padding: 10px;
+    color: #AFAFAF;
+    border: none;
+}
+.navButton.selectedNav {
+    color: #9C47FF !important;
+    border: none;
+    border-bottom: #9C47FF 5px solid !important;
+}
+/*  */
 .diagramContainer {
     position: relative;
     width: 300px;
@@ -341,11 +370,23 @@ li:hover .check_mark {
 .dataTexts h4 {
     font-size: 20px;
 }
-.studentsContainer {
+.mainContainer {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    width: 100%;
     padding: 25px;
+    padding-top: 85px;
+}
+.studentsContainer {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+}
+.studentsContainer.hideblock {
+    display: none;
 }
 .student-answer {
     display: flex;
@@ -404,4 +445,57 @@ li:hover .check_mark {
 .answers-student div p {
     font-size: 16px;
     font-weight: 500;
+}
+.question-answers-results {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.question-answers-results.hideblock {
+    display: none;
+}
+.name-question-text {
+    font-size: 20px;
+}
+.variants-question {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+.variant-container {
+    display: grid;
+    grid-template-columns: 1fr 130px;
+    grid-template-rows: 40px;
+    gap: 10px;
+    align-items: center;
+}
+.variant-text {
+    font-size: 18px;
+    opacity: 0.85;
+}
+.variant-progress-bar {
+    position: relative;
+    width: 130px;
+    height: 100%;
+    border-radius: 45px;
+    overflow: hidden;
+    background-color: #1d1d1d;
+    border: #1A1A1A 1px solid;
+}
+.variant-progress-bar-fill {
+    background-color: #9C47FF;
+    height: 100%;
+}
+.variant-progress-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 20;
 }
