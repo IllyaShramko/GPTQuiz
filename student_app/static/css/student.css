@@ -1,4 +1,26 @@
 
+.welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+.welcome-text {
+    font-size: 24px;
+    color:white;
+}
+.enter-code {
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    border: solid white 1px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+}
+
 .stats {
     display: flex;
     flex-direction: column;
@@ -6,6 +28,7 @@
 .stats h1 {
     text-align: center;
     color: white;
+    font-size: 20px;
 }
 .history {
     display: flex;

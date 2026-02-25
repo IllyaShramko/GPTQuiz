@@ -68,6 +68,7 @@ body {
     padding: 15px;
     border-radius: 5px;
     font-size: 18px;
+    text-align: center;
 }
 #room {
     position: absolute;
@@ -444,4 +445,57 @@ li:hover .check_mark {
 .answers-student div p {
     font-size: 16px;
     font-weight: 500;
+}
+.question-answers-results {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.question-answers-results.hideblock {
+    display: none;
+}
+.name-question-text {
+    font-size: 20px;
+}
+.variants-question {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+.variant-container {
+    display: grid;
+    grid-template-columns: 1fr 130px;
+    grid-template-rows: 40px;
+    gap: 10px;
+    align-items: center;
+}
+.variant-text {
+    font-size: 18px;
+    opacity: 0.85;
+}
+.variant-progress-bar {
+    position: relative;
+    width: 130px;
+    height: 100%;
+    border-radius: 45px;
+    overflow: hidden;
+    background-color: #1d1d1d;
+    border: #1A1A1A 1px solid;
+}
+.variant-progress-bar-fill {
+    background-color: #9C47FF;
+    height: 100%;
+}
+.variant-progress-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 20;
 }

@@ -99,6 +99,18 @@
                 }
                 console.log(currentPage)
             }
+            function getAnswerText(n) {
+                if (n === 0) return `${n} відповідей`;
+                const lastDigit = n % 10;
+                const lastTwoDigits = n % 100;
+                if (lastDigit === 1 && lastTwoDigits !== 11) {
+                    return `${n} відповідь`;
+                } else if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) {
+                    return `${n} відповіді`;
+                } else {
+                    return `${n} відповідей`;
+                }
+            }
 
             buttonStart.addEventListener("click", () => {
                 socket.emit("quiz_start", {code: code})
@@ -152,7 +164,7 @@
                 const mainContainer = document.createElement("div")
                 mainContainer.classList.add("mainContainer")
                 const questionAnswersContainer = document.createElement("div")
-                questionAnswersContainer.classList.add("question-answers") 
+                questionAnswersContainer.classList.add("question-answers-results") 
                 const studentsContainer = document.createElement("div")
                 studentsContainer.classList.add("studentsContainer")
                 studentsContainer.classList.add("hideblock")
@@ -178,7 +190,39 @@
                     studentsContainer.appendChild(divA);
                 });
                 //
-                console.log(data.question_data)
+                const nameQuestionContainer = document.createElement("div")
+                nameQuestionContainer.classList.add("name-question-container")
+                const nameQuestionText = document.createElement("h1")
+                nameQuestionText.classList.add("name-question-text")
+                nameQuestionText.textContent = data.question_data.name
+                const variantsQuestion = document.createElement("div")
+                variantsQuestion.classList.add("variants-question")
+                if (data.question_data.type !== "enter answer") {
+                    data.question_data.variants.forEach(variant => {
+                        if (!variant || variant === undefined || variant === null) return;
+                        const variantContainer = document.createElement("div")
+                        variantContainer.classList.add("variant-container")
+                        const variantText = document.createElement("p")
+                        variantText.classList.add("variant-text")
+                        variantText.textContent = variant.text
+                        const variantProgressBar = document.createElement("div")
+                        variantProgressBar.classList.add("variant-progress-bar")
+                        const variantProgressBarFill = document.createElement("div")
+                        variantProgressBarFill.classList.add("variant-progress-bar-fill")
+                        variantProgressBarFill.style.width = `${variant.answered / document.getElementById("users").childElementCount * 100}%`
+                        const variantProgressBarText = document.createElement("p")
+                        variantProgressBarText.classList.add("variant-progress-bar-text")
+                        variantProgressBarText.textContent = getAnswerText(variant.answered)
+                        variantContainer.appendChild(variantText)
+                        variantProgressBar.appendChild(variantProgressBarFill)
+                        variantProgressBar.appendChild(variantProgressBarText)
+                        variantContainer.appendChild(variantProgressBar)
+                        variantsQuestion.appendChild(variantContainer)
+                    })
+                }
+                nameQuestionContainer.appendChild(nameQuestionText)
+                questionAnswersContainer.appendChild(nameQuestionContainer)
+                questionAnswersContainer.appendChild(variantsQuestion)
                 //
                 const header = document.createElement("header")
                 header.classList.add("header-answers")
@@ -243,8 +287,9 @@
                 // 
                 container.appendChild(dataAnswersContainer)
                 mainContainer.appendChild(studentsContainer)
+                mainContainer.appendChild(questionAnswersContainer)
                 container.appendChild(mainContainer)
-                container.appendChild(questionAnswersContainer)
+
                 console.log(data)
                 renderDonut(data1 = {
                     correct: data.donut_data.correct,
@@ -290,7 +335,6 @@
                         timerText.textContent = remainingTime;
 
                         if (remainingTime <= 0) {
-                            console.log("Время вышло!");
                             socket.emit("end_question", { code: code });
                             clearInterval(timerInterval);
                         }

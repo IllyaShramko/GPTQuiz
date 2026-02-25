@@ -261,8 +261,12 @@ def handle_host_join(data):
                             skipped += 1
                         else:
                             wrong += 1
-                    
-                    print(type(ans.answer), ans.answer, "AAAAAAA")
+                    if current_question.type != "enter answer":
+                        if isinstance(ans.answer, list):
+                            for answer in ans.answer:
+                                count_answered[str(answer)] += 1
+                        elif current_question.type == "one answer" and len(ans.answer) == 1:
+                            count_answered[str(ans.answer)] += 1
 
                     results.append({
                         "student_id": ans.participant_id,
@@ -297,6 +301,7 @@ def handle_host_join(data):
                         "answered": count_answered["4"]
                     }
                 ]
+                print(variants_with_answers)
                 socketio.emit(
                     "teacher_results",
                     {
@@ -309,7 +314,7 @@ def handle_host_join(data):
                         "question_data": {
                             "name": current_question.name,
                             "type": current_question.type,
-                            "variants": variants_with_answers
+                            "variants": variants_with_answers,
                         },
                         "results": results,
                         "index_question": room.index_question,
@@ -572,6 +577,12 @@ def handle_end_question(data):
     correct = 0
     wrong = 0
     skipped = 0
+    count_answered = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+    }
     for ans in answers:
         participant = SessionParticipant.query.get(ans.participant_id)
         correct_text = ans.right_answers() 
@@ -588,6 +599,12 @@ def handle_end_question(data):
                 skipped += 1
             else:
                 wrong += 1
+        if current_question.type != "enter answer":
+            if isinstance(ans.answer, list):
+                for answer in ans.answer:
+                    count_answered[str(answer)] += 1
+            elif current_question.type == "one answer" and len(ans.answer) == 1:
+                count_answered[str(ans.answer)] += 1
         results.append({
             "student_id": ans.participant_id,
             "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
@@ -613,6 +630,28 @@ def handle_end_question(data):
             room=f"student_{res['student_id']}"
         )
 
+    variants_with_answers = [
+        {
+            "id": 1,
+            "text": current_question.variant_1,
+            "answered": count_answered["1"]
+        },
+        {
+            "id": 2,
+            "text": current_question.variant_2,
+            "answered": count_answered["2"]
+        },
+        {
+            "id": 3,
+            "text": current_question.variant_3,
+            "answered": count_answered["3"]
+        },
+        {
+            "id": 4,
+            "text": current_question.variant_4,
+            "answered": count_answered["4"]
+        }
+    ]
     socketio.emit(
         "teacher_results",
         {
@@ -621,6 +660,11 @@ def handle_end_question(data):
                 "correct": correct,
                 "wrong": wrong,
                 "skipped": skipped
+            },
+            "question_data": {
+                "name": current_question.name,
+                "type": current_question.type,
+                "variants": variants_with_answers,
             },
             "results": results,
             "index_question": room.index_question,
