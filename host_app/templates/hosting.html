@@ -68,20 +68,37 @@
             const socket = io();
             const code = "{{ code }}"; 
             const div = document.getElementById('QandR');
-            let nextBtn;
-            nextBtn = document.createElement('button');
+            const nextBtn = document.createElement('button');
             nextBtn.id = 'nextBtn';
             nextBtn.classList.add("controlers")
             const imgBtn = document.createElement("img")
             imgBtn.src = "{{ url_for('host_app.static', filename= 'images/next.svg') }}"
             nextBtn.appendChild(imgBtn)
-
+            let currentPage = "question_answers"
             let timerInterval = null;
             socket.emit("host_join", { room: code });
         
             const buttonStart = document.getElementById("start-quiz");
             
-            
+            function switchPages (switchPage, question_container, answers_container, button1, button2) {
+                if (switchPage === currentPage) {
+                    return;
+                } 
+                if (switchPage === "question_answers") {
+                    answers_container.classList.add("hideblock")
+                    question_container.classList.remove("hideblock")
+                    currentPage = "questions_answers"
+                    button1.classList.add("selectedNav")
+                    button2.classList.remove("selectedNav")
+                } else if (switchPage === "students_answers") {
+                    question_container.classList.add("hideblock")
+                    answers_container.classList.remove("hideblock")
+                    currentPage = "students_answers"
+                    button2.classList.add("selectedNav")
+                    button1.classList.remove("selectedNav")
+                }
+                console.log(currentPage)
+            }
 
             buttonStart.addEventListener("click", () => {
                 socket.emit("quiz_start", {code: code})
@@ -125,14 +142,20 @@
                 if (timerInterval) {
                     clearInterval(timerInterval);
                 }
+                currentPage = "question_answers"
                 document.getElementById('timerText').innerHTML = '0';
                 const container = document.getElementById("resultsContainer");
                 container.innerHTML = "";
                 console.log("Received teacher_results:", data.results);
                 div.innerHTML = ""
                 const avatarUrl = "{{ url_for('host_app.static', filename='images/avatar.svg') }}";
+                const mainContainer = document.createElement("div")
+                mainContainer.classList.add("mainContainer")
+                const questionAnswersContainer = document.createElement("div")
+                questionAnswersContainer.classList.add("question-answers") 
                 const studentsContainer = document.createElement("div")
                 studentsContainer.classList.add("studentsContainer")
+                studentsContainer.classList.add("hideblock")
 
                 data.results.forEach(res => {
                     const divA = document.createElement("div");
@@ -147,15 +170,33 @@
                         <div class="answers-student">
                             ${
                                 Array.isArray(res.answer)
-                                    ? res.answer
-                                        .map(ans => `<div><p>${ans}</p></div>`)
-                                        .join("")
-                                    : `<div><p>${res.answer}</p></div>`
+                                ? res.answer.map(ans => `<div><p>${ans}</p></div>`).join("")
+                                : `<div><p>${res.answer}</p></div>`
                             }
                         </div>
                     `;
                     studentsContainer.appendChild(divA);
                 });
+                //
+                console.log(data.question_data)
+                //
+                const header = document.createElement("header")
+                header.classList.add("header-answers")
+                const navButtonQuestionAnswers = document.createElement("button")
+                navButtonQuestionAnswers.classList.add("selectedNav")
+                navButtonQuestionAnswers.textContent = "Загальний огляд"
+                const navButtonAnswers = document.createElement("button")
+                navButtonAnswers.textContent = "Відповідді"
+                navButtonQuestionAnswers.classList.add("navButton")
+                navButtonAnswers.classList.add("navButton")
+
+                navButtonQuestionAnswers.onclick = () => switchPages("question_answers", questionAnswersContainer, studentsContainer, navButtonQuestionAnswers, navButtonAnswers)
+                navButtonAnswers.onclick = () => switchPages("students_answers", questionAnswersContainer, studentsContainer, navButtonQuestionAnswers, navButtonAnswers)
+
+                header.appendChild(navButtonQuestionAnswers)
+                header.appendChild(navButtonAnswers)
+                mainContainer.appendChild(header)
+                //
                 const diagramContainer = document.createElement("div")
                 diagramContainer.classList.add("diagramContainer")
                 const chartContainer = document.createElement("div")
@@ -192,16 +233,18 @@
                 const summaryPercentage = document.createElement("h4")
                 summaryPercentage.classList.add("percentage")
                 summaryPercentage.textContent = `${((data.donut_data.correct / data.donut_data.total_participiants) * 100).toFixed(0)}%`
-                
+                //
                 diagramContainer.appendChild(chartContainer)
                 diagramContainer.appendChild(summaryPercentage)
                 dataAnswersContainer.appendChild(diagramContainer)
                 dataAnswersContainer.appendChild(correctContainer)
                 dataAnswersContainer.appendChild(wrongContainer)
                 dataAnswersContainer.appendChild(skippedContainer)
-                
+                // 
                 container.appendChild(dataAnswersContainer)
-                container.appendChild(studentsContainer)
+                mainContainer.appendChild(studentsContainer)
+                container.appendChild(mainContainer)
+                container.appendChild(questionAnswersContainer)
                 console.log(data)
                 renderDonut(data1 = {
                     correct: data.donut_data.correct,
@@ -254,6 +297,7 @@
                     }, 150);
                 }
             });
+            
             socket.on("quiz_start_teacher", (data) => {
                 const checkMarks = document.getElementsByClassName('check_mark');
                 if (checkMarks.length) {
@@ -274,18 +318,18 @@
                 
                 try {
                     document.getElementById("room").remove();
-                } catch {
-                }
-                questionDiv = document.createElement('div');
+                } catch {}
+
+                const questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
+                const answersDiv = document.createElement("div")
+                answersDiv.id = 'answerDiv'
                 if (data.image) {
                     questionDiv.innerHTML = `<img id="questionImage" src="/library/images/${data.image}" class="q-image"><h2>${data.name}</h2>`;
                 }
                 else {
                     questionDiv.innerHTML = `<h2>${data.name}</h2>`;
                 }
-                const answersDiv = document.createElement("div")
-                answersDiv.id = 'answerDiv'
                 if (data.type != "enter answer") {
                     data.variants.forEach(variant => {
                         answersDiv.innerHTML += `<p class="answerv">${variant.text}</p>`;
@@ -319,17 +363,13 @@
                 document.getElementById("timeControl").appendChild(nextBtn);
 
             })
-
             socket.on("student_answer", (data) => {
                 const user = document.getElementById(data.hash)
-                console.log("data:", data)
                 const checkMark = document.createElement('img') 
                 checkMark.src = '{{ url_for("host_app.static", filename = "images/check-mark.svg") }}'
                 checkMark.classList.add('check_mark')
                 user.appendChild(checkMark)
             })
-
-            
             socket.on("show_finish_button", data => {
                 if (nextBtn) {
                     nextBtn.remove();
@@ -341,15 +381,11 @@
                 document.body.appendChild(endBtn);
             });
             socket.on("end_msg", data => {
-                nextBtn.innerHTML = `
-                    <img src="{{ url_for('host_app.static', filename= 'gifs/loading.gif') }}" style="height: 20px; width: 20px;">
-                `
+                nextBtn.innerHTML = `<img src="{{ url_for('host_app.static', filename= 'gifs/loading.gif') }}" style="height: 20px; width: 20px;">`
                 setTimeout(()=> {
                     socket.emit("show_quiz_results", {code: code})
-                }, 100)
+                }, 50)
             }) 
-
-
             socket.on("quiz_results", data => {
                 if (data.url) {
                     window.location.href = `${data.url}`;

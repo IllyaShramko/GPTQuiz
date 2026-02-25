@@ -190,7 +190,6 @@
                     }
     
                     answered = !answered
-                    // console.log({answer: answer, question_id: questionID, username, code});
                     socket.emit("answer", {answer: answer, question_id: questionID, username, code, my_hash});
                 }
     
