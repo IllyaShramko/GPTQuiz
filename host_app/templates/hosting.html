@@ -408,6 +408,7 @@
 
             })
             socket.on("student_answer", (data) => {
+                console.log("student")
                 const user = document.getElementById(data.hash)
                 const checkMark = document.createElement('img') 
                 checkMark.src = '{{ url_for("host_app.static", filename = "images/check-mark.svg") }}'

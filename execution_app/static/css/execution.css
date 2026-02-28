@@ -49,12 +49,11 @@ main {
 
 .form_enter{
     width: 384px;
-    height: 230px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 5px 16px 5px 16px;
+    padding: 16px;
     background-color: #2B2B2B;
     border-radius: 18px;
     position: absolute;
@@ -69,10 +68,17 @@ main {
     font-size: 40px;
     color: white;
 }
-
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.error-text {
+    color: #B62D11 !important;
+    font-size: 16px !important;
+}
 .input_code{
     width: 100%;
-    height: 143px;
     display: flex;
     flex-direction: column;
     align-items: center;

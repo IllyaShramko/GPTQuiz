@@ -23,8 +23,15 @@ def render_enter_code():
     if flask.session.get("user_role") != "student":
         return flask.redirect(f"/login_student?redirect_to={code}")
     if code:
-        quiz = RedeemCode.query.filter_by(code_enter= code).first_or_404().quiz
-        room = RedeemCode.query.filter_by(code_enter=code).first().room
+        redeem_code = RedeemCode.query.filter_by(code_enter= code).first_or_404()
+        quiz = redeem_code.quiz
+        room = redeem_code.room
+        if flask_login.current_user.classroom.id != redeem_code.room.group_class_id:
+            return flask.render_template(
+                template_name_or_list="enter_code.html",
+                error = "USER_NOT_FROM_THIS_CLASSROOM",
+                code = code
+            )
         teacher = User.query.get(room.host)
         username = flask_login.current_user.surname + " " + flask_login.current_user.name
         return flask.render_template(
@@ -32,6 +39,7 @@ def render_enter_code():
             quiz=quiz, teacher=teacher, username= username, student= flask_login.current_user
         )
     return flask.render_template(
-        template_name_or_list="enter_code.html"
+        template_name_or_list="enter_code.html",
+        error = None, code = None
     )
 

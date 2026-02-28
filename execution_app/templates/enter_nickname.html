@@ -537,12 +537,6 @@
                         }
                     }
                 });
-    
-                socket.on("end_msg", data => {
-                    socket.emit("end_quiz", { code: code });
-                });
-    
-    
                 socket.on("end_quiz", data => {
                     url = window.location.origin + "/student/report/" + data.hash_code
                     window.location.href = url;

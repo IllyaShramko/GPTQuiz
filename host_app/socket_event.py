@@ -121,7 +121,7 @@ def handle_join(data):
             "correct_answer": hashed_correct,
             "image": current_question.image,
             "id": current_question.id,
-            "current_question": room.index_question
+            "current_question": room.index_question + 1
         })
         answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).count()
         answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
@@ -186,6 +186,10 @@ def handle_host_join(data):
     if not room:
         return
 
+    if not flask_login.current_user.is_authenticated or flask_login.current_user.id != room.host:
+        if flask.session.get("user_role") != "teacher":
+            return
+        
     join_room(str(room.id))
     join_room(f"teacher_{room.host}")
 
@@ -194,9 +198,6 @@ def handle_host_join(data):
 
     emit("user_list_update", {"students": students}, room=str(room.id))
 
-    if not flask_login.current_user.is_authenticated or flask_login.current_user.id != room.host:
-        if flask.session.get("user_role") != "teacher":
-            return
 
     quiz = Quiz.query.get(room.quiz) if room and room.quiz else None
 
@@ -220,13 +221,13 @@ def handle_host_join(data):
             "variants": variants,
             "correct_answer": hashed_correct,
             "image": current_question.image,
-            "current_question": room.index_question
+            "current_question": room.index_question + 1
         }
 
         socketio.emit("quiz_start_teacher", question_data, room=f"teacher_{room.host}")
 
         try:
-            duration = 45
+            duration = 60
             end_time = int(time.time() + duration)
             socketio.emit("question_timer", {"end_time": end_time, "duration": duration}, room=f"teacher_{room.host}")
         except Exception as e:
@@ -301,7 +302,6 @@ def handle_host_join(data):
                         "answered": count_answered["4"]
                     }
                 ]
-                print(variants_with_answers)
                 socketio.emit(
                     "teacher_results",
                     {
@@ -322,18 +322,15 @@ def handle_host_join(data):
                     },
                     room=f"teacher_{room.host}"
                 )
-            else:
-                for ans in answers:
-                    participant = SessionParticipant.query.get(ans.participant_id)
-                    socketio.emit(
-                        'student_answer',
-                        {
-                            'hash': participant.reconnect_hash,
-                            'answer': ans.get_answer(ans.answer) if ans.answer else ans.answer,
-                            'question_id': current_question.id
-                        },
-                        room=f"teacher_{room.host}"
-                    )
+            for ans in answers:
+                participant = SessionParticipant.query.get(ans.participant_id)
+                socketio.emit(
+                    'student_answer',
+                    {
+                        'hash': participant.reconnect_hash
+                    },
+                    room=f"{room.id}"
+                )
     return
 
 @socketio.on("quiz_start")
@@ -500,7 +497,7 @@ def handle_next(data):
         emit("quiz_start_student", question_data, room=room_id)
         emit("quiz_start_teacher", question_data, room=room_id)
 
-        duration = 45
+        duration = 60
         end_time = int(time.time() + duration)
         emit("question_timer", {"end_time": end_time, "duration": duration}, room=room_id)
     else:
@@ -514,19 +511,14 @@ def handle_quiz_end_msg(data):
     if not redeem:
         return
     room = Room.query.get(redeem.room_id)
+    for participiant in room.session_participants:
+        report_hash = create_student_report(participant_id= participiant.id, room_id=room.id)
+        emit(
+            "end_quiz",
+            {"hash_code": report_hash},
+            room= f"student_{participiant.id}"
+        )
     emit("end_msg", {}, room=str(room.id))
-
-@socketio.on("end_quiz")
-def handle_quiz_end(data):
-    code_enter = data.get("code")
-    redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
-    if not redeem:
-        return
-
-    room = Room.query.get(redeem.room_id)
-
-    report = create_student_report(participant_id= session['participant_id'], room_id=room.id)
-    emit("end_quiz", {'hash_code': report}, room= f"student_{session['participant_id']}")
 
 @socketio.on("show_quiz_results")
 def handle_show_quiz_results(data):

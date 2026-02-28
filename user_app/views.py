@@ -188,5 +188,8 @@ def create_admin():
 
 def logout():
     flask_login.logout_user()
+    redirect_url = flask.request.args.get("redirect_to")
+    if redirect_url:
+        return flask.redirect(redirect_url)
     return flask.redirect("/")
     

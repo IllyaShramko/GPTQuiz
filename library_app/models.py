@@ -147,15 +147,17 @@ class Room(DATABASE.Model):
                     "your_answer": a.answer,
                     "is_correct": a.is_correct
                 })
-
-            report.append({
-                "participant_id": p.id,
-                "nickname": f"{p.student_profile.surname} {p.student_profile.name}",
-                "percent": student_report.percentage,
-                "answers": answers_data,
-                "grade": student_report.grade,
-                "report": p.report
-            })
+            try:
+                report.append({
+                    "participant_id": p.id,
+                    "nickname": f"{p.student_profile.surname} {p.student_profile.name}",
+                    "percent": student_report.percentage,
+                    "answers": answers_data,
+                    "grade": student_report.grade,
+                    "report": p.report
+                })
+            except:
+                print("Error")
 
         return sorted(report, key=lambda x: x["percent"], reverse=True)
 
