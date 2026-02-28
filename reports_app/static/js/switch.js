@@ -21,8 +21,12 @@ function switchTab(tab) {
     /* judah tut */
     if (tab === "graphic") {
         loadRoomStats(roomId);
+        sorting.style.display = "none";
     } else if (tab === "questions") {
         loadQuestions(roomId);
+        sorting.style.display = "none";
+    } else {
+        sorting.style.display = "block";
     }
 
     currentPage = tab;
