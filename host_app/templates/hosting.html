@@ -47,7 +47,7 @@
             </div>
             <div class="participants">
                 <h2 id="usersText">Участники:</h2>
-                <ul id="users"></ul>
+                <ol id="users"></ol>
             </div>
         </div>
         <div class="mini-menu">
@@ -119,25 +119,30 @@
             socket.on("user_list_update", (data) => {
                 const usersList = document.getElementById("users");
                 const usersText = document.getElementById("usersText");
-                console.log(data.students);
                 usersList.innerHTML = '';
                 usersText.textContent = `Участники: (${data.students.length})`;
                 
-                data.students.forEach(student => {
+                data.students.forEach((student, index) => {
+                    
                     const li = document.createElement("li");
+                    const divLi = document.createElement("div")
+
+                    divLi.classList.add("divLi")
                     const p = document.createElement("p")
+                    p.classList.add("nickname")
                     p.textContent = student[0];
-                    li.appendChild(p)
+                    divLi.appendChild(p)
                     li.id = student[1];
                     const deleteBtn = document.createElement("button");
                     const deleteImg = document.createElement("img");
-                    deleteImg.src = "{{ url_for('host_app.static', filename='images/delete.svg') }}";
+                    deleteImg.src = "{{ url_for('host_app.static', filename='images/cross.svg') }}";
                     deleteBtn.appendChild(deleteImg);
                     deleteBtn.onclick = () => {
                         socket.emit("remove_student", { code: code, student: student });
                     };
                     deleteBtn.classList.add("delete-user-btn");
-                    li.appendChild(deleteBtn);
+                    divLi.appendChild(deleteBtn);
+                    li.appendChild(divLi)
                     usersList.appendChild(li);
                 });
             });
@@ -409,7 +414,7 @@
             })
             socket.on("student_answer", (data) => {
                 console.log("student")
-                const user = document.getElementById(data.hash)
+                const user = document.getElementById(data.hash).querySelector("div")
                 const checkMark = document.createElement('img') 
                 checkMark.src = '{{ url_for("host_app.static", filename = "images/check-mark.svg") }}'
                 checkMark.classList.add('check_mark')

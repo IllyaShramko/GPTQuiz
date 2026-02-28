@@ -61,9 +61,8 @@ def handle_join(data):
         emit("join_error", {"message": "Комната не найдена"})
         return
     
-    participants = SessionParticipant.query.filter_by(room_id=room.id).filter_by(is_connected = True).all()
     username = flask_login.current_user.surname + " " + flask_login.current_user.name
-    students = [[f"{p.student_profile.surname} {p.student_profile.name}", p.reconnect_hash] for p in participants]
+    
     existing_participiant = SessionParticipant.query.filter_by(student_id=student_id, room_id=room.id).first()
     if not existing_participiant:
         print("Участника нет в комнате, добавление...")
@@ -75,8 +74,7 @@ def handle_join(data):
         try:
             DATABASE.session.add(existing_participiant)
             DATABASE.session.commit()
-            students.append([username, existing_participiant.reconnect_hash])    
-            room.students = students
+            room.students.append([username, existing_participiant.reconnect_hash])    
             DATABASE.session.commit()
             print(f"Участник (id: {existing_participiant.id}, student_id: {student_id}) успешно добавлен")
         except Exception as e:
@@ -84,12 +82,31 @@ def handle_join(data):
             print("Ошибка при добавлении участника:", e)
             emit("join_error", {"message": "Не удалось добавить участника"})
             return
+        emit("user_list_update", {"students": room.students}, room=str(room.id))
+        for ans in answers:
+            participant = SessionParticipant.query.get(ans.participant_id)
+            socketio.emit(
+                'student_answer',
+                {
+                    'hash': participant.reconnect_hash
+                },
+                room=f"{room.id}"
+            )
     elif existing_participiant.is_connected == False:
         existing_participiant.is_connected = True
         
-        students.append([username, existing_participiant.reconnect_hash])    
-        room.students = students
+        room.students.append([username, existing_participiant.reconnect_hash])    
         DATABASE.session.commit()
+        emit("user_list_update", {"students": room.students}, room=str(room.id))
+        for ans in answers:
+            participant = SessionParticipant.query.get(ans.participant_id)
+            socketio.emit(
+                'student_answer',
+                {
+                    'hash': participant.reconnect_hash
+                },
+                room=f"{room.id}"
+            )
     else:
         print("Участник есть в комнате")
     session['participant_id'] = existing_participiant.id
@@ -98,8 +115,6 @@ def handle_join(data):
 
 
     emit("joined_success", {"quiz_name": redeem.name, "hash": existing_participiant.reconnect_hash})
-    print("students:", students)
-    emit("user_list_update", {"students": students}, room=str(room.id))
 
     if room.index_question is not None and 0 <= room.index_question <= len(quiz.questions):
         current_question = quiz.questions[room.index_question]
@@ -125,7 +140,7 @@ def handle_join(data):
         })
         answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).count()
         answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
-        if answers != len(students):
+        if answers != len(room.students):
             if answer_status:
                 emit(
                     "current_question_info",
@@ -194,7 +209,7 @@ def handle_host_join(data):
     join_room(f"teacher_{room.host}")
 
     participants = SessionParticipant.query.filter_by(room_id=room.id, is_connected=True).all()
-    students = [[f"{p.student_profile.surname} {p.student_profile.name}", p.reconnect_hash] for p in participants]
+    students = room.students
 
     emit("user_list_update", {"students": students}, room=str(room.id))
 
@@ -583,7 +598,6 @@ def handle_end_question(data):
 
         user_answer_text = ans.get_answer(ans.answer) 
         user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
-        print(type(ans.answer), ans.answer, "AAAAAAA")
         if ans.is_correct:
             correct += 1
         else: 
@@ -644,6 +658,42 @@ def handle_end_question(data):
             "answered": count_answered["4"]
         }
     ]
+    
+    top_participiants = []
+    
+    for participant in room.session_participants:
+        total_correct = SessionAnswer.query.filter_by(
+            room_id=room.id, 
+            participant_id=participant.id, 
+            is_correct=True
+        ).count()
+        
+        top_participiants.append({
+            "participant": participant, 
+            "total": total_correct
+        })
+
+    top_participiants.sort(key=lambda x: x["total"], reverse=True)
+    
+    room.students = [] 
+
+    for item in top_participiants:
+        p = item["participant"]
+        username = f"{p.student_profile.surname} {p.student_profile.name}"
+        room.students.append([username, p.reconnect_hash])
+    
+    DATABASE.session.commit()
+    
+    emit("user_list_update", {"students": room.students}, room=str(room.id))
+    for ans in answers:
+        participant = SessionParticipant.query.get(ans.participant_id)
+        socketio.emit(
+            'student_answer',
+            {
+                'hash': participant.reconnect_hash
+            },
+            room=f"{room.id}"
+        )
     socketio.emit(
         "teacher_results",
         {

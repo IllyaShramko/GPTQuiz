@@ -75,7 +75,7 @@ h2 > a:hover {
     padding: calc(0.3906250005vw + 0.7211538465vh);
     background-color: #212121;
     border-radius: calc(0.3906250005vw + 0.7211538465vh);
-    width: calc(100% - 5%);
+    width: calc(100% - 20vw);
 }
 
 .quizes > div {
@@ -180,5 +180,7 @@ h4 {
     .line {
         width: 100vw;
     }
-    
+    .quizes {
+        width: 100%;
+    }
 }
