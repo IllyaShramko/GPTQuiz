@@ -194,7 +194,7 @@
                 }
     
                 socket.on("quiz_start_student", data => {
-                    startTimer(45)
+                    startTimer(60)
                     div.style.display = 'none';
                     if (answered) {
                         answered = !answered
@@ -369,7 +369,8 @@
                         });
                     }
                     document.getElementById("currentQ").textContent = data.current_question
-                    document.getElementById('notifyDiv').remove();
+                    document.getElementById('notifyDiv')?.remove();
+                    document.getElementById('notifyDiv')?.remove();
                 });
             
                 socket.on("current_question_info", data => {
@@ -420,7 +421,13 @@
                     notifyDiv.classList.add('notify-div')
                     notifyDiv.id = 'notifyDiv'
                     console.log(data)
-                    if (data.answer_id[0] === "Пропущений") {
+                    if (data.is_correct === "wait") {
+                        if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
+                            document.getElementById("WWblur").classList.remove('hideblur');
+                        }
+                        blockPanel()
+                    }
+                    else if (data.answer_id[0] === "Пропущений") {
                         if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
                             document.getElementById("WWblur").classList.remove('hideblur');
                         }
