@@ -9,8 +9,8 @@ from classroom_app import Student
 import json, flask, time
 from flask import request, session
 
-def create_student_report(participant_id, room_id):
-    answers = SessionAnswer.query.filter_by(room_id=room_id, participant_id=participant_id).all()
+def create_student_report(participant, room_id):
+    answers = SessionAnswer.query.filter_by(room_id=room_id, participant_id=participant.id).all()
 
     total = len(answers)
     correct = sum(1 for a in answers if a.is_correct)
@@ -23,7 +23,7 @@ def create_student_report(participant_id, room_id):
     grade = percentage / 100 * 12 // 1
 
     report = StudentReport(
-        participant_id=participant_id,
+        participant_id=participant.id,
         room_id=room_id,
         total_questions=total,
         correct_answers=correct,
@@ -32,7 +32,7 @@ def create_student_report(participant_id, room_id):
         max_score=max_score,
         percentage=percentage,
         grade=grade,
-        student_id=flask_login.current_user.id
+        student_id=participant.student_profile.id
     )
 
     DATABASE.session.add(report)
@@ -60,7 +60,6 @@ def handle_join(data):
     if not room:
         emit("join_error", {"message": "Комната не найдена"})
         return
-    
     username = flask_login.current_user.surname + " " + flask_login.current_user.name
     
     existing_participiant = SessionParticipant.query.filter_by(student_id=student_id, room_id=room.id).first()
@@ -108,6 +107,17 @@ def handle_join(data):
     emit("user_list_update", {"students": room.students}, room=str(room.id))
 
     if room.index_question is not None and 0 <= room.index_question <= len(quiz.questions):
+        if room.index_question + 1 == len(quiz.questions):
+            result = StudentReport.query.filter_by(participant_id = existing_participiant.id, room_id = room.id).first()
+            if not result:
+                emit("redirect_to", {
+                    "url": "/"
+                })
+                return
+            emit("redirect_to", {
+                "url": f"/student/report/{result.hash_code}"
+            })
+            return
         current_question = quiz.questions[room.index_question]
         variants = [
             {"id": 1, "text": current_question.variant_1},
@@ -200,10 +210,16 @@ def handle_host_join(data):
 
     room = Room.query.get(redeem.room_id)
     if not room:
+        emit("redirect_to", {
+            "url": "/"
+        })
         return
 
     if not flask_login.current_user.is_authenticated or flask_login.current_user.id != room.host:
         if flask.session.get("user_role") != "teacher":
+            emit("redirect_to", {
+                "url": "/"
+            })
             return
         
     join_room(str(room.id))
@@ -218,6 +234,12 @@ def handle_host_join(data):
     quiz = Quiz.query.get(room.quiz) if room and room.quiz else None
 
     if room.index_question is not None and quiz and 0 <= room.index_question < len(quiz.questions):
+        
+        if room.index_question + 1 == len(quiz.questions):
+            emit("redirect_to", {
+                "url": f"/report/{room.id}"
+            })
+            return
         current_question = quiz.questions[room.index_question]
 
         variants = [
@@ -386,7 +408,7 @@ def handle_start(data):
     emit("quiz_start_student", question_data, room=room_id)
     emit("quiz_start_teacher", question_data, room=room_id)
 
-    duration = 45
+    duration = 60
     end_time = int(time.time() + duration)
     emit("question_timer", {"end_time": end_time, "duration": duration}, room=room_id)
 
@@ -507,7 +529,7 @@ def handle_next(data):
             "variants": variants,
             "correct_answer": hashed_correct,
             "image": now_question.image,
-            "current_question": room.index_question
+            "current_question": room.index_question + 1
         }
 
         emit("quiz_start_student", question_data, room=room_id)
@@ -528,7 +550,8 @@ def handle_quiz_end_msg(data):
         return
     room = Room.query.get(redeem.room_id)
     for participiant in room.session_participants:
-        report_hash = create_student_report(participant_id= participiant.id, room_id=room.id)
+        print(participiant.student_profile.id)
+        report_hash = create_student_report(participant= participiant, room_id=room.id)
         emit(
             "end_quiz",
             {"hash_code": report_hash},
@@ -546,7 +569,7 @@ def handle_show_quiz_results(data):
     room = Room.query.get(redeem.room_id)
     if not room:
         return
-    time.sleep(1)
+    time.sleep(2)
     emit("quiz_results", {"url": f"/report/{room.id}"})
 
 @socketio.on("end_question")

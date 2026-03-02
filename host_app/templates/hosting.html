@@ -115,7 +115,11 @@
             buttonStart.addEventListener("click", () => {
                 socket.emit("quiz_start", {code: code})
             })
-        
+            
+            socket.on("redirect_to", data => {
+                window.location.replace(`${window.location.origin}${data.url}`)
+            })
+
             socket.on("user_list_update", (data) => {
                 const usersList = document.getElementById("users");
                 const usersText = document.getElementById("usersText");

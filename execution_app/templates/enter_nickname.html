@@ -98,6 +98,10 @@
                 socket.on("join_error", data => {
                     alert(data.message);
                 });
+
+                socket.on("redirect_to", data => {
+                    window.location.replace(`${window.location.origin}${data.url}`)
+                })
                 
                 socket.on("joined_success", data => {
                     document.getElementById("lobby").style.display = "flex";
@@ -427,7 +431,7 @@
                         }
                         blockPanel()
                     }
-                    else if (data.answer_id[0] === "Пропущений") {
+                    else if (data.answer_id === "Пропущений...") {
                         if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
                             document.getElementById("WWblur").classList.remove('hideblur');
                         }

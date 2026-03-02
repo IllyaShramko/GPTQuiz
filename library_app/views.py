@@ -79,6 +79,7 @@ def render_create_quiz():
 
         else:
             type_question = flask.request.form['type_question']
+            
             if type_question == 'one_answer':
                 question = Question(
                     name = flask.request.form['question'],
@@ -92,6 +93,22 @@ def render_create_quiz():
 
                     quiz_id = flask.session.get('quizId')   
                 )
+                try:
+                    DATABASE.session.add(question)
+                    quiz.count_questions += 1
+                    DATABASE.session.commit()
+                    return flask.redirect(flask.url_for('/create-quiz/'))
+                except:
+                    print(Exception)
+            elif type_question == 'enter_answer':
+                question = Question(
+                    name = flask.request.form['question'],
+                    type = 'enter answer',
+                    variant_1 = flask.request.form['answer1'],
+                    correct_answer = flask.request.form['answer1'],
+                    quiz_id = flask.session.get('quizId')
+                )
+                
                 q_image = flask.request.files['image']
                 if q_image:
                     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -109,24 +126,8 @@ def render_create_quiz():
                         counter += 1
                     final_filename = os.path.basename(save_path)
                     q_image.save(save_path)
-                    print("✅ Saved:", save_path)
-
                     question.image = f"questions/{final_filename}"
-                try:
-                    DATABASE.session.add(question)
-                    quiz.count_questions += 1
-                    DATABASE.session.commit()
-                    return flask.redirect(flask.url_for('/create-quiz/'))
-                except:
-                    print(Exception)
-            elif type_question == 'enter_answer':
-                question = Question(
-                    name = flask.request.form['question'],
-                    type = 'enter answer',
-                    variant_1 = flask.request.form['answer1'],
-                    correct_answer = flask.request.form['answer1'],
-                    quiz_id = flask.session.get('quizId')
-                )
+                
                 try:
                     DATABASE.session.add(question)
                     quiz.count_questions += 1

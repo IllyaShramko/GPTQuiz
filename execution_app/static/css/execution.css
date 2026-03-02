@@ -200,17 +200,16 @@ main {
 #question {
     position: relative;
     display: flex;
-
     width: 100%;
     height: 50%;
-    flex-direction: row;
+    flex-direction: row-reverse;
     align-items: center;
     justify-content: center;
     gap: 15px;
     padding: 20px;
     color: white;
     overflow-y: auto;
-
+    
 }
 #question h2 {
     font-family: "Inter";
@@ -218,6 +217,8 @@ main {
     font-size: 28px;
     text-align: center;
     width: 70%;
+    -webkit-user-select: none;
+    user-select: none;
 }
 #question img.question-image {
     max-width: 25%;
@@ -243,6 +244,8 @@ main {
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
 }
 #answerBtn1 {
     background-color: #2C70AD;
@@ -271,6 +274,8 @@ main {
     border-radius: 10px;
     cursor: pointer;
     text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
 }
 #answers input[type="checkbox"]:checked {
     opacity: 1;
@@ -498,7 +503,7 @@ main {
 }
 #charInputsContainer {
     display: flex;
-    width: 95%;
+    width: 100%;
     height: 90%;
     padding: 10px;
     border-radius: 10px;
@@ -518,6 +523,8 @@ main {
     }
     #charInputsContainer {
         background-color: #323232;
+        padding: 40px 5px;
+        height: fit-content;
     }
     #lobby {
         width: 95%;
@@ -560,6 +567,8 @@ main {
         flex-direction: column;
         height: 40vh;
         margin-bottom: 5vh;
+        align-items: center;
+        justify-content: center;
     }
     #answers button, #answers label {
         height: 100%;

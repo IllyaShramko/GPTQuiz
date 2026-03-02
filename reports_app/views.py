@@ -38,8 +38,10 @@ def render_archived_reports():
 
 def render_detail_report(room_id):
     room = Room.query.get_or_404(room_id)
+    if not flask_login.current_user.is_authenticated:
+        return flask.redirect("/")
     if room.host != flask_login.current_user.id:
-        return {"error": "forbidden"}, 403
+        return flask.redirect("/")
     report_data = room.get_report()
     return flask.render_template("detail_report.html", report=report_data, room=room, username = flask_login.current_user.login)
 
@@ -70,11 +72,31 @@ def get_quiz_questions_for_report(room_id):
     if room.host != flask_login.current_user.id:
         return {"error": "forbidden"}, 403
 
-    quiz = Quiz.query.get(room.quiz)
+    quiz = room.roomsQuiz
     if not quiz:
         return {"error": "quiz not found"}, 404
 
-    return flask.jsonify([
+    answers = SessionAnswer.query.filter_by(room_id=room_id).all()
+
+    stats_map = {}
+
+    for ans in answers:
+        idx = ans.question_index
+        if idx is None:
+            continue
+            
+        if idx not in stats_map:
+            stats_map[idx] = {'total': 0, 'correct': 0, "incorrect": 0, "skipped": 0}
+        
+        stats_map[idx]['total'] += 1
+        if ans.is_correct:
+            stats_map[idx]['correct'] += 1
+        elif ans.answer == "Пропущений...":
+            stats_map[idx]['skipped'] += 1
+        else:
+            stats_map[idx]["incorrect"] += 1
+
+    result = [
         {
             "id": q.id,
             "question_text": q.name,
@@ -88,10 +110,27 @@ def get_quiz_questions_for_report(room_id):
                     q.variant_5
                 ] if v
             ],
-            "image": q.image
+            "image": q.image,
+            "percentage": None
         }
         for q in quiz.questions
-    ])
+    ]
+    for idx in sorted(stats_map.keys()):
+        total = stats_map[idx]['total']
+        correct = stats_map[idx]['correct']
+        incorrect = stats_map[idx]["incorrect"]
+        skipped = stats_map[idx]["skipped"]
+        
+        percantage_correct = int((correct / total) * 100) if total > 0 else 0
+        percantage_incorrect = int((incorrect / total) * 100) if total > 0 else 0
+        percantage_skipped = int((skipped / total) * 100) if total > 0 else 0
+        
+        result[idx]["percentage"] = {
+            "correct": percantage_correct,
+            "incorrect": percantage_incorrect,
+            "skipped": percantage_skipped
+        }
+    return flask.jsonify(result)
 
 def get_report_answers(room_id):
     answers = SessionAnswer.query.filter_by(room_id=room_id).all()
@@ -115,7 +154,6 @@ def get_report_answers(room_id):
     for idx in sorted(stats_map.keys()):
         total = stats_map[idx]['total']
         correct = stats_map[idx]['correct']
-        print("IDX:", idx,"\nTOTAL:", total, '\nCORRECT:', correct)
         percent = int((correct / total) * 100) if total > 0 else 0
         
         result.append({

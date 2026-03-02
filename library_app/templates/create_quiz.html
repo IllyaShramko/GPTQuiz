@@ -112,11 +112,16 @@
                         <button name="button" class = 'button-save' type="submit" disabled>Створити та зберегти</button>
                     </form>
                 {% elif question == "Enter answer" %}
-                    <form method="post" class = 'main-create-block'>
+                    <form method="post" class = 'main-create-block' enctype="multipart/form-data">
                         <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
                         <h1>Створення запитання з заповненням бланка</h1>
+                        
                         <div class="all-block">
                             <div class="create-block">
+                                <label for="imageQuestion" class="label-for-image">
+                                    <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
+                                </label>
+                                <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
                                <textarea name = 'question' class = 'input-question' placeholder="Введіть запитання..."></textarea>
                             </div>
                             <div class="enter-answer-div">

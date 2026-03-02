@@ -19,6 +19,11 @@ function renderQuestions(questions) {
             <div class="questions-block">
                 ${variantsHTML}
             </div>
+            <div class="progress-bar">
+                ${q.percentage.correct !== 0  ? `<div class="progress correct-bar" style="width: ${q.percentage.correct}%"></div>` : ""}
+                ${q.percentage.incorrect !== 0  ? `<div class="progress incorrect-bar" style="width: ${q.percentage.incorrect}%"></div>` : ""}
+                ${q.percentage.skipped !== 0 ? `<div class="progress skipped-bar" style="width: ${q.percentage.skipped}%"></div>` : ""}
+            </div>
         `;
 
         container.appendChild(block);
