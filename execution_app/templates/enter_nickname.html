@@ -86,9 +86,24 @@
                         }
                     }, 1000);
                 }
+
+                function handleKeyPress(event) {
+                    const key = event.key;
+                    if (['1', '2', '3', '4'].includes(key)) {
+                        const btnIndex = parseInt(key); 
+                        const btn = document.getElementById(`answerBtn${btnIndex}`);
+                        
+                        if (btn) {
+                            btn.click(); 
+                        }
+                    }
+                }
+
+                function stopKeyboardTracking() {
+                    document.removeEventListener('keydown', handleKeyPress);
+                }
                 
 
-                console.log("Reconnect Hash:", student_id);
                 socket.emit("join_room", { code, quizId, student_id });
                 
                 socket.on("auto_join_error", data => {
@@ -230,7 +245,15 @@
                             label.setAttribute('data-value', variant.id);
                             label.appendChild(checkbox);
                             label.append(`${variant.text}`);
+                            const numberCount = document.createElement("div")
+                            const numberCountText = document.createElement("p")
+                            numberCount.classList.add("numberContainer")
+                            numberCountText.classList.add("numberCount")
+                            numberCountText.textContent = `${index + 1}`
+                            numberCount.appendChild(numberCountText)
+                            label.appendChild(numberCount)
                             answersDiv.appendChild(label);
+                            document.addEventListener('keydown', handleKeyPress);
                         });
     
                         const sendBtn = document.createElement('button');
@@ -242,6 +265,7 @@
                                 alert("Выбери хотя бы один вариант!");
                                 return;
                             }
+                            stopKeyboardTracking(); 
                             uploadAnswer(checked, data.id, checked);
                         };
                         generalDiv.appendChild(sendBtn);
@@ -337,8 +361,19 @@
                             btn.id = `answerBtn${index + 1}`
                             btn.value = variant.id
                             btn.classList.add("answer-button")
-                            btn.onclick = () => uploadAnswer(btn.value, data.id, btn.value)
+                            btn.onclick = () => {
+                                stopKeyboardTracking(); 
+                                uploadAnswer(btn.value, data.id, btn.value);
+                            };
+                            const numberCount = document.createElement("div")
+                            const numberCountText = document.createElement("p")
+                            numberCount.classList.add("numberContainer")
+                            numberCountText.classList.add("numberCount")
+                            numberCountText.textContent = `${index + 1}`
+                            numberCount.appendChild(numberCountText)
+                            btn.appendChild(numberCount)
                             answersDiv.appendChild(btn) 
+                            document.addEventListener('keydown', handleKeyPress);
                         })
                     }
                     if (data.image) {
@@ -425,13 +460,14 @@
                     notifyDiv.classList.add('notify-div')
                     notifyDiv.id = 'notifyDiv'
                     console.log(data)
+                    console.log()
                     if (data.is_correct === "wait") {
                         if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
                             document.getElementById("WWblur").classList.remove('hideblur');
                         }
                         blockPanel()
                     }
-                    else if (data.answer_id === "Пропущений...") {
+                    else if (data.answer_id === "Пропущений..." || data.answer_id[0] === "Пропущений") {
                         if (document.getElementById("WWblur").classList.contains('hideblur') === true) {
                             document.getElementById("WWblur").classList.remove('hideblur');
                         }

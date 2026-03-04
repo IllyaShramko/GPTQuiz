@@ -90,3 +90,6 @@ body{
     display: inline-block;
     width: 294px;
 }
+.error {
+    color: #ff431e !important;
+}

@@ -303,7 +303,7 @@ header img {
     font-weight: 400;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
     #empty {
         display: none;
     }
@@ -351,6 +351,7 @@ header img {
     }
     .corr-wrong {
         height: 15px;
+        gap: 4px;
     }
     .names h2 {
         font-size: 20px;

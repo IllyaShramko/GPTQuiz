@@ -74,7 +74,7 @@ main {
     align-items: center;
 }
 .error-text {
-    color: #B62D11 !important;
+    color: #ff431e !important;
     font-size: 16px !important;
 }
 .input_code{
@@ -235,6 +235,7 @@ main {
     height: 50%;
 }
 #answers button {
+    position: relative;
     flex: 1;
     height: 100%;
     font-family: "Inter";
@@ -512,6 +513,17 @@ main {
     justify-content: center;
     align-content: center;
 }
+.numberContainer {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -521,10 +533,12 @@ main {
         background: none;
         border-radius: 15px;
     }
+    .numberContainer {
+        display: none;
+    }
     #charInputsContainer {
         background-color: #323232;
         padding: 40px 5px;
-        height: fit-content;
     }
     #lobby {
         width: 95%;

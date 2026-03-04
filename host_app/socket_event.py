@@ -103,7 +103,6 @@ def handle_join(data):
 
 
     emit("joined_success", {"quiz_name": redeem.name, "hash": existing_participiant.reconnect_hash})
-    print(room.students)
     emit("user_list_update", {"students": room.students}, room=str(room.id))
 
     if room.index_question is not None and 0 <= room.index_question <= len(quiz.questions):
@@ -187,7 +186,6 @@ def handle_join(data):
 def handle_remove_student(data):
     code_enter = data.get("code")
     student = data.get("student")
-    print("Видалено:", student)
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     if not redeem:
         return
@@ -402,7 +400,7 @@ def handle_start(data):
         "variants": variants,
         "correct_answer": hashed_correct,
         "image": now_question.image,
-        "current_question": room.index_question
+        "current_question": room.index_question + 1
     }
 
     emit("quiz_start_student", question_data, room=room_id)
@@ -420,12 +418,10 @@ def handle_answer(data):
     code_enter = data.get("code")
     my_hash = data.get("my_hash")   
     if not question_id:
-        print("question_id is None or missing in data")
         return
 
     question = Question.query.get(question_id)
     if not question:
-        print(f"No question found with id: {question_id}")
         return
     participiant = SessionParticipant.query.get(session.get("participant_id"))
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
@@ -465,10 +461,8 @@ def handle_answer(data):
     try:
         db.session.add(session_answer)
         db.session.commit()
-        print("Result updated successfully.")
     except Exception as e:
         db.session.rollback()
-        print("Error occurred while updating result:", e)
 
     if redeem and room:
         room.answered_students = (room.answered_students or 0) + 1
@@ -550,7 +544,6 @@ def handle_quiz_end_msg(data):
         return
     room = Room.query.get(redeem.room_id)
     for participiant in room.session_participants:
-        print(participiant.student_profile.id)
         report_hash = create_student_report(participant= participiant, room_id=room.id)
         emit(
             "end_quiz",

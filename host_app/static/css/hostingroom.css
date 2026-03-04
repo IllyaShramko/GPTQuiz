@@ -68,6 +68,7 @@ body {
     gap: 10px;
 }
 .answerv {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -76,7 +77,24 @@ body {
     background-color: #454545;
     padding: 15px;
     border-radius: 5px;
-    font-size: 18px;
+}
+.answervText {
+    font-size: 20px;
+    text-align: center;
+}
+.number {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background-color: #5e5e5e;
+}
+.numberText {
+    font-size: 24px;
     text-align: center;
 }
 #room {
@@ -522,4 +540,10 @@ li:hover .check_mark {
     font-size: 14px;
     font-weight: 600;
     z-index: 20;
+}
+.numberQuestion {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 18px;
 }

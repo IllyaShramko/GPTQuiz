@@ -60,5 +60,12 @@ def render_host_app(quizid):
 
 
 def render_hosting_quiz(code):
+    codeBD = RedeemCode.query.filter_by(code_enter = code).first()
+    if not codeBD:
+        return flask.redirect("/")
     
-    return flask.render_template("hosting.html", code=code)
+    return flask.render_template(
+        "hosting.html",
+        code= code,
+        quiz= codeBD.quiz
+    )

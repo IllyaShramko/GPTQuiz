@@ -364,28 +364,41 @@
                 document.querySelector(".bottom-box").style.display = "flex";
                 const container = document.getElementById("resultsContainer");
                 container.innerHTML = "";
-                if (nextBtn) {
-                    nextBtn.remove();
-                }
+                nextBtn?.remove();
                 div.innerHTML = '';
                 
-                try {
-                    document.getElementById("room").remove();
-                } catch {}
+                document.getElementById("room")?.remove();
 
                 const questionDiv = document.createElement('div');
                 questionDiv.id = 'question';
                 const answersDiv = document.createElement("div")
                 answersDiv.id = 'answerDiv'
                 if (data.image) {
-                    questionDiv.innerHTML = `<img id="questionImage" src="/library/images/${data.image}" class="q-image"><h2>${data.name}</h2>`;
+                    questionDiv.innerHTML = `
+                        <img id="questionImage" src="/library/images/${data.image}" class="q-image">
+                        <h2>${data.name}</h2>
+                    `;
                 }
                 else {
-                    questionDiv.innerHTML = `<h2>${data.name}</h2>`;
+                    questionDiv.innerHTML = `
+                        <h2>${data.name}</h2>
+                    `;
                 }
+                questionDiv.innerHTML += `
+                    <p class="numberQuestion">${data.current_question} / {{quiz.questions|length}}</p>
+                `
                 if (data.type != "enter answer") {
-                    data.variants.forEach(variant => {
-                        answersDiv.innerHTML += `<p class="answerv">${variant.text}</p>`;
+                    data.variants.forEach((variant, index) => {
+                        answersDiv.innerHTML += `
+                            <div class="answerv">
+                                <div class="number">
+                                    <p class="numberText">${index + 1}</p>
+                                </div>
+                                <p class="answervText">
+                                    ${variant.text}
+                                </p>
+                            </div>
+                        `;
                     })
                 }
                 div.appendChild(questionDiv);

@@ -5,6 +5,7 @@ from user_app.models import User
 from classroom_app.models import Student
 
 def render_login_student():
+    error = None
     if flask.request.method == "POST":
         for student in Student.query.filter_by(login = flask.request.form['login']):
             if student.password == flask.request.form['password']:
@@ -12,7 +13,11 @@ def render_login_student():
                 flask.session['user_role'] = 'student'
                 redirect_url = flask.request.args.get("redirect_to")
                 return flask.redirect(redirect_url)
-    return flask.render_template(template_name_or_list= 'login_student.html')
+        error = "USER_DOESNT_EXISTS"
+    return flask.render_template(
+        template_name_or_list= 'login_student.html',
+        error = error
+    )
 
 def render_enter_code():
     code = flask.request.args.get("code")
