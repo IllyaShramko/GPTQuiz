@@ -1,6 +1,6 @@
 import flask, flask_login 
 from library_app.models import RedeemCode, Quiz, Question, SessionAnswer, SessionParticipant, StudentReport, Room
-from project.settings import DATABASE
+from project import DATABASE
 from user_app.models import User
 from classroom_app.models import Student
 

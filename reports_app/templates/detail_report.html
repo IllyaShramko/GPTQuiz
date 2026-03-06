@@ -1,5 +1,9 @@
 {% extends 'base_admin.html' %}
 
+{% block title %}
+Звіт №{{ room.id }}
+{% endblock %}
+
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('reports_app.static', filename='css/detail_report.css') }}">
 {% endblock %}
@@ -50,6 +54,7 @@
             </div>
             <div class="sort-data">
                 <p>Ім'я</p>
+                <div></div>
                 <div class="table-headers">
                     <div class="table-head">
                         <p>Оцінка</p>
@@ -58,7 +63,6 @@
                         <p>Точність</p>
                     </div>
                 </div>
-
             </div>
             <div id="studentsContainer">
                 {% for student in report %}
@@ -71,8 +75,12 @@
                                 {% endfor %}
                             </div>
                             <div class="data">
-                                <h5 class="grade">{{ student.grade }}</h5>
-                                <h5 class="percent">{{ student.percent }}%</h5>
+                                <div>
+                                    <h5 class="grade">{{ student.grade }}</h5>
+                                </div>
+                                <div>
+                                    <h5 class="percent">{{ student.percent }}%</h5>
+                                </div>
                             </div>
                         </div>
                     {% endif %}
@@ -81,8 +89,8 @@
         </div>
     </div>
 </div>
-<div id="blurrrr" ></div>
-<div id="studentModal" class="modal" style="display: none;">
+<div id="blurrrr"></div>
+<div id="studentModal" class="modal">
     <div class="what-student">
         <h3>Результати <b id="nicknameStudent"></b></h3>
     </div>

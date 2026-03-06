@@ -105,6 +105,9 @@ textarea:focus, input:focus {
     border: solid white calc(0.0260416667vw + 0.0480769231vh);
     border-radius: calc(0.260416667vw + 0.480769231vh);
 }
+.enter-code::after {
+    content: "Введіть код";
+}
 
 .login {
     height: calc(1.1718750015vw + 2.1634615395vh);
@@ -130,37 +133,44 @@ textarea:focus, input:focus {
 @media screen and (max-width: 600px) {
 
     .without-auth {
-        height: 8vh;
-        padding-left: 15px;
-        padding-right: 15px;
+        height: 70px;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
         justify-content: space-between;
         gap: 10px;
         box-shadow: none;
     }
 
+    .main-info {
+        height: auto;
+    }
+
     .logo-title img {
-        width: 34px;
-        height: 34px;
+        width: 50px;
+        height: 50px;
     }
 
     .logo-title h1 {
-        font-size: 18px;
+        font-size: 22px;
     }
 
     .links {
-        gap: 8px;
+        gap: 10px;
     }
 
     .links a {
-        font-size: 13px;
+        font-size: 18px;
     }
 
     .enter-code,
-    .login {
-        height: 32px;
-        padding: 5px 10px;
-        font-size: 13px;
+    .login{
+        height: auto;
+        padding: 7px 15px;
+        font-size: 16px;
         border-radius: 6px;
+    }
+    .enter-code::after {
+        content: "Код";
     }
     .signin {
         display: none;

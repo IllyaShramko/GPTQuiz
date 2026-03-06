@@ -99,7 +99,7 @@ main {
 }
 
 .button_code{
-    width: 352px;
+    width: 100%;
     height: 46px;
     text-align: center;
     font-family: "Inter";
@@ -108,8 +108,8 @@ main {
     background-color: #22CE00;
     color: #262626;
     border: none;
-    border-radius: 32px;
-
+    box-sizing: border-box;
+    border-radius: 15px;
 }
 
 .button_span{

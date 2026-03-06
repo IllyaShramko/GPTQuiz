@@ -9,13 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function openModal() {
         modal.classList.add("show");
         modalBlur.classList.add("show");
-        modal.style.display = "flex";
     }
 
     function hideModal() {
         modal.classList.remove("show");
         modalBlur.classList.remove("show");
-        modal.style.display = "none"
     }
 
     closeModal.addEventListener("click", hideModal);

@@ -146,6 +146,9 @@ def render_login():
                 if user.password == flask.request.form['password']:
                     flask_login.login_user(user)
                     flask.session['user_role'] = 'teacher'
+                    redirect_to = flask.request.args.get("redirect_to")
+                    if redirect_to:
+                        return flask.redirect(redirect_to)
                     return flask.redirect('/admin/')
             error_msg = "Неправильний логін або пароль"
         elif flask.request.form["button"] == "student":
@@ -153,6 +156,9 @@ def render_login():
                 if student.password == flask.request.form['password']:
                     flask_login.login_user(student)
                     flask.session['user_role'] = 'student'
+                    redirect_to = flask.request.args.get("redirect_to")
+                    if redirect_to:
+                        return flask.redirect(redirect_to)
                     return flask.redirect('/student/')
             error_msg = "Неправильний логін або пароль"
             selected = False

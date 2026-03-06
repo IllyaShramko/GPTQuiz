@@ -1,7 +1,7 @@
 from library_app.models import Quiz, RedeemCode, Room, Question
 import flask, random, flask_login
-
-from project.settings import DATABASE
+from project import DATABASE
+from project.decorators import login_required, teacher_required
 
 def generate_code():
     num1= random.randint(0,9)
@@ -14,9 +14,9 @@ def generate_code():
     code= f"{num1}{num2}{num3}{num4}{num5}{num6}"
     return int(code)
 
+@login_required
+@teacher_required
 def render_host_app(quizid):
-    if not flask_login.current_user.is_authenticated:
-        return flask.redirect(flask.url_for("user_app.render_login"))
     quiz = Quiz.query.get(ident=quizid)
     code = 000000
     if flask.request.method == "POST":
@@ -58,10 +58,13 @@ def render_host_app(quizid):
         user = flask_login.current_user
         )
 
-
+@login_required
+@teacher_required
 def render_hosting_quiz(code):
     codeBD = RedeemCode.query.filter_by(code_enter = code).first()
     if not codeBD:
+        return flask.redirect("/")
+    if flask_login.current_user.id != codeBD.hosted_by:
         return flask.redirect("/")
     
     return flask.render_template(

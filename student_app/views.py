@@ -1,14 +1,63 @@
 import flask, flask_login, datetime
 from classroom_app import Student
 from library_app.models import Question, SessionAnswer, SessionParticipant, StudentReport
+from project.decorators import login_required, student_required
 from user_app.models import User
 
+@login_required
+@student_required
 def render_student_page():
-
     return flask.render_template(
         template_name_or_list= 'student_home.html',
         current_user = flask_login.current_user,
         results = flask_login.current_user.my_reports
+    )
+
+def report_view(hash_code):
+    report = StudentReport.query.filter_by(hash_code=hash_code).first_or_404()
+    participant = SessionParticipant.query.get(report.participant_id)
+    room = report.room
+    questions = []
+    host = User.query.get(room.host)
+    name_teacher = f'{host.surname} {host.name}'
+    skipped = 0
+    for question_idx in range(room.index_question + 1):
+        answer = SessionAnswer.query.filter_by(room_id=room.id, participant_id=participant.id, question_index = question_idx).first()
+        q = room.roomsQuiz.questions[question_idx]
+        if not answer:
+            questions.append({
+                "id": q.id,
+                "text": q.name,
+                "type": q.type,
+                "your_answer": "Пропущений...",
+                "correct_answer": "Правильної відповідді не буде відображено. Ви під'єднались пізніше ніж воно було пройдено",
+                "is_correct": False,
+                "is_skipped": True
+            })
+            skipped += 1
+        else:
+            if answer.answer == "Пропущений..." or answer.answer == "Пропущений":
+                skipped += 1
+            questions.append({
+                "id": q.id,
+                "text": q.name,
+                "type": q.type,
+                "your_answer": answer.get_answer(answer.answer),
+                "correct_answer": answer.right_answers(),
+                "is_correct": answer.is_correct,
+                "is_skipped": False
+            })
+    roomsquiz = room.roomsQuiz    
+
+    return flask.render_template(
+        "student_report.html",
+        name_teacher=name_teacher,
+        report=report,
+        participant=participant,
+        quiz=roomsquiz,
+        questions=questions,
+        ignore_links=True,
+        skipped_answers= skipped
     )
 
 def get_student_stats(student_id):
@@ -39,42 +88,3 @@ def get_student_stats(student_id):
         data["pie_data"][g_label] = data["pie_data"].get(g_label, 0) + 1
 
     return flask.jsonify(data)
-
-def report_view(hash_code):
-    report = StudentReport.query.filter_by(hash_code=hash_code).first_or_404()
-    participant = SessionParticipant.query.get(report.participant_id)
-    room = report.room
-    answers = SessionAnswer.query.filter_by(room_id=room.id, participant_id=participant.id).all()
-    questions = []
-    host = User.query.get(room.host)
-    name_teacher = f'{host.surname} {host.name}'
-    skipped = 0
-    for a in answers:
-        if a.answer == "Пропущений..." or a.answer == "Пропущений":
-            skipped += 1
-        q = Question.query.get(a.question)
-        questions.append({
-            "id": q.id,
-            "text": q.name,
-            "type": q.type,
-            "your_answer": a.get_answer(a.answer),
-            "correct_answer": a.right_answers(),
-            "is_correct": a.is_correct,
-        })
-    roomsquiz = room.roomsQuiz
-    
-    print(name_teacher)
-
-    
-
-    return flask.render_template(
-        "student_report.html",
-        name_teacher=name_teacher,
-        report=report,
-        participant=participant,
-        quiz=roomsquiz,
-        questions=questions,
-        ignore_links=True,
-        answers=answers,
-        skipped_answers= skipped
-    )

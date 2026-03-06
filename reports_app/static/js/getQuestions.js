@@ -24,6 +24,20 @@ function renderQuestions(questions) {
                 ${q.percentage.incorrect !== 0  ? `<div class="progress incorrect-bar" style="width: ${q.percentage.incorrect}%"></div>` : ""}
                 ${q.percentage.skipped !== 0 ? `<div class="progress skipped-bar" style="width: ${q.percentage.skipped}%"></div>` : ""}
             </div>
+            <div class="numbers">
+                <div class="number-container">
+                    <span>${q.numbers.correct}</span>
+                    <p>правильних</p>
+                </div>
+                <div class="number-container">
+                    <span>${q.numbers.incorrect}</span>
+                    <p>неправильних</p>
+                </div>
+                <div class="number-container">
+                    <span>${q.numbers.skipped}</span>
+                    <p>пропущених</p>
+                </div>
+            </div>
         `;
 
         container.appendChild(block);

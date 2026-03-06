@@ -303,7 +303,7 @@ header img {
     font-weight: 400;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 860px) {
     #empty {
         display: none;
     }

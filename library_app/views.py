@@ -1,41 +1,37 @@
+import time
+
 import flask, flask_login, os
+from project.decorators import login_required, teacher_required
 from .models import Quiz, Question
-from project.settings import DATABASE
+from project import DATABASE
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
+
+@login_required
+@teacher_required
 def render_library():
-    
     return flask.render_template(
-            'library.html',
-            username = flask_login.current_user.login,
-            created_quizes = Quiz.query.filter_by(author_id = flask_login.current_user.id, is_draft = False ).all(),
-        )
+        'library.html',
+        username = flask_login.current_user.login,
+        created_quizes = Quiz.query.filter_by(author_id = flask_login.current_user.id, is_draft = False ).all(),
+        main_page = True
+    )
 
 def get_draft():
     next_id = DATABASE.session.query(func.max(Quiz.id)).scalar()
     next_id = (next_id or 0) + 1
+    time.sleep(0.5)
     if flask.session.get('quizId'):
         return flask.redirect("/create-quiz/")
     flask.session['quizId'] = next_id
-    print(flask.session.get('quizId'))
     return flask.redirect("/create-quiz/")
 
-def get_redaction_quiz():
-    id = flask.request.form["redact"]
-    quiz = Quiz.query.get(id)
-    if not quiz:
-        return flask.redirect("/library/")
-    if quiz.author_id != flask_login.current_user.id:
-        return flask.redirect("/library/")
-    flask.session['quizId'] = id
-    return flask.redirect("/create-quiz/")
-
-
+@login_required
+@teacher_required
 def render_create_quiz():
     questions = []
     question = None
     create_question = False
-    print(flask.session.get('quizId'))
     if flask.request.method == 'POST':
         quiz = Quiz.query.get(flask.session.get('quizId'))
         if flask.request.form['button'] == 'one_answer':
@@ -65,13 +61,11 @@ def render_create_quiz():
                         counter += 1
                     
                     final_filename = os.path.basename(save_path)
-                    print(os.path.abspath(save_path), final_filename, quiz_image)
                     quiz_image.save(os.path.abspath(save_path))
                     quiz.image = f"/images/quizes/{final_filename}"
                 else:
                     quiz.image = f"/images/quizes/default.svg"
 
-                print(flask.request.form['Name-Quiz'])
                 DATABASE.session.commit()
                 response = flask.make_response(flask.redirect("/library/"))
                 flask.session.pop('quizId', None)
@@ -192,7 +186,6 @@ def render_create_quiz():
             except:
                 print(Exception)
     
-
     return flask.render_template(
         'create_quiz.html',
         username = flask_login.current_user.login,
@@ -202,10 +195,6 @@ def render_create_quiz():
         create_question = create_question
     )
             
-
-def render_enter_answer():
-    return flask.render_template(template_name_or_list='enter_answer.html')
-
 def search_in_library():
     data = flask.request.get_json()
     search_text = data.get('search', '')
@@ -218,5 +207,4 @@ def search_in_library():
         quizes = quizes.filter(Quiz.name.ilike(f'%{search_text}%'))
 
     quizes = quizes.all()
-    print(f"Search text: {search_text}, Found quizes: {[q.image for q in quizes]}")
     return flask.jsonify([q.to_dict() for q in quizes])

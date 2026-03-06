@@ -136,17 +136,27 @@ class Room(DATABASE.Model):
         report = []
 
         for p in participants:
-            answers = SessionAnswer.query.filter_by(room_id=self.id, participant_id=p.id).all()
+            if not p.is_connected:
+                continue
             student_report = p.report
             answers_data = []
-            for a in answers:
-                q = Question.query.get(a.question)
-                answers_data.append({
-                    "question_id": q.id,
-                    "question_text": q.name,
-                    "your_answer": a.answer,
-                    "is_correct": a.is_correct
-                })
+            for question_idx in range(self.index_question + 1):
+                answer = SessionAnswer.query.filter_by(room_id=self.id, participant_id=p.id, question_index= question_idx).first()
+                if not answer:
+                    answers_data.append({
+                        "question_id": self.roomsQuiz.questions[question_idx].id,
+                        "question_text": self.roomsQuiz.questions[question_idx].name,
+                        "your_answer": "Пропущений...",
+                        "is_correct": False
+                    })
+                else:
+                    q = Question.query.get(answer.question)
+                    answers_data.append({
+                        "question_id": q.id,
+                        "question_text": q.name,
+                        "your_answer": answer.answer,
+                        "is_correct": answer.is_correct
+                    })
             try:
                 report.append({
                     "participant_id": p.id,

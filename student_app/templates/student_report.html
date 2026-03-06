@@ -64,10 +64,10 @@
                 </div>
             </div>
             <div class="corr-wrong">
-                {% for ans in answers %}
-                    {% if ans.is_correct %}
+                {% for question in questions %}
+                    {% if question.is_correct %}
                         <div class="correcta answer"></div>
-                    {% elif ans.answer == "Пропущений..." or ans.answer == 'Пропущений' %}
+                    {% elif question.is_skipped %}
                         <div class="skippeda answer"></div>
                     {% else %}
                         <div class="wronga answer"></div>
@@ -77,15 +77,15 @@
             <div class="answersCorrWron">
                 <div class="section1">
                     <div>
-                        <span>{{ report.correct_answers }}</span><p> правильних</p>
+                        <span>{{ report.correct_answers }}</span><p>правильних</p>
                     </div>
                     <div>
-                        <span>{{ report.wrong_answers - skipped_answers }}</span><p> неправильних</p>
+                        <span>{{ report.wrong_answers - skipped_answers }}</span><p>неправильних</p>
                     </div>
                 </div>
                 <div class="section1">
                     <div>
-                        <span>{{ skipped_answers }}</span><p> пропущено</p>
+                        <span>{{ skipped_answers }}</span><p>пропущено</p>
                     </div>
                 </div>
             </div>
@@ -101,29 +101,30 @@
                                 Ваша відповідь: 
                                 {% if q.type == "enter answer" %}
                                     {{ q.your_answer }}
-                                {% elif q.type == "one answer" %}
-                                    {% for answer1 in q.your_answer %}
-                                        {{ answer1 }}
-                                    {% endfor %}
                                 {% else %}
-                                    {% for answer1 in q.your_answer %}
-                                        {{ answer1 }}, 
-                                    {% endfor %}
+                                    {% if q.is_skipped %}
+                                        {{ q.your_answer }}
+                                    {% else %}
+                                        {% for answer1 in q.your_answer %}
+                                            {{ answer1 }};
+                                        {% endfor %}
+                                    {% endif %}
                                 {% endif %}
                             </p>
                             <p>
                                 Правильна відповідь: 
                                 {% if q.type == "enter answer" %}
                                     {{ q.correct_answer }}
-                                {% elif q.type == "one answer" %}
-                                    {% for answer in q.correct_answer %}
-                                        {{ answer }}   
-                                    {% endfor %}
                                 {% else %}
-                                    {% for answer in q.correct_answer %}
-                                        {{ answer }},   
-                                    {% endfor %}
-                                {% endif %}</p>
+                                    {% if q.is_skipped %}
+                                        {{ q.correct_answer }}
+                                    {% else %}
+                                        {% for answer1 in q.correct_answer %}
+                                            {{ answer1 }};
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endif %}
+                            </p>
                         </div>
                         <p class="points">{% if q.is_correct %}1/1{% else %}0/1{% endif %}</p>
                     </div>

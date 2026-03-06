@@ -1,7 +1,6 @@
 const teacherBtn = document.getElementById("teacher")
 const studentBtn = document.getElementById("student")
 const btnSubmit = document.getElementById("btnSubmit")
-console.log(teacherBtn, studentBtn, btnSubmit)
 teacherBtn.addEventListener(
     "click",
     event => {

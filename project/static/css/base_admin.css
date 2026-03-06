@@ -13,6 +13,14 @@
     src: url(../fonts/Inter_28pt-Regular.ttf) format('truetype');
     font-weight: 300;
 }
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(5);
+        opacity: 0;
+    }
+}
+
 *{
     padding: 0;
     margin: 0;
@@ -79,6 +87,7 @@ h1{
     font-size: 24px;
 }
 .createForm button{
+    position: relative;
     width: 100%;
     height: 40px;
     background-color: #22CE00;
@@ -92,7 +101,12 @@ h1{
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 15px;
+    padding: 0;
+    padding-left: 10px;
+    padding-right: 15px;
+}
+.createForm button img {
+    height: calc(100% - 15px);
 }
 .createForm button:hover {
     background-color: #27ea00;
@@ -167,9 +181,23 @@ h1{
     color: white;
 }
 .firstNav {
+    position: relative;
     display: flex;
     gap: 10px;
     align-items: center;
+}
+.backContainer {
+    position: absolute;
+    left: -60px;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+} 
+.backContainer img {
+    width: 100%;
+    height: 100%;
 }
 .secondNav a img{
     width: 90%;
@@ -202,12 +230,7 @@ textarea:focus, input:focus{
     transition: all 0.2s ease-in-out;
     outline:solid #B26FFF 1px ;
 }
-@keyframes ripple-animation {
-    to {
-      transform: scale(5);
-      opacity: 0;
-    }
-}
+
 
 .create-btn-ripple{
     position: relative;

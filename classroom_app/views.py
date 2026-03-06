@@ -1,9 +1,12 @@
 from datetime import datetime
 import flask, flask_login
 from library_app.models import Room, StudentReport
-from project.settings import DATABASE
+from project import DATABASE
+from project.decorators import login_required, teacher_required
 from .models import GroupClass, Student
 
+@login_required
+@teacher_required
 def render_classrooms():
     errors = ""
     if flask.request.method == "POST":
@@ -27,9 +30,12 @@ def render_classrooms():
         "classrooms.html",
         username = flask_login.current_user.login,
         class_groups = class_groups,
-        errors=errors
+        errors=errors,
+        main_page = True
     )
 
+@login_required
+@teacher_required
 def render_classroom(id):
     errors = ""
     classroom = GroupClass.query.get(id)
@@ -65,6 +71,8 @@ def render_classroom(id):
         errors=errors
     )
 
+@login_required
+@teacher_required
 def render_student_information(id):
     student = Student.query.get(id)
     if not student:

@@ -1,5 +1,5 @@
 from .settings import project
-import home_app, user_app, admin_app, library_app, execution_app, history_app, reports_app, host_app, classroom_app, student_app
+import home_app, user_app, admin_app, library_app, execution_app, reports_app, host_app, classroom_app, student_app
 
 home_app.home_app.add_url_rule(
     rule= '/',
@@ -72,18 +72,6 @@ library_app.library_app.add_url_rule(
 )
 
 library_app.library_app.add_url_rule(
-    rule= '/get-redaction/',
-    view_func= library_app.get_redaction_quiz,
-    methods= ["POST"]
-)
-
-library_app.library_app.add_url_rule(
-    rule= '/enter-answer/',
-    view_func= library_app.render_enter_answer,
-    methods= ["POST", "GET"]
-)
-
-library_app.library_app.add_url_rule(
     rule= '/create-quiz/',
     view_func= library_app.render_create_quiz,
     methods= ["POST", "GET"]
@@ -109,16 +97,7 @@ execution_app.execution_app.add_url_rule(
     methods = ["POST", "GET"]
 )
 
-
 project.register_blueprint(blueprint = execution_app.execution_app)
-
-
-history_app.history_app.add_url_rule(
-    rule = '/history/',
-    view_func= history_app.render_history,
-    methods = ["POST", "GET"]
-)
-project.register_blueprint(blueprint = history_app.history_app)
 
 reports_app.reports_app.add_url_rule(
     rule= '/reports/',
