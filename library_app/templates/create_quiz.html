@@ -11,7 +11,10 @@
                 <a href="/library/" title="Вийти"><img src="{{url_for('library_app.static',filename= 'images/arrow.svg')}}"></a>
                 <p>Створення нової вікторини</p>
             </div>
-            <button type="button" id="SaveAndExit"><p>Опублiкувати</p><img src="{{url_for('library_app.static',filename= 'images/public.svg')}}"></button>
+            <div class="header-buttons">
+                <button type="button" id="Delete">Очистити вікторину</button>
+                <button type="button" id="SaveAndExit"><p>Опублiкувати</p><img src="{{url_for('library_app.static',filename= 'images/public.svg')}}"></button>
+            </div>
         </header>
         <main>
             <div class="sidebar">
@@ -212,7 +215,20 @@
 
             <button type="submit" name="button" value="save_quiz">Зберегти</button>
         </form>
-        <script src="{{ url_for('library_app.static',filename= 'js/openCloseModel.js') }}"></script>
+
+        <form method="post" id="deleteForm" class="form hideform">
+            <div class="header-form">
+                <h2>Ви дійсно хочете очистити вікторину?</h2>
+                <p class="extend-desc">Ця дія незворотня</p>
+            </div>
+
+            <div class="buttons-bottom">
+                <button type="button" id="closeBtn" class="close">Закрити</button>
+                <button type="submit" name="button" value="delete_quiz" class="submit">Очистити</button>
+            </div>
+        </form>
+
+        <script src="{{ url_for('library_app.static',filename= 'js/openCloseModal.js') }}"></script>
         <script src="{{ url_for('library_app.static',filename= 'js/checkCorrect.js') }}"></script>
         <script src="{{ url_for('library_app.static',filename= 'js/uploadImageQ.js') }}"></script>
     </body>

@@ -500,13 +500,11 @@ textarea:focus, input:focus{
     gap: 10px;
     background-color: #414141;
     border-radius: 10px;
-    
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 11;
-    
 }
 
 .form h2 {
@@ -614,13 +612,26 @@ hr {
     height: 100%;
     backdrop-filter: blur(5px);
     z-index: 10;
-
-
     background: rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(2.5px);
 
 }
-
+.header-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.extend-desc {
+    color: #ff1818;
+    text-align: center;
+}
+#closeBtn {
+    border: 2px #FFFFFF solid;
+    background: none;
+}
+#closeBtn:hover {
+    border: 2px #FFFFFF dashed;
+}
 .form button {
     width: 155px;
     height: 41px;
@@ -630,8 +641,11 @@ hr {
     color: white;
     border-radius: 5px;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
-
+.form button:hover {
+    background-color: #9C47FF;
+}
 #SaveAndExit{
     display: flex;
     justify-content: center;

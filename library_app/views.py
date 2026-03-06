@@ -70,7 +70,9 @@ def render_create_quiz():
                 response = flask.make_response(flask.redirect("/library/"))
                 flask.session.pop('quizId', None)
                 return response
-
+        elif flask.request.form["button"] == "delete_quiz":
+            flask.session.pop('quizId', None)
+            return get_draft()
         else:
             type_question = flask.request.form['type_question']
             
@@ -167,8 +169,11 @@ def render_create_quiz():
         quiz_id = flask.session.get('quizId')
         quiz = Quiz.query.get(quiz_id)
         if quiz:
+            if quiz.author_id != flask_login.current_user.id:
+                deleted_quiz_id = flask.session.pop('quizId', None)
+                print(f"User {flask_login.current_user.email} (id: {flask_login.current_user.id}) had to try get data quiz which not his one (quiz id: {deleted_quiz_id}).")
+                return flask.redirect("/not-found")
             if quiz.questions != 0:
-                print(quiz.questions)
                 questions = quiz.questions
             else:
                 questions = []
@@ -185,7 +190,6 @@ def render_create_quiz():
                 DATABASE.session.commit()
             except:
                 print(Exception)
-    
     return flask.render_template(
         'create_quiz.html',
         username = flask_login.current_user.login,
