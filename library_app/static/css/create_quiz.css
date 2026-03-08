@@ -25,18 +25,13 @@
 
 body {
     background-color: #2b2b2b;
-    
-    
-    
 }
 
 header {
     display: flex;
     align-items: center;
-
     background-color: transparent;
     border-bottom: 1px solid #202020;
-
     width: 100vw;
     height: 55px;
     padding: 0px 20px;
@@ -54,12 +49,9 @@ header a {
     display: flex;
     align-items: center;
     justify-content: center;
-
     background-color: #454545;
-
     width: 38px;
     height: 38px;
-
     border: 1px solid white;
     border-radius: 5px;
 }
@@ -101,13 +93,16 @@ main {
     flex-direction: column;
 
     background-color: #383838;
-    color: white;
     border-radius: 10px;
     width: 20%;
     min-height: 60vh;
     max-height: 87vh;
     padding: clamp(15px, 2vw, 100px);
     gap: 10px;
+}
+
+.sidebar * {
+    color: white;
 }
 
 .sidebar p {
@@ -136,12 +131,14 @@ main {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    padding-bottom: 3px;
     gap: 20px;
 }
 .AI-button {
     color: #B26FFF;
 }
 .slide {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -149,8 +146,19 @@ main {
     font-size: 16px;
     font-weight: 400;
     margin-left: 10px;
+    width: calc(100% - 10px);
+    background: none;
+    border: none;
+    cursor: pointer;
 }
-
+.slide-under {
+    position: absolute;
+    bottom: -3px;
+    width: 100%;
+    height: 3px;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+}
 .slide img {
     width: 30px;
 }
@@ -304,7 +312,6 @@ form {
     height: 60vh;
     display: flex;
     flex-direction: column;
-    
     padding: 30px 20px 30px 20px;
     gap: 15px;
     background-color: #383838;
@@ -396,6 +403,7 @@ form {
     justify-content: center;
     align-items: center;
     background-color: #252525;
+    border-radius: 10px;
 }
 
 .all-block{
@@ -412,7 +420,7 @@ form {
 
 .enter-answer-input{
     width: 80%;
-    height: 30%;
+    height: 50%;
     border: solid rgba(#868686 .5) 1px;
     border: 1px solid rgba(134, 134, 134, 0.5);
     border-radius: 2px;

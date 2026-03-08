@@ -32,6 +32,7 @@ def render_create_quiz():
     questions = []
     question = None
     create_question = False
+    edit_question = None
     if flask.request.method == 'POST':
         quiz = Quiz.query.get(flask.session.get('quizId'))
         if flask.request.form['button'] == 'one_answer':
@@ -54,18 +55,15 @@ def render_create_quiz():
                     name, ext = os.path.splitext(secure_filename(quiz_image.filename))
                     save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "quizes", filename)
                     counter = 1
-                    
                     while os.path.exists(save_path):
                         new_filename = f"{name}_{counter}{ext}"
                         save_path = os.path.join(os.path.abspath(__file__), "..", "static", "images", "quizes", new_filename)
                         counter += 1
-                    
                     final_filename = os.path.basename(save_path)
                     quiz_image.save(os.path.abspath(save_path))
                     quiz.image = f"/images/quizes/{final_filename}"
                 else:
                     quiz.image = f"/images/quizes/default.svg"
-
                 DATABASE.session.commit()
                 response = flask.make_response(flask.redirect("/library/"))
                 flask.session.pop('quizId', None)
@@ -73,9 +71,29 @@ def render_create_quiz():
         elif flask.request.form["button"] == "delete_quiz":
             flask.session.pop('quizId', None)
             return get_draft()
+        elif flask.request.form["button"].split(" ")[0] == "edit":
+            edit_question = Question.query.get(flask.request.form["button"].split(" ")[1])
+            print(edit_question)
+            create_question = True
+            if not edit_question:
+                pass
+        elif flask.request.form["button"].split(" ")[0] == "editing":
+            edit_question = Question.query.get(flask.request.form["button"].split(" ")[1])
+            print(edit_question)
+            if not edit_question:
+                pass
+            edit_question.name = flask.request.form['question']
+            edit_question.variant_1 = flask.request.form['answer1']
+            if edit_question.type != "enter answer":
+                edit_question.variant_2 = flask.request.form['answer2']
+                edit_question.variant_3 = flask.request.form['answer3']
+                edit_question.variant_4 = flask.request.form['answer4']
+                edit_question.correct_answer = flask.request.form['correct answer']
+            else:
+                edit_question.correct_answer = flask.request.form['answer1']
+            DATABASE.session.commit()
         else:
             type_question = flask.request.form['type_question']
-            
             if type_question == 'one_answer':
                 question = Question(
                     name = flask.request.form['question'],
@@ -196,7 +214,8 @@ def render_create_quiz():
         quiz = Quiz.query.get(ident = 1),
         questions = questions,
         question = question,
-        create_question = create_question
+        create_question = create_question,
+        edit_question= edit_question
     )
             
 def search_in_library():

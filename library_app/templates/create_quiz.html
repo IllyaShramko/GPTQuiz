@@ -27,13 +27,16 @@
                 {% else %}
                     <p>Створені запитання:</p>
                 {% endif %}
-                <div class="slides">
+                <form method="post" class="slides">
                     {% for question in questions %}
-                        <div class="slide">
+                        <button name="button" value="edit {{ question.id }}" class="slide">
                             <h3>{{question.name[:30]}}</h3>
-                        </div>
+                            {% if edit_question and question.id == edit_question.id  %}
+                                <div class="slide-under"></div>
+                            {% endif %}
+                        </button>
                     {% endfor %}
-                </div>
+                </form>
             </div>
             {% if not create_question %}
                 <div class = 'create-question'>
@@ -66,131 +69,212 @@
                     </form>
                 </div>
             {% else %}
-                {% if question == "One answer" %}
-                    <form action ='' method="post" class = 'main-create-block' enctype="multipart/form-data">
-                        <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
-                        <h1>Створення запитання з однією відповіддю</h1>
-                        <div class="create-block">
-                            
-                            <textarea name = 'question' class = 'input-question'  placeholder="Введіть запитання..."></textarea>
-                            <label for="imageQuestion" class="label-for-image">
-                                <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
-                            </label>
-                            <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
-                            
-                            <div class="answers-block">
-
-                                <div class="answer-block1">
-                                    <input type="radio" name="correct answer" class="correct-answer" id="correct1" value="1">
-                                    <label class="correct-label" for="correct1">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea name = 'answer1' class="block1" placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-
-                                <div class="answer-block2">
-                                    <input type="radio" name="correct answer" class="correct-answer" id="correct2" value="2">
-                                    <label class="correct-label"  for="correct2">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea name = 'answer2' class="block2" placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-                                <div class="answer-block3">
-                                    <input type="radio" name="correct answer" class="correct-answer" id="correct3" value="3">
-                                    <label class="correct-label"  for="correct3">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea name = 'answer3' class = 'block3' placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-
-                                <div class="answer-block4">
-                                    <input type="radio" name="correct answer" class="correct-answer" id="correct4" value="4">
-                                    <label class="correct-label"  for="correct4">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea  name = 'answer4' class="block4" placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-                        </div>
-                        <input type="hidden" value="one_answer" name = 'type_question'>
-                        <button name="button" class = 'button-save' type="submit" disabled>Створити та зберегти</button>
-                    </form>
-                {% elif question == "Enter answer" %}
-                    <form method="post" class = 'main-create-block' enctype="multipart/form-data">
-                        <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
-                        <h1>Створення запитання з заповненням бланка</h1>
-                        
-                        <div class="all-block">
-                            <div class="create-block">
-                                <label for="imageQuestion" class="label-for-image">
-                                    <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
+            {% if edit_question %}
+            <form method="post" class = 'main-create-block' enctype="multipart/form-data">
+                <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
+                {% if edit_question.type == "one answer" %}
+                    <h1>Створення запитання з однією відповіддю</h1>
+                {% elif edit_question == "enter answer" %}
+                    <h1>Створення запитання з заповненням бланка</h1>
+                {% elif edit_question == "multiple answers" %}
+                    <h1>Створення запитання з декількома відповіддями</h1>
+                {% endif %}
+                <div class="create-block">
+                    <textarea name = 'question' class = 'input-question'  placeholder="Введіть запитання...">{{ edit_question.name }}</textarea>
+                    <label for="imageQuestion" class="label-for-image">
+                        <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
+                    </label>
+                    <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
+                    <div class="answers-block">
+                        {% if edit_question.type == "one answer" %}
+                            <div class="answer-block1">
+                                <input 
+                                    type="radio" 
+                                    name="correct answer" 
+                                    class="correct-answer" 
+                                    id="correct1" value="1" 
+                                    {{ "checked" if edit_question.correct_answer|int == 1 else "" }}
+                                >
+                                <label class="correct-label" for="correct1">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
                                 </label>
-                                <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
-                               <textarea name = 'question' class = 'input-question' placeholder="Введіть запитання..."></textarea>
+                                <textarea name='answer1' class="block1" placeholder="Введіть варіант відповіді...">{{ edit_question.variant_1 }}</textarea>
                             </div>
+                            <div class="answer-block2">
+                                <input 
+                                    type="radio" 
+                                    name="correct answer" 
+                                    class="correct-answer" 
+                                    id="correct2" value="2" 
+                                    {{ "checked" if edit_question.correct_answer|int == 2 else "" }}
+                                >
+                                <label class="correct-label"  for="correct2">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer2' class="block2" placeholder="Введіть варіант відповіді...">{{ edit_question.variant_2 }}</textarea>
+                            </div>
+                            <div class="answer-block3">
+                                <input 
+                                    type="radio" 
+                                    name="correct answer" 
+                                    class="correct-answer" 
+                                    id="correct3" value="3" 
+                                    {{ "checked" if edit_question.correct_answer|int == 3 else "" }}
+                                >
+                                <label class="correct-label"  for="correct3">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer3' class = 'block3' placeholder="Введіть варіант відповіді...">{{ edit_question.variant_3 }}</textarea>
+                            </div>
+                            <div class="answer-block4">
+                                <input 
+                                    type="radio" 
+                                    name="correct answer" 
+                                    class="correct-answer" 
+                                    id="correct4" value="4"
+                                    {{ "checked" if edit_question.correct_answer|int == 4 else "" }}
+                                >
+                                <label class="correct-label"  for="correct4">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name ='answer4' class="block4" placeholder="Введіть варіант відповіді...">{{ edit_question.variant_4 }}</textarea>
+                            </div>
+                        {% elif edit_question.type == "enter answer" %}
+                            <div class="enter-answer-div">
+                                <input type="text" class="enter-answer-input" name="answer1" id='enterAnswer' placeholder="введіть відповідь" value="{{ edit_question.variant_1 }}" id="">
+                            </div>
+                        {% elif edit_question.type == "multiple answers" %}
+                            <div class="answer-block1">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct1" value="1">
+                                <label class="correct-label" for="correct1">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer1' class="block1" placeholder="Введіть варіант відповіді...">{{ edit_question.variant_1 }}</textarea>
+                            </div>
+                            <div class="answer-block2">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct2" value="2">
+                                <label class="correct-label"  for="correct2">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer2' class="block2" placeholder="Введіть варіант відповіді...">{{ edit_question.variant_2 }}</textarea>
+                            </div>
+                            <div class="answer-block3">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct3" value="3">
+                                <label class="correct-label"  for="correct3">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer3' class = 'block3' placeholder="Введіть варіант відповіді...">{{ edit_question.variant_3 }}</textarea>
+                            </div>
+                            <div class="answer-block4">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct4" value="4">
+                                <label class="correct-label"  for="correct4">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea  name = 'answer4' class="block4" placeholder="Введіть варіант відповіді...">{{ edit_question.variant_4 }}</textarea>
+                            </div>
+                        {% endif %}
+                    </div>                    
+                </div>
+                <div class="div-button-save">
+                    <button name="button" class='button-save' id='buttonAnswer' value="editing {{ edit_question.id }}" type="submit" disabled>Зберегти</button>
+                </div>
+            </form>
+            {% else %}
+            <form action ='' method="post" class = 'main-create-block' enctype="multipart/form-data">
+                <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
+                {% if question == "One answer" %}
+                    <h1>Створення запитання з однією відповіддю</h1>
+                {% elif question == "Enter answer" %}
+                    <h1>Створення запитання з заповненням бланка</h1>
+                {% elif question == "multiple answers" %}
+                    <h1>Створення запитання з декількома відповіддями</h1>
+                {% endif %}
+                <div class="create-block">
+                    <textarea name = 'question' class = 'input-question'  placeholder="Введіть запитання..."></textarea>
+                    <label for="imageQuestion" class="label-for-image">
+                        <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
+                    </label>
+                    <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
+                    <div class="answers-block">
+                        {% if question == "One answer" %}
+                            <div class="answer-block1">
+                                <input type="radio" name="correct answer" class="correct-answer" id="correct1" value="1">
+                                <label class="correct-label" for="correct1">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer1' class="block1" placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                            
+                            <div class="answer-block2">
+                                <input type="radio" name="correct answer" class="correct-answer" id="correct2" value="2">
+                                <label class="correct-label"  for="correct2">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer2' class="block2" placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                            <div class="answer-block3">
+                                <input type="radio" name="correct answer" class="correct-answer" id="correct3" value="3">
+                                <label class="correct-label"  for="correct3">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer3' class = 'block3' placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                            <div class="answer-block4">
+                                <input type="radio" name="correct answer" class="correct-answer" id="correct4" value="4">
+                                <label class="correct-label"  for="correct4">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea  name = 'answer4' class="block4" placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                        {% elif question == "Enter answer" %}
                             <div class="enter-answer-div">
                                 <input type="text" class="enter-answer-input" name="answer1" id='enterAnswer' placeholder="введіть відповідь" id="">
                             </div>
-                        </div>
-                        <input type="hidden" value="enter_answer"  name = 'type_question'>
-                        <div class="div-button-save">
-                            <button name="button" class = 'button-save' id = 'buttonAnswer' type="submit"  disabled>Створити та зберегти</button>
-                        
-                        </div>
-                    </form>
+                        {% elif question == "multiple answers" %}
+                            <div class="answer-block1">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct1" value="1">
+                                <label class="correct-label" for="correct1">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer1' class="block1" placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                            <div class="answer-block2">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct2" value="2">
+                                <label class="correct-label"  for="correct2">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer2' class="block2" placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                            <div class="answer-block3">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct3" value="3">
+                                <label class="correct-label"  for="correct3">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea name = 'answer3' class = 'block3' placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                            <div class="answer-block4">
+                                <input type="checkbox" name="correct answer" class="correct-answer" id="correct4" value="4">
+                                <label class="correct-label"  for="correct4">
+                                    <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
+                                </label>
+                                <textarea  name = 'answer4' class="block4" placeholder="Введіть варіант відповіді..."></textarea>
+                            </div>
+                        {% endif %}
+                    </div>                    
+                </div>
+                {% if question == "One answer" %}
+                    <input type="hidden" value="one_answer" name = 'type_question'>
+                {% elif question == "Enter answer" %}
+                    <input type="hidden" value="enter_answer"  name = 'type_question'>
                 {% elif question == "multiple answers" %}
-                    <form action ='' method="post" class = 'main-create-block' enctype="multipart/form-data">
-                        <a href="/create-quiz/" class="backwood" title="Закрити"><img src="{{ url_for('library_app.static', filename = 'images/close.svg')}}" alt=""></a>
-                        <h1>Створення запитання з декількома відповідями</h1>
-
-                        <div class="create-block">
-                            
-                            <textarea name = 'question' class = 'input-question'  placeholder="Введіть запитання..."></textarea>
-                            <label for="imageQuestion" class="label-for-image">
-                                <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
-                            </label>
-                            <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
-                            
-                            <div class="answers-block">
-
-                                <div class="answer-block1">
-                                    <input type="checkbox" name="correct answer" class="correct-answer" id="correct1" value="1">
-                                    <label class="correct-label" for="correct1">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea name = 'answer1' class="block1" placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-
-                                <div class="answer-block2">
-                                    <input type="checkbox" name="correct answer" class="correct-answer" id="correct2" value="2">
-                                    <label class="correct-label"  for="correct2">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea name = 'answer2' class="block2" placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-                                <div class="answer-block3">
-                                    <input type="checkbox" name="correct answer" class="correct-answer" id="correct3" value="3">
-                                    <label class="correct-label"  for="correct3">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea name = 'answer3' class = 'block3' placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-
-                                <div class="answer-block4">
-                                    <input type="checkbox" name="correct answer" class="correct-answer" id="correct4" value="4">
-                                    <label class="correct-label"  for="correct4">
-                                        <img src="{{ url_for('library_app.static', filename = 'images/correct.png')}}">
-                                    </label>
-                                    <textarea  name = 'answer4' class="block4" placeholder="Введіть варіант відповіді..."></textarea>
-                                </div>
-                        </div>
-                        <input type="hidden" value="multiple_answers" name = 'type_question'>
-                        <div class="button-div">
-                            <button name="button" class = 'button-save' type="submit" disabled>Створити та зберегти</button>
-                        </div>
-                       
-                    </form>
+                    <input type="hidden" value="multiple_answers" name = 'type_question'>
                 {% endif %}
+                <div class="div-button-save">
+                    <button name="button" class = 'button-save' id = 'buttonAnswer' type="submit"  disabled>Створити та зберегти</button>
+                </div>
+            </form>
             {% endif %}
+        {% endif %}
         </main>
         <input type="hidden" name="questions" value="{{ questions|length }}">
         <div class="blur hideform" id="blur"></div>
