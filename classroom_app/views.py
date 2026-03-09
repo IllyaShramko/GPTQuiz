@@ -8,7 +8,7 @@ from .models import GroupClass, Student
 @login_required
 @teacher_required
 def render_classrooms():
-    errors = ""
+    errors = None
     if flask.request.method == "POST":
         number = flask.request.form["number"]
         char   = flask.request.form["char"].upper()
@@ -37,7 +37,7 @@ def render_classrooms():
 @login_required
 @teacher_required
 def render_classroom(id):
-    errors = ""
+    errors = None
     classroom = GroupClass.query.get(id)
     if not classroom:
         return flask.redirect("/classrooms/")
@@ -86,6 +86,8 @@ def render_student_information(id):
         student=student
     )
 
+@login_required
+@teacher_required
 def get_data_login_student(id_student, id_classroom):
     response = {
         "status": 200,
@@ -113,6 +115,8 @@ def get_data_login_student(id_student, id_classroom):
     response["password"] = student.password
     return response
 
+@login_required
+@teacher_required
 def get_class_stats(id):
     start_date_str = flask.request.args.get('start_date')
     end_date_str = flask.request.args.get('end_date')
@@ -139,15 +143,18 @@ def get_class_stats(id):
             all_stats.append({
                 "date": room_date.strftime('%Y-%m-%d'),
                 "code": f"({room.redeem_codes[0].code_enter})", 
-                "rate": avg_room_success 
+                "rate": avg_room_success,
+                "id": room.id
             })
 
     all_stats.sort(key=lambda x: x['date'])
 
     labels = [[item['date'], f"{item['code']}"] for item in all_stats]
     rates = [item['rate'] for item in all_stats]
+    ids = [item['id'] for item in all_stats]
 
     return flask.jsonify({
         "labels": labels,
-        "success_rates": rates
+        "success_rates": rates,
+        "ids": ids
     })

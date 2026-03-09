@@ -13,7 +13,15 @@ window.onload = function() {
             height: 350,
             background: 'transparent',
             foreColor: themeColors.labels,
-            toolbar: { show: true }
+            toolbar: { show: true },
+            events: {
+                markerClick: function(event, chartContext, { seriesIndex, dataPointIndex }) {
+                    const roomIds = chartContext.w.config.userData.roomIds; 
+                    if (roomIds && roomIds[dataPointIndex]) {
+                        window.location.href = "/report/" + roomIds[dataPointIndex];
+                    }
+                }
+            }
         },
         dataLabels: {
             enabled: true,
@@ -81,12 +89,13 @@ async function updateCharts() {
                     rotate: 0, 
                 }
             },
-            legend: { show: false } 
+            legend: { show: false },
+            userData: { roomIds: resData.ids }
         });
-        
+
         successfulRateChart.updateSeries([{
             name: 'Успішність кімнати',
-            data: resData.success_rates
+            data: resData.success_rates, 
         }]);
 
     } catch (err) {

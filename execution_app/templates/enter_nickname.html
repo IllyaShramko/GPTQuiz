@@ -256,9 +256,15 @@
                             document.addEventListener('keydown', handleKeyPress);
                         });
     
-                        const sendBtn = document.createElement('button');
+                            const sendBtn = document.createElement('button');
                         sendBtn.id = 'sendBtn';
-                        sendBtn.textContent = "Відправити -->";
+                        const sendDivInBtn = document.createElement("div")
+                        sendDivInBtn.classList.add("send-btn-internal-div")
+                        const sendPInBtn = document.createElement("p")
+                        sendPInBtn.textContent = "Відправити -->";
+                        sendDivInBtn.appendChild(sendPInBtn)
+                        sendBtn.appendChild(sendDivInBtn)
+
                         sendBtn.onclick = () => {
                             const checked = Array.from(answersDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => parseInt(cb.value));
                             if (checked.length === 0) {
@@ -329,7 +335,12 @@
 
                         const sendBtn = document.createElement('button');
                         sendBtn.id = 'sendBtn';
-                        sendBtn.textContent = "Відправити -->";
+                        const sendDivInBtn = document.createElement("div")
+                        sendDivInBtn.classList.add("send-btn-internal-div")
+                        const sendPInBtn = document.createElement("p")
+                        sendPInBtn.textContent = "Відправити -->";
+                        sendDivInBtn.appendChild(sendPInBtn)
+                        sendBtn.appendChild(sendDivInBtn)
 
                         sendBtn.onclick = () => {
                             let finalAnswer = "";

@@ -3,17 +3,17 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Create Quiz</title>
-        <link rel="stylesheet" href="{{ url_for('library_app.static',filename= 'css/create_quiz.css') }}">
+        <link rel="stylesheet" href="{{ url_for('library_app.static', filename= 'css/create_quiz.css') }}">
     </head>
     <body>
         <header>
             <div>
-                <a href="/library/" title="Вийти"><img src="{{url_for('library_app.static',filename= 'images/arrow.svg')}}"></a>
+                <a href="/library/" title="Вийти"><img src="{{ url_for('library_app.static', filename= 'images/arrow.svg') }}"></a>
                 <p>Створення нової вікторини</p>
             </div>
             <div class="header-buttons">
-                <button type="button" id="Delete">Очистити вікторину</button>
-                <button type="button" id="SaveAndExit"><p>Опублiкувати</p><img src="{{url_for('library_app.static',filename= 'images/public.svg')}}"></button>
+                <button type="button" id="Delete"><p>Очистити вікторину</p><img src="{{ url_for('library_app.static', filename= 'images/bin.svg') }}"></button>
+                <button type="button" id="SaveAndExit"><p>Опублiкувати</p><img src="{{ url_for('library_app.static', filename= 'images/public.svg') }}"></button>
             </div>
         </header>
         <main>
@@ -30,7 +30,7 @@
                 <form method="post" class="slides">
                     {% for question in questions %}
                         <button name="button" value="edit {{ question.id }}" class="slide">
-                            <h3>{{question.name[:30]}}</h3>
+                            <h3>№{{ loop.index }}: {{question.name if question.name|length < 30 else question.name[:27] + "..."}}</h3>
                             {% if edit_question and question.id == edit_question.id  %}
                                 <div class="slide-under"></div>
                             {% endif %}
@@ -81,10 +81,6 @@
                 {% endif %}
                 <div class="create-block">
                     <textarea name = 'question' class = 'input-question'  placeholder="Введіть запитання...">{{ edit_question.name }}</textarea>
-                    <label for="imageQuestion" class="label-for-image">
-                        <img src="{{ url_for('library_app.static', filename='images/upload.svg') }}" id="imageBtn">
-                    </label>
-                    <input type="file" name="image" id="imageQuestion" accept="image/*" style="display: none;">
                     <div class="answers-block">
                         {% if edit_question.type == "one answer" %}
                             <div class="answer-block1">

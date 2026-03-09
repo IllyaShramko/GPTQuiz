@@ -107,6 +107,24 @@ def render_create_quiz():
 
                     quiz_id = flask.session.get('quizId')   
                 )
+                q_image = flask.request.files['image']
+                if q_image:
+                    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+                    save_dir = os.path.join(BASE_DIR, "..", "library_app", "static", "images", "questions")
+                    os.makedirs(save_dir, exist_ok=True)
+
+                    filename = secure_filename(q_image.filename)
+                    name, ext = os.path.splitext(filename)
+                    save_path = os.path.join(save_dir, filename)
+                    counter = 1
+
+                    while os.path.exists(save_path):
+                        new_filename = f"{name}_{counter}{ext}"
+                        save_path = os.path.join(save_dir, new_filename)
+                        counter += 1
+                    final_filename = os.path.basename(save_path)
+                    q_image.save(save_path)
+                    question.image = f"questions/{final_filename}"
                 try:
                     DATABASE.session.add(question)
                     quiz.count_questions += 1

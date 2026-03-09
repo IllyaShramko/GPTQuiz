@@ -151,6 +151,9 @@ main {
     border: none;
     cursor: pointer;
 }
+.slide h3 {
+    text-align: start;
+}
 .slide-under {
     position: absolute;
     bottom: -3px;
@@ -384,7 +387,12 @@ form {
     font-weight: 300;
     border: none;
     cursor: pointer;
-    background: none;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+    border-radius: 5px;
+}
+.type-request:hover {
+    background-color: #464646;
 }
 
 .type-request img{
@@ -654,7 +662,17 @@ hr {
 .form button:hover {
     background-color: #9C47FF;
 }
-#SaveAndExit{
+#Delete, #SaveAndExit {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+#SaveAndExit {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -663,13 +681,16 @@ hr {
     border-radius: 10px;
     background-color: #9C47FF;
     border: none;
-    cursor: pointer;
+    transition: background-color 0.3s ease-in;
 }
-#SaveAndExit p{
+#SaveAndExit:hover {
+    background-color: #7d38cc;
+}
+#SaveAndExit p, #Delete p{
     font-size: 18px;
     font-weight: 300;
 }
-#SaveAndExit img{
+#SaveAndExit img, #Delete img{
     width: 22px;
     height: 22px;
 }
@@ -699,4 +720,8 @@ hr {
     justify-items: center;
     padding: 4px;
     cursor: pointer;
+}
+#Delete {
+    background: none;
+    border: 1px #FFFFFF solid;
 }

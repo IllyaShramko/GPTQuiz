@@ -87,7 +87,9 @@
             <label for="student_name">Вкажіть ім'я учня:</label>
             <input type="text" name="student_name" id="student_name" placeholder="Ім'я учня">
         </div>
-        <h3 id="errors">{{ errors }}</h3>
+        {% if errors %}
+            <h3 id="errors">{{ errors }}</h3>
+        {% endif %}
         <button type="submit" class="submit">Додати учня</button>
     </form>
     <div class="blur {% if not errors %}hideform{% endif %}" id="blur"></div>

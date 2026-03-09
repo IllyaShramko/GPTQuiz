@@ -15,8 +15,11 @@
                     <div id="timer"></div>
                 </div>
                 <div id="timeControl">
-                    <button id="15sAdd" class="controlers">+15</button>
-                    
+                    <button id="15sAdd" class="controlers">
+                        <div class="controller-content">
+                            <p>+15 сек</p>
+                        </div>
+                    </button>
                 </div>
             </div>
             <div id="resultsContainer"></div>
@@ -39,10 +42,14 @@
                     <button id="copy-code"><img class="img-copy" src="{{ url_for('host_app.static', filename='images/copy.svg') }}"></button>
                 </div>
                 <h2 id="codeDisplay">{{ code }}</h2>
-                <button id="start-quiz">
-                    <img src="{{ url_for('host_app.static', filename='images/start.svg') }}">
-                    <p>Почати вікторину</p>
-                </button>
+                <div class="start-button-container">
+                    <button id="start-quiz">
+                        <div class="start-content">
+                            <img src="{{ url_for('host_app.static', filename='images/start.svg') }}">
+                            <p>Почати вікторину</p>
+                        </div>
+                    </button>
+                </div>
             </div>
             <div class="participants">
                 <h2 id="usersText">Участники:</h2>
@@ -70,9 +77,12 @@
             const nextBtn = document.createElement('button');
             nextBtn.id = 'nextBtn';
             nextBtn.classList.add("controlers")
+            const controllerContent = document.createElement("div")
+            controllerContent.classList.add("controller-content")
             const imgBtn = document.createElement("img")
             imgBtn.src = "{{ url_for('host_app.static', filename= 'images/next.svg') }}"
-            nextBtn.appendChild(imgBtn)
+            controllerContent.appendChild(imgBtn)
+            nextBtn.appendChild(controllerContent)
             let currentPage = "question_answers"
             let timerInterval = null;
             socket.emit("host_join", { room: code });
@@ -166,7 +176,6 @@
                 document.getElementById('timerText').innerHTML = '0';
                 const container = document.getElementById("resultsContainer");
                 container.innerHTML = "";
-                console.log("Received teacher_results:", data.results);
                 div.innerHTML = ""
                 const avatarUrl = "{{ url_for('host_app.static', filename='images/avatar.svg') }}";
                 const mainContainer = document.createElement("div")
@@ -298,14 +307,13 @@
                 mainContainer.appendChild(questionAnswersContainer)
                 container.appendChild(mainContainer)
 
-                console.log(data)
                 renderDonut(data1 = {
                     correct: data.donut_data.correct,
                     wrong: data.donut_data.wrong,
                     skipped: data.donut_data.skipped
                 })
                 if (data.index_question == data.total_questions-1) {
-                    nextBtn.innerText = "Кінець";
+                    nextBtn.querySelector("div").innerText = "Кінець";
                     nextBtn.onclick = () => socket.emit("quiz_end_msg", { code: code });
                 } else {
                     nextBtn.onclick = () => socket.emit("next_question", { code: code });
@@ -447,7 +455,7 @@
                 document.body.appendChild(endBtn);
             });
             socket.on("end_msg", data => {
-                nextBtn.innerHTML = `<img src="{{ url_for('host_app.static', filename= 'gifs/loading.gif') }}" style="height: 20px; width: 20px;">`
+                nextBtn.querySelector("div").innerHTML = `<img src="{{ url_for('host_app.static', filename= 'gifs/loading.gif') }}" style="height: 20px; width: 20px;">`
                 setTimeout(()=> {
                     socket.emit("show_quiz_results", {code: code})
                 }, 50)

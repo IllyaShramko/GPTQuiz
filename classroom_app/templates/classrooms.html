@@ -41,7 +41,9 @@
             <label for="char">Літера класу:</label>
             <input type="text"   id="char" name="char" maxlength="1" required>
         </div>
-        <h3>{{ errors }}</h3>
+        {% if errors %}
+            <h3>{{ errors }}</h3>
+        {% endif %}
         <button type="submit" class="submit">Додати</button>
     </form>
     <div class="blur {% if not errors %}hideform{% endif %}" id="blur"></div>

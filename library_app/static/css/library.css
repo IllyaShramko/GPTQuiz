@@ -15,33 +15,6 @@
     align-items: center;
     gap: 30px;
 }
-.created-by-me-create button {
-    width: 135px;
-    height: 45px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #22CE00;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-family: 'Inter';
-    font-weight: 500;
-    font-size: 16px;
-    cursor: pointer;
-}
-.created-by-me{
-    top: 80px;
-    left: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
-    padding-top: 20px;
-}
-
-
 .search{
     display: flex;
     flex-direction: column;
@@ -96,8 +69,8 @@ span{
     color: #B26FFF;
 }
 textarea:focus, input:focus{
-  transition: all 0.2s ease-in-out;
-  outline:solid #B26FFF 1px ;
+    transition: all 0.2s ease-in-out;
+    outline:solid #B26FFF 1px;
 }
 
 #createQuiz a {
@@ -107,11 +80,21 @@ textarea:focus, input:focus{
 .quizes {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    width: 80%;
+    gap: 15px;
+    width: 100%;
     padding: 0 20px;
     padding-bottom: 30px;
     flex-wrap: wrap;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(15px);
+    }
+    to { 
+        opacity: 1;
+    }
 }
 
 .quiz {
@@ -126,11 +109,16 @@ textarea:focus, input:focus{
     padding: 10px;
     gap: 10px;
     color: white;
-    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.15);
     border: 0;
     cursor: pointer;
     text-decoration: none;
-
+    animation: 0.4s fadeIn ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.quiz:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.25);
 }
 
 .quiz div {
