@@ -187,6 +187,9 @@
                 studentsContainer.classList.add("hideblock")
 
                 data.results.forEach(res => {
+                    if (res.answer === "Пропущений..." || res.answer === "Пропущений") {
+                        return
+                    }
                     const divA = document.createElement("div");
                     divA.classList.add("student-answer")
                     divA.classList.add(res.is_correct ? "student-right" : "student-wrong")
@@ -206,6 +209,12 @@
                     `;
                     studentsContainer.appendChild(divA);
                 });
+                if (studentsContainer.childElementCount === 0) {
+                    const placeholderText = document.createElement("h3")
+                    placeholderText.classList.add("placeholderAnswersText")
+                    placeholderText.textContent = "Немає відповідей на це запитання..."
+                    studentsContainer.appendChild(placeholderText)
+                }
                 //
                 const nameQuestionContainer = document.createElement("div")
                 nameQuestionContainer.classList.add("name-question-container")

@@ -2,6 +2,7 @@ import random
 
 import flask_login
 from project import DATABASE as db
+from project.decorators import login_required
 from project.settings import DATABASE, socketio
 from flask_socketio import join_room, emit
 from library_app.models import RedeemCode, Quiz, Room, Question, SessionParticipant, SessionAnswer, StudentReport
@@ -63,7 +64,6 @@ def handle_join(data):
     
     existing_participiant = SessionParticipant.query.filter_by(student_id=student_id, room_id=room.id).first()
     if not existing_participiant:
-        print("Участника нет в комнате, добавление...")
         existing_participiant = SessionParticipant(
             room_id=room.id, 
             is_connected=True,
@@ -74,17 +74,13 @@ def handle_join(data):
             DATABASE.session.commit()
             if not room.students:
                 room.students = [[username, existing_participiant.reconnect_hash]]
-                print(1, [username, existing_participiant.reconnect_hash])
             else:
                 new_students = list(room.students)
                 new_students.append([username, existing_participiant.reconnect_hash])
                 room.students = new_students
-                print(2, [username, existing_participiant.reconnect_hash])
             DATABASE.session.commit()
-            print(f"Участник (id: {existing_participiant.id}, student_id: {student_id}) успешно добавлен")
         except Exception as e:
             DATABASE.session.rollback()
-            print("Ошибка при добавлении участника:", e)
             emit("join_error", {"message": "Не удалось добавить участника"})
             return
     elif existing_participiant.is_connected == False:
@@ -95,89 +91,95 @@ def handle_join(data):
         DATABASE.session.commit()
     else:
         print("Участник есть в комнате")
+        
     session['participant_id'] = existing_participiant.id
+    
     join_room(str(room.id))
     join_room(f"student_{existing_participiant.id}")
 
-
     emit("joined_success", {"quiz_name": redeem.name, "hash": existing_participiant.reconnect_hash})
     emit("user_list_update", {"students": room.students}, room=str(room.id))
-
-    if room.index_question is not None and 0 <= room.index_question <= len(quiz.questions):
-        if room.index_question + 1 == len(quiz.questions):
-            result = StudentReport.query.filter_by(participant_id = existing_participiant.id, room_id = room.id).first()
-            if not result:
-                emit("redirect_to", {
-                    "url": "/"
-                })
-                return
+    if not room.index_question and room.index_question != 0:
+        return
+    
+    if room.index_question + 1 == len(quiz.questions):
+        result = StudentReport.query.filter_by(participant_id = existing_participiant.id, room_id = room.id).first()
+        if not result:
             emit("redirect_to", {
-                "url": f"/student/report/{result.hash_code}"
+                "url": "/"
             })
             return
-        current_question = quiz.questions[room.index_question]
-        variants = [
-            {"id": 1, "text": current_question.variant_1},
-            {"id": 2, "text": current_question.variant_2},
-            {"id": 3, "text": current_question.variant_3},
-            {"id": 4, "text": current_question.variant_4}
-        ]
-        
-        hashed_correct = ""
-        for char in current_question.correct_answer:
-            hashed_correct += "a" if char != " " else " "
-        emit("quiz_start_student", {
-            "quiz_name": quiz.name,
-            "name": current_question.name,
-            "type": current_question.type,
-            "variants": variants,
-            "correct_answer": hashed_correct,
-            "image": current_question.image,
-            "id": current_question.id,
-            "current_question": room.index_question + 1
+        emit("redirect_to", {
+            "url": f"/student/report/{result.hash_code}"
         })
-        answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).all()
-        answers_count = len(answers)
-        for ans in answers:
-            participant = SessionParticipant.query.get(ans.participant_id)
-            socketio.emit(
-                'student_answer',
-                {
-                    'hash': participant.reconnect_hash
-                },
-                room=f"{room.id}"
-            )
-        answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
-        if answers_count != len(room.students):
-            if answer_status:
-                emit(
-                    "current_question_info",
-                    {
-                        "question": current_question.type,
-                        "is_correct": "wait",
-                        "answer_id": None,
-                    }
-                )
-            return
+        return
+    current_question = quiz.questions[room.index_question]
+    variants = [
+        {"id": 1, "text": current_question.variant_1},
+        {"id": 2, "text": current_question.variant_2},
+        {"id": 3, "text": current_question.variant_3},
+        {"id": 4, "text": current_question.variant_4}
+    ]
+    
+    hashed_correct = ""
+    for char in current_question.correct_answer:
+        hashed_correct += "a" if char != " " else " "
+    emit("quiz_start_student", {
+        "quiz_name": quiz.name,
+        "name": current_question.name,
+        "type": current_question.type,
+        "variants": variants,
+        "correct_answer": hashed_correct,
+        "image": current_question.image,
+        "id": current_question.id,
+        "current_question": room.index_question + 1
+    })
+    answers = SessionAnswer.query.filter_by(room_id = room.id, question= current_question.id).all()
+    answers_count = len(answers)
+    for ans in answers:
+        participant = SessionParticipant.query.get(ans.participant_id)
+        user_answer_text = ans.get_answer(ans.answer)
+        user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+        if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
+            continue
+        socketio.emit(
+            'student_answer',
+            {
+                'hash': participant.reconnect_hash
+            },
+            room=f"{room.id}"
+        )
+    answer_status = SessionAnswer.query.filter_by(participant_id=existing_participiant.id, question=current_question.id).first()
+    if answers_count != len(room.students):
         if answer_status:
             emit(
                 "current_question_info",
                 {
                     "question": current_question.type,
-                    "is_correct": answer_status.is_correct,
-                    "answer_id": answer_status.get_answer(answer_status.answer),
-                }
-            )
-        else:
-            emit(
-                "current_question_info",
-                {
-                    "question": current_question.type,
-                    "is_correct": "skipped",
+                    "is_correct": "wait",
                     "answer_id": None,
                 }
             )
         return
+    if answer_status:
+        emit(
+            "current_question_info",
+            {
+                "question": current_question.type,
+                "is_correct": answer_status.is_correct,
+                "answer_id": answer_status.get_answer(answer_status.answer),
+            }
+        )
+    else:
+        emit(
+            "current_question_info",
+            {
+                "question": current_question.type,
+                "is_correct": "skipped",
+                "answer_id": None,
+            }
+        )
+    return
 
 @socketio.on("remove_student")
 def handle_remove_student(data):
@@ -197,7 +199,13 @@ def handle_remove_student(data):
     emit("remove_student_client", {"hash": student[1]}, room=str(room.id))
 
 @socketio.on("host_join")
+@login_required
 def handle_host_join(data):
+    if flask.session.get("user_role") != "teacher":
+        emit("redirect_to", {
+            "url": "/"
+        })
+        return
     code_enter = data.get("room")
     redeem = RedeemCode.query.filter_by(code_enter=code_enter).first()
     if not redeem:
@@ -210,12 +218,11 @@ def handle_host_join(data):
         })
         return
 
-    if not flask_login.current_user.is_authenticated or flask_login.current_user.id != room.host:
-        if flask.session.get("user_role") != "teacher":
-            emit("redirect_to", {
-                "url": "/"
-            })
-            return
+    if flask_login.current_user.id != room.host:
+        emit("redirect_to", {
+            "url": "/"
+        })
+        return
         
     join_room(str(room.id))
     join_room(f"teacher_{room.host}")
@@ -357,6 +364,10 @@ def handle_host_join(data):
                 )
             for ans in answers:
                 participant = SessionParticipant.query.get(ans.participant_id)
+                user_answer_text = ans.get_answer(ans.answer)
+                user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+                if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
+                    continue
                 socketio.emit(
                     'student_answer',
                     {
@@ -579,8 +590,7 @@ def handle_end_question(data):
         ans.participant_id for ans in SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
     }
 
-    all_participants = SessionParticipant.query.filter_by(room_id=room.id, is_connected= True).all()
-
+    all_participants = room.session_participants
     for participant in all_participants:
         if participant.id not in answered_ids:
             skip_answer = SessionAnswer(
@@ -704,6 +714,10 @@ def handle_end_question(data):
     emit("user_list_update", {"students": room.students}, room=str(room.id))
     for ans in answers:
         participant = SessionParticipant.query.get(ans.participant_id)
+        user_answer_text = ans.get_answer(ans.answer)
+        user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+        if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
+            continue
         socketio.emit(
             'student_answer',
             {

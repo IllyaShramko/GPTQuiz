@@ -17,21 +17,21 @@
             <input type="hidden" id="quizCreate" value="">
             <div class="links">
                 <a class="tab-link" href="{{ url_for('classroom_app.render_classrooms') }}">
-                    <div>
+                    <div class="tab-link-content">
                         <img src="{{ url_for('static', filename= 'images/classroom.svg') }}">
                         <p>Мої класи</p>
                     </div>
                     <div class="divider myClassLink"></div>
                 </a>
                 <a class="tab-link" href="{{ url_for('library_app.render_library') }}">
-                    <div>
+                    <div class="tab-link-content">
                         <img src="{{ url_for('static', filename= 'images/library.svg') }}">
                         <p>Бібліотека</p>
                     </div>
                     <div class="divider libraryLink"></div>
                 </a>
                 <a class="tab-link" href="{{ url_for('reports_app.render_reports_page') }}">
-                    <div>
+                    <div class="tab-link-content">
                         <img src="{{ url_for('static', filename= 'images/reports.svg') }}">
                         <p>Звіти</p>
                     </div>
@@ -57,7 +57,7 @@
                     </button>
                 </form>
                 <a href="/execution/" class="enter-code">Введіть код</a>
-                <a href="/profile/" id="username">{{username}}</a>
+                <a href="/profile/" id="username">{{ username }}</a>
                 <a href="/logout/" class="logout">
                     <img src="{{ url_for('admin_app.static', filename= 'images/logout.svg') }}">
                 </a>
