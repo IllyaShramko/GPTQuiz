@@ -274,107 +274,111 @@ def handle_host_join(data):
             print("Error emitting reconnect timer to teacher:", e)
 
         answers = SessionAnswer.query.filter_by(room_id=room.id, question=current_question.id).all()
-        if answers:
-            if len(answers) == len(participants):
-                results = []
-                total = len(participants)
-                correct = 0
-                wrong = 0
-                skipped = 0
-                count_answered = {
-                    "1": 0,
-                    "2": 0,
-                    "3": 0,
-                    "4": 0
-                }
-                for ans in answers:
-                    participant = SessionParticipant.query.get(ans.participant_id)
-                    correct_text = ans.right_answers()
-                    if isinstance(correct_text, list):
-                        correct_text = correct_text if len(correct_text) > 1 else correct_text[0]
+        if not answers:
+            return
+        
+        if len(answers) != len(participants):
+            return
+        
+        results = []
+        total = len(participants)
+        correct = 0
+        wrong = 0
+        skipped = 0
+        count_answered = {
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
+        }
+        for ans in answers:
+            participant = SessionParticipant.query.get(ans.participant_id)
+            correct_text = ans.right_answers()
+            if isinstance(correct_text, list):
+                correct_text = correct_text if len(correct_text) > 1 else correct_text[0]
 
-                    user_answer_text = ans.get_answer(ans.answer)
-                    user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
-                    if ans.is_correct:
-                        correct += 1
-                    else: 
-                        if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
-                            skipped += 1
-                        else:
-                            wrong += 1
-                    if current_question.type != "enter answer":
-                        if isinstance(ans.answer, list):
-                            for answer in ans.answer:
-                                count_answered[str(answer)] += 1
-                        elif current_question.type == "one answer" and len(ans.answer) == 1:
-                            count_answered[str(ans.answer)] += 1
-
-                    results.append({
-                        "student_id": ans.participant_id,
-                        "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
-                        "answer": user_answer_text,
-                        "is_correct": ans.is_correct,
-                        "correct_answer": correct_text,
-                        "answer_id": ans.answer,
-                        "correct_answer_id": current_question.correct_answer,
-                        "type": current_question.type
-                    })
-
-                variants_with_answers = [
-                    {
-                        "id": 1,
-                        "text": current_question.variant_1,
-                        "answered": count_answered["1"]
-                    },
-                    {
-                        "id": 2,
-                        "text": current_question.variant_2,
-                        "answered": count_answered["2"]
-                    },
-                    {
-                        "id": 3,
-                        "text": current_question.variant_3,
-                        "answered": count_answered["3"]
-                    },
-                    {
-                        "id": 4,
-                        "text": current_question.variant_4,
-                        "answered": count_answered["4"]
-                    }
-                ]
-                socketio.emit(
-                    "teacher_results",
-                    {
-                        "donut_data": {
-                            "total_participiants": total,
-                            "correct": correct,
-                            "wrong": wrong,
-                            "skipped": skipped
-                        },
-                        "question_data": {
-                            "name": current_question.name,
-                            "type": current_question.type,
-                            "variants": variants_with_answers,
-                        },
-                        "results": results,
-                        "index_question": room.index_question,
-                        "total_questions": len(quiz.questions)
-                    },
-                    room=f"teacher_{room.host}"
-                )
-            for ans in answers:
-                participant = SessionParticipant.query.get(ans.participant_id)
-                user_answer_text = ans.get_answer(ans.answer)
-                user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+            user_answer_text = ans.get_answer(ans.answer)
+            user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+            if ans.is_correct:
+                correct += 1
+            else: 
                 if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
-                    continue
-                socketio.emit(
-                    'student_answer',
-                    {
-                        'hash': participant.reconnect_hash
-                    },
-                    room=f"{room.id}"
-                )
+                    skipped += 1
+                else:
+                    wrong += 1
+            if current_question.type != "enter answer":
+                if isinstance(ans.answer, list):
+                    for answer in ans.answer:
+                        count_answered[str(answer)] += 1
+                elif current_question.type == "one answer" and len(ans.answer) == 1:
+                    count_answered[str(ans.answer)] += 1
+
+            results.append({
+                "student_id": ans.participant_id,
+                "nickname": participant.student_profile.surname + " " + participant.student_profile.name,
+                "answer": user_answer_text,
+                "is_correct": ans.is_correct,
+                "correct_answer": correct_text,
+                "answer_id": ans.answer,
+                "correct_answer_id": current_question.correct_answer,
+                "type": current_question.type
+            })
+
+        variants_with_answers = [
+            {
+                "id": 1,
+                "text": current_question.variant_1,
+                "answered": count_answered["1"]
+            },
+            {
+                "id": 2,
+                "text": current_question.variant_2,
+                "answered": count_answered["2"]
+            },
+            {
+                "id": 3,
+                "text": current_question.variant_3,
+                "answered": count_answered["3"]
+            },
+            {
+                "id": 4,
+                "text": current_question.variant_4,
+                "answered": count_answered["4"]
+            }
+        ]
+        socketio.emit(
+            "teacher_results",
+            {
+                "donut_data": {
+                    "total_participiants": total,
+                    "correct": correct,
+                    "wrong": wrong,
+                    "skipped": skipped
+                },
+                "question_data": {
+                    "name": current_question.name,
+                    "type": current_question.type,
+                    "variants": variants_with_answers,
+                },
+                "results": results,
+                "index_question": room.index_question,
+                "total_questions": len(quiz.questions)
+            },
+            room=f"teacher_{room.host}"
+        )
+        for ans in answers:
+            participant = SessionParticipant.query.get(ans.participant_id)
+            user_answer_text = ans.get_answer(ans.answer)
+            user_answer_text = user_answer_text if len(user_answer_text) > 1 else user_answer_text[0]
+            if user_answer_text == "Пропущений" or user_answer_text == "Пропущений...":
+                continue
+            socketio.emit(
+                'student_answer',
+                {
+                    'hash': participant.reconnect_hash
+                },
+                room=f"{room.id}"
+            )
     return
 
 @socketio.on("quiz_start")
